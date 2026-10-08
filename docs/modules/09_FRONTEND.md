@@ -49,7 +49,7 @@ T1: none. T2a: `make deploy-frontend` (script 15, MANUAL STEP: GitHub OAuth), th
 - Static: `tsc --noEmit`; `check-no-hydraulics.sh`.
 - Contract: client asserts `X-Aqua-Contract`; mocks come from generated examples.
 - Manual checklist (record in TILL_NOW): tick, pause, speeds, each menu, leak visuals, challenge flow, badge/label states.
-- Firewall (UI): `grep -RIn "hidden\|LK_" frontend/src` → no hits.
+- Firewall (UI): `bash frontend/scripts/check-no-truth-fields.sh` (fails on `.hidden`, `"hidden":`, `LK_` in `frontend/src`; runs in `npm run lint`)
 
 ## 9. Acceptance gate — G9
 - [ ] no hydraulic math in frontend code (grep check)

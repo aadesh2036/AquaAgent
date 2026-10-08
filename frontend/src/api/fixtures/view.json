@@ -1,0 +1,173 @@
+{
+  "session_id": "sess_a122e8",
+  "sim_time_s": 0,
+  "clock": "00:00",
+  "speed": 1,
+  "nodes": {
+    "1": {
+      "pressure_m": 0,
+      "head_m": 213.36,
+      "demand_lps": -38.167358681949636,
+      "is_sensor": false,
+      "sensor_id": null,
+      "status": "ok"
+    },
+    "2": {
+      "pressure_m": 45.4667360415354,
+      "head_m": 258.8267360415354,
+      "demand_lps": 0,
+      "is_sensor": true,
+      "sensor_id": "S1",
+      "status": "ok"
+    },
+    "3": {
+      "pressure_m": 41.717706343179316,
+      "head_m": 258.12570634317933,
+      "demand_lps": 3.831983393991195,
+      "is_sensor": false,
+      "sensor_id": null,
+      "status": "ok"
+    },
+    "4": {
+      "pressure_m": 43.498538560065015,
+      "head_m": 256.858538560065,
+      "demand_lps": 3.8319833940594354,
+      "is_sensor": true,
+      "sensor_id": "S2",
+      "status": "ok"
+    },
+    "5": {
+      "pressure_m": 58.12026076492333,
+      "head_m": 256.24026076492333,
+      "demand_lps": 5.109311192826317,
+      "is_sensor": false,
+      "sensor_id": null,
+      "status": "ok"
+    },
+    "6": {
+      "pressure_m": 43.39189738076931,
+      "head_m": 256.7518973807693,
+      "demand_lps": 3.831983394055349,
+      "is_sensor": true,
+      "sensor_id": "S3",
+      "status": "ok"
+    },
+    "7": {
+      "pressure_m": 43.61951117000143,
+      "head_m": 256.97951117000144,
+      "demand_lps": 0,
+      "is_sensor": false,
+      "sensor_id": null,
+      "status": "ok"
+    },
+    "8": {
+      "pressure_m": 1.0699999999999932,
+      "head_m": 254.054,
+      "demand_lps": 21.56209730701734,
+      "is_sensor": false,
+      "sensor_id": null,
+      "status": "ok"
+    }
+  },
+  "links": {
+    "1": {
+      "flow_lps": 38.167358681949636,
+      "velocity_ms": 0.3843073763061878,
+      "status": "OPEN",
+      "direction": 1,
+      "visual_fault": "NONE"
+    },
+    "2": {
+      "flow_lps": 25.18361816862236,
+      "velocity_ms": 0.34514240364794213,
+      "status": "OPEN",
+      "direction": 1,
+      "visual_fault": "NONE"
+    },
+    "3": {
+      "flow_lps": 9.15175711933608,
+      "velocity_ms": 0.28220661997000396,
+      "status": "OPEN",
+      "direction": 1,
+      "visual_fault": "NONE"
+    },
+    "4": {
+      "flow_lps": 2.4048917958017477,
+      "velocity_ms": 0.0741580415910381,
+      "status": "OPEN",
+      "direction": 1,
+      "visual_fault": "NONE"
+    },
+    "5": {
+      "flow_lps": 3.62152086160502,
+      "velocity_ms": 0.1116744192593424,
+      "status": "OPEN",
+      "direction": 1,
+      "visual_fault": "NONE"
+    },
+    "6": {
+      "flow_lps": 21.56209730701734,
+      "velocity_ms": 0.4255334329270573,
+      "status": "OPEN",
+      "direction": 1,
+      "visual_fault": "NONE"
+    },
+    "7": {
+      "flow_lps": 2.9148819294748978,
+      "velocity_ms": 0.15979425176361817,
+      "status": "OPEN",
+      "direction": 1,
+      "visual_fault": "NONE"
+    },
+    "8": {
+      "flow_lps": 2.1944292633514184,
+      "velocity_ms": 0.12029893171302376,
+      "status": "OPEN",
+      "direction": -1,
+      "visual_fault": "NONE"
+    },
+    "9": {
+      "flow_lps": 38.167358681949636,
+      "velocity_ms": 0,
+      "status": "OPEN",
+      "direction": 1,
+      "visual_fault": "NONE"
+    }
+  },
+  "tank": {
+    "tank_id": "8",
+    "level_m": 1.0699999999999932,
+    "level_pct": 17.552493438320095
+  },
+  "pump": {
+    "pump_id": "9",
+    "flow_lps": 38.167358681949636,
+    "status": "ON"
+  },
+  "taps": {
+    "T1": {
+      "open": false,
+      "demand_lps": 3.831983393991195
+    },
+    "T2": {
+      "open": false,
+      "demand_lps": 3.8319833940594354
+    },
+    "T3": {
+      "open": false,
+      "demand_lps": 3.831983394055349
+    }
+  },
+  "valves": {
+    "V1": {
+      "open": true
+    }
+  },
+  "network_status": "NORMAL",
+  "challenge": {
+    "active": false,
+    "challenge_id": null,
+    "state": null
+  },
+  "events": []
+}

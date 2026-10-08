@@ -116,7 +116,7 @@ export function BlueprintBackground(): JSX.Element {
   }, []);
 
   return (
-    <div role="presentation" className={`fixed inset-0 -z-10 pointer-events-none ${fallback ? "blueprint-grid-subtle" : ""}`} style={{ backgroundColor: "#0284c7" }}>
+    <div aria-hidden="true" className={`fixed inset-0 -z-10 pointer-events-none ${fallback ? "blueprint-grid-subtle" : ""}`} style={{ backgroundColor: "#0284c7" }}>
       {!fallback && <canvas ref={ref} className="w-full h-full block" />}
     </div>
   );

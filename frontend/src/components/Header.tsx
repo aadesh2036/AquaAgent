@@ -17,9 +17,9 @@ export function Header({ tag, center, right }: { tag?: string; center?: ReactNod
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <BrandMark />
-          {tag && <span className="max-sm:[display:none] font-mono-cad text-[10px] text-paler border-l border-white/40 pl-3 whitespace-nowrap">{tag}</span>}
+          {tag && <span className="max-sm:hidden font-mono-cad text-[10px] text-paler border-l border-white/40 pl-3 whitespace-nowrap">{tag}</span>}
         </div>
-        {center && <div className="max-md:[display:none] md:flex flex-1 justify-center min-w-0">{center}</div>}
+        {center && <div className="hidden md:flex flex-1 justify-center min-w-0">{center}</div>}
         <div className="flex items-center gap-2 shrink-0">{right}</div>
       </div>
     </header>

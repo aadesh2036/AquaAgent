@@ -20,7 +20,7 @@ const STAGES: Stage[] = [
     body: "The gap between reading and expectation is tracked over time. A dual threshold — one instant, one cumulative — confirms an anomaly while ignoring ordinary demand swings.",
     chips: ["DUAL THRESHOLD", "FALSE ALARMS MEASURED"], caption: "FIG 04 // ONE MEASURED FACT", drawing: <DetectionDrawing /> },
   { n: "05", layer: "REPORT LAYER", title: "Explanation & reveal", h3: "Evidence, then the answer",
-    body: "AquaAgent writes what changed, why it is suspicious and what to check, using only measured values. Then the hiddden fault is revealed next to the AI's answer.",
+    body: "AquaAgent writes what changed, why it is suspicious and what to check, using only measured values. Then the hidden fault is revealed next to the AI's answer.",
     chips: ["NO INVENTED NUMBERS", "GROUND TRUTH REVEAL"], caption: "FIG 05 // REPORT CARD, MOCK-UP", drawing: <ReportDrawing /> },
 ];
 
@@ -49,10 +49,10 @@ export function HowItWorks(): JSX.Element {
             <h2 className="font-heading font-bold text-3xl sm:text-4xl mt-1">From pipe to proof, in five stages</h2>
           </div>
           <div className="flex items-center gap-2">
-            <button className="cad-btn-secondary w-10 h-10 flex items-center justify-center" onClick={() => go(idx - 1)} aria-label="Previous stage"><span className="material-symbols-outlined">arrow_back</span></button>
-            <button className="cad-btn-secondary w-10 h-10 flex items-center justify-center" onClick={() => go(idx + 1)} aria-label="Next stage"><span className="material-symbols-outlined">arrow_forward</span></button>
+            <button className="cad-btn-secondary w-10 h-10 flex items-center justify-center" onClick={() => go(idx - 1)} aria-label="Previous stage"><span aria-hidden="true" className="material-symbols-outlined">arrow_back</span></button>
+            <button className="cad-btn-secondary w-10 h-10 flex items-center justify-center" onClick={() => go(idx + 1)} aria-label="Next stage"><span aria-hidden="true" className="material-symbols-outlined">arrow_forward</span></button>
             <button className="cad-btn-secondary h-10 px-3 flex items-center gap-2 mono-label" onClick={() => setAuto((a) => !a)} aria-pressed={auto}>
-              <span className="material-symbols-outlined">{auto ? "pause" : "play_arrow"}</span>{auto ? "AUTOPLAY ON" : "AUTOPLAY OFF"}
+              <span aria-hidden="true" className="material-symbols-outlined">{auto ? "pause" : "play_arrow"}</span>{auto ? "AUTOPLAY ON" : "AUTOPLAY OFF"}
             </button>
           </div>
         </div>
@@ -69,7 +69,7 @@ export function HowItWorks(): JSX.Element {
           </div>
         </div>
 
-        <div className="overflow-clip">
+        <div className="overflow-hidden">
           <div className="timeline-slider" style={{ transform: `translateX(-${idx * 20}%)` }}>
             {STAGES.map((s, i) => (
               <div key={s.n} className={`timeline-slide-item px-1 ${i === idx ? "active-slide" : ""}`} {...(i === idx ? {} : { inert: "" })}>

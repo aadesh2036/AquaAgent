@@ -79,7 +79,10 @@ export function Simulate(): JSX.Element {
 
   useEffect(() => {
     if (!running) return;
-    const t = setInterval(() => { void useSimStore.getState().step(); }, 1000);
+    const t = setInterval(() => {
+      if (document.visibilityState !== "visible") return; // pause the tick while the tab is in the background
+      void useSimStore.getState().step();
+    }, 1000);
     return () => clearInterval(t);
   }, [running]);
 
@@ -91,12 +94,15 @@ export function Simulate(): JSX.Element {
         right={<><ConnBadge c={connection} /><Link to="/" className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap">← OVERVIEW</Link></>} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-20">
-        <div className="md:[display:none] mb-4 overflow-x-auto"><ModeTabs mode={mode} onMode={setMode} /></div>
+        <div className="md:hidden mb-4 overflow-x-auto"><ModeTabs mode={mode} onMode={setMode} /></div>
 
         {contractMismatch && (
           <div role="alert" className="mb-4 border border-alarm text-alarm bg-well px-4 py-2 font-mono-cad text-[11px]">
             CONTRACT MISMATCH: the API speaks {contractMismatch}, this frontend expects {CONTRACT_VERSION}. Values may be wrong.
           </div>
+        )}
+        {connection === "mock" && MOCK_HAS_FIXTURES && (
+          <div role="status" className="mb-4 border border-dashed border-white bg-well px-4 py-2 font-mono-cad text-[11px]">MOCK DATA — recorded from the live API. Steps replay a recorded session.</div>
         )}
         {connection === "mock" && !MOCK_HAS_FIXTURES && (
           <div role="status" className="mb-4 border border-dashed border-white bg-well px-4 py-2 font-mono-cad text-[11px]">MOCK DATA — fixtures not recorded yet. Values show as "—".</div>
@@ -113,7 +119,7 @@ export function Simulate(): JSX.Element {
             <div className="mono-label text-paler mb-2">PLAN VIEW // net_epa_tutorial_v1 // SCALE N.T.S.</div>
             {offline ? (
               <div className="py-16 px-4 text-center flex flex-col items-center gap-4 max-w-xl mx-auto">
-                <span className="material-symbols-outlined text-alarm" style={{ fontSize: 40 }}>cloud_off</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-alarm" style={{ fontSize: 40 }}>cloud_off</span>
                 <p className="text-sm">Can't reach the AquaAgent API at {API_BASE_URL}. Start it with <code className="font-mono-cad">make sim-serve</code> and <code className="font-mono-cad">make api-serve</code>, or switch to mock data.</p>
                 <div className="flex gap-3">
                   <button className="cad-btn-primary px-4 py-2 font-mono-cad text-xs font-bold" onClick={() => void loadTopology()}>RETRY</button>
@@ -121,7 +127,7 @@ export function Simulate(): JSX.Element {
                 </div>
               </div>
             ) : topology && view ? (
-              <div className="overflow-x-auto"><div className="min-w-[400px]"><NetworkCanvas topology={topology} view={view} running={running} selection={selection} onSelect={select} /></div></div>
+              <div><NetworkCanvas topology={topology} view={view} running={running} selection={selection} onSelect={select} /></div>
             ) : (
               <div className="py-24 text-center font-mono-cad text-xs text-paler aq-pulse">LOADING NETWORK…</div>
             )}

@@ -137,7 +137,7 @@ export function DetectionDrawing(): JSX.Element {
     <div className="w-full h-full flex flex-col justify-center gap-5 p-6 sm:p-10">
       <div className="mono-label text-paler">// Measured in our simulation</div>
       <p className="font-heading text-lg sm:text-2xl leading-snug">
-        A <span className="inline-flex items-center gap-1 text-alarm"><span className="material-symbols-outlined" style={{ fontSize: 22 }}>water_drop</span>3.3 L/s leak on pipe 4</span> makes S2 and S3 read{" "}
+        A <span className="inline-flex items-center gap-1 text-alarm"><span aria-hidden="true" className="material-symbols-outlined" style={{ fontSize: 22 }}>water_drop</span>3.3 L/s leak on pipe 4</span> makes S2 and S3 read{" "}
         <strong>0.92 m below</strong> the same network without it.
       </p>
       <p className="font-mono-cad text-[11px] text-paler">SENSOR NOISE σ = 0.05 m // SAME NETWORK, SAME TIME OF DAY, LEAK ON vs OFF</p>

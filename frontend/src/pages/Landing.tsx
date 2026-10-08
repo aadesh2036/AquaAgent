@@ -50,11 +50,11 @@ function ScrollNav(): JSX.Element {
 export function Landing(): JSX.Element {
   return (
     <div className="min-h-screen">
-      <div className="max-lg:[display:none] fixed top-16 left-4 z-10 font-mono-cad text-[9px] text-white/50 pointer-events-none">DWG NO: AQ-NET-01 // NETWORK: net_epa_tutorial_v1</div>
-      <div className="max-lg:[display:none] fixed top-16 right-4 z-10 font-mono-cad text-[9px] text-white/50 pointer-events-none">SENSORS: 3 PRESSURE + 2 FLOW [+]</div>
+      <div className="hidden lg:block fixed top-16 left-4 z-10 font-mono-cad text-[9px] text-white/50 pointer-events-none">DWG NO: AQ-NET-01 // NETWORK: net_epa_tutorial_v1</div>
+      <div className="hidden lg:block fixed top-16 right-4 z-10 font-mono-cad text-[9px] text-white/50 pointer-events-none">SENSORS: 3 PRESSURE + 2 FLOW [+]</div>
 
       <Header tag="SIM://WNTR-1.5" center={<ScrollNav />}
-        right={<Link to="/simulate" className="cad-btn-primary px-3 sm:px-4 py-2 font-mono-cad text-[11px] font-bold flex items-center gap-2 whitespace-nowrap">OPEN SIMULATOR <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span></Link>} />
+        right={<Link to="/simulate" className="cad-btn-primary px-3 sm:px-4 py-2 font-mono-cad text-[11px] font-bold flex items-center gap-2 whitespace-nowrap">OPEN SIMULATOR <span aria-hidden="true" className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span></Link>} />
 
       <main>
         <section id="overview" className="pt-32 pb-16 sm:pt-44 sm:pb-24">
@@ -65,15 +65,15 @@ export function Landing(): JSX.Element {
             <h1 className="font-heading font-bold text-4xl sm:text-5xl md:text-6xl leading-[1.08]">
               Water disappears underground.<br />
               <span className="font-normal text-pale">We work out <span className="relative inline-block font-hand text-5xl sm:text-6xl md:text-7xl text-white font-bold align-baseline">where.
-                <svg viewBox="0 0 120 14" className="absolute left-0 -bottom-3 w-full" fill="none" role="presentation"><path d="M 2 8 C 28 3, 75 4, 114 6" stroke="#fff" strokeWidth="1.8" /><path d="M 102 3 L 115 6 L 105 10" stroke="#fff" strokeWidth="1.5" /></svg>
+                <svg viewBox="0 0 120 14" className="absolute left-0 -bottom-3 w-full" fill="none" aria-hidden="true"><path d="M 2 8 C 28 3, 75 4, 114 6" stroke="#fff" strokeWidth="1.8" /><path d="M 102 3 L 115 6 L 105 10" stroke="#fff" strokeWidth="1.5" /></svg>
               </span></span>
             </h1>
             <p className="text-pale text-base sm:text-lg max-w-2xl leading-relaxed">
               AquaAgent watches a pressurised water network through just five sensors. A model trained only on healthy days predicts what each sensor should read. When the readings stop fitting that prediction, it raises an alarm and shows the evidence.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 mt-2">
-              <Link to="/simulate" className="cad-btn-primary px-6 py-3 font-mono-cad font-bold text-sm flex items-center justify-center gap-2">OPEN SIMULATOR <span className="material-symbols-outlined">north_east</span></Link>
-              <button className="cad-btn-secondary px-6 py-3 font-mono-cad font-bold text-sm flex items-center justify-center gap-2" onClick={() => document.getElementById("how")?.scrollIntoView({ behavior: "smooth" })}>SEE HOW IT WORKS <span className="material-symbols-outlined">tune</span></button>
+              <Link to="/simulate" className="cad-btn-primary px-6 py-3 font-mono-cad font-bold text-sm flex items-center justify-center gap-2">OPEN SIMULATOR <span aria-hidden="true" className="material-symbols-outlined">north_east</span></Link>
+              <button className="cad-btn-secondary px-6 py-3 font-mono-cad font-bold text-sm flex items-center justify-center gap-2" onClick={() => document.getElementById("how")?.scrollIntoView({ behavior: "smooth" })}>SEE HOW IT WORKS <span aria-hidden="true" className="material-symbols-outlined">tune</span></button>
             </div>
           </div>
         </section>

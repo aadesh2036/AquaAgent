@@ -55,7 +55,7 @@
 @keyframes aq-pulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
 .aq-pulse { animation: aq-pulse 1.4s ease-in-out infinite; }
 
-@media (max-width: 639px) { .aq-node-label { display: none; } }
+@media (max-width: 479px) { .aq-node-label { display: none; } }
 .aq-hit { cursor: pointer; }
 .aq-hit:focus-visible { outline: none; }
 .aq-hit:focus-visible + .aq-focus-ring, .aq-focus-ring-on { stroke: #fff; }

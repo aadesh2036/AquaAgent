@@ -1,0 +1,3771 @@
+[
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 0,
+    "clock": "00:00",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -38.167358681949636,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.4667360415354,
+        "head_m": 258.8267360415354,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.717706343179316,
+        "head_m": 258.12570634317933,
+        "demand_lps": 3.831983393991195,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.498538560065015,
+        "head_m": 256.858538560065,
+        "demand_lps": 3.8319833940594354,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.12026076492333,
+        "head_m": 256.24026076492333,
+        "demand_lps": 5.109311192826317,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.39189738076931,
+        "head_m": 256.7518973807693,
+        "demand_lps": 3.831983394055349,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.61951117000143,
+        "head_m": 256.97951117000144,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.0699999999999932,
+        "head_m": 254.054,
+        "demand_lps": 21.56209730701734,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 38.167358681949636,
+        "velocity_ms": 0.3843073763061878,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.18361816862236,
+        "velocity_ms": 0.34514240364794213,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.15175711933608,
+        "velocity_ms": 0.28220661997000396,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.4048917958017477,
+        "velocity_ms": 0.0741580415910381,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.62152086160502,
+        "velocity_ms": 0.1116744192593424,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.56209730701734,
+        "velocity_ms": 0.4255334329270573,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.9148819294748978,
+        "velocity_ms": 0.15979425176361817,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1944292633514184,
+        "velocity_ms": 0.12029893171302376,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 38.167358681949636,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.0699999999999932,
+      "level_pct": 17.552493438320095
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 38.167358681949636,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393991195
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.8319833940594354
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.831983394055349
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 300,
+    "clock": "00:05",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -38.14627002070707,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.483852338892916,
+        "head_m": 258.84385233889293,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.73553982259415,
+        "head_m": 258.14353982259416,
+        "demand_lps": 3.831983393991878,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.517228867573294,
+        "head_m": 256.8772288675733,
+        "demand_lps": 3.8319833940601518,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.1390699054823,
+        "head_m": 256.2590699054823,
+        "demand_lps": 5.109311192827278,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.41083715620067,
+        "head_m": 256.7708371562007,
+        "demand_lps": 3.831983394056075,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.63884008711398,
+        "head_m": 256.998840087114,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.0946257773684636,
+        "head_m": 254.07862577736847,
+        "demand_lps": 21.541008645771687,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 38.14627002070707,
+        "velocity_ms": 0.38409503444256876,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.165871399425026,
+        "velocity_ms": 0.34489918353013616,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.148415227290165,
+        "velocity_ms": 0.28210356827771316,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.401852424469424,
+        "velocity_ms": 0.0740643185278772,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.6248627536533378,
+        "velocity_ms": 0.11177747095170734,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.541008645771687,
+        "velocity_ms": 0.4251172428743032,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.914579408760591,
+        "velocity_ms": 0.15977766753401462,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1947317840666867,
+        "velocity_ms": 0.12031551594268003,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 38.14627002070707,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.0946257773684636,
+      "level_pct": 17.95645960250104
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 38.14627002070707,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393991878
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.8319833940601518
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.831983394056075
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 600,
+    "clock": "00:10",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -38.12518914471051,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.50095286280555,
+        "head_m": 258.86095286280556,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.75335692626777,
+        "head_m": 258.1613569262678,
+        "demand_lps": 3.8319833939925605,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.53590188249797,
+        "head_m": 256.895901882498,
+        "demand_lps": 3.8319833940608676,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.15786153432714,
+        "head_m": 256.27786153432714,
+        "demand_lps": 5.109311192828238,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.42975920584803,
+        "head_m": 256.78975920584804,
+        "demand_lps": 3.8319833940568,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.65815128843667,
+        "head_m": 257.0181512884367,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.1192274696644233,
+        "head_m": 254.10322746966443,
+        "demand_lps": 21.519927769772046,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 38.12518914471051,
+        "velocity_ms": 0.3838827709686411,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.14812987826533,
+        "velocity_ms": 0.344656035336877,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.14507587245262,
+        "velocity_ms": 0.2820005948236217,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.3988150591722914,
+        "velocity_ms": 0.07397065732348325,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.6282021084932854,
+        "velocity_ms": 0.11188044440587287,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.519927769772046,
+        "velocity_ms": 0.42470120646534415,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.914277419219461,
+        "velocity_ms": 0.15976111242340196,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1950337736087766,
+        "velocity_ms": 0.12033207105334533,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 38.12518914471051,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.1192274696644233,
+      "level_pct": 18.360030670348152
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 38.12518914471051,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.8319833939925605
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.8319833940608676
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.8319833940568
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 900,
+    "clock": "00:15",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -38.104116059805456,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.518037619008396,
+        "head_m": 258.8780376190084,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.77115766008319,
+        "head_m": 258.1791576600832,
+        "demand_lps": 3.831983393993243,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.554557611276095,
+        "head_m": 256.9145576112761,
+        "demand_lps": 3.831983394061582,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.1766356581644,
+        "head_m": 256.2966356581644,
+        "demand_lps": 5.109311192829197,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.44866353657312,
+        "head_m": 256.80866353657314,
+        "demand_lps": 3.8319833940575245,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.67744478007603,
+        "head_m": 257.03744478007604,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.14380508577932,
+        "head_m": 254.12780508577933,
+        "demand_lps": 21.498854684863904,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 38.104116059805456,
+        "velocity_ms": 0.38367058594326314,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.13039361083854,
+        "velocity_ms": 0.34441295914621856,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.141739054973671,
+        "velocity_ms": 0.281897699612362,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.395779700606858,
+        "velocity_ms": 0.073877057999334,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.631538925974634,
+        "velocity_ms": 0.11198333961720651,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.498854684863904,
+        "velocity_ms": 0.4242853238155424,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.9139759603052298,
+        "velocity_ms": 0.15974458640183314,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1953352325239672,
+        "velocity_ms": 0.12034859707496671,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 38.104116059805456,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.14380508577932,
+      "level_pct": 18.763206787718502
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 38.104116059805456,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393993243
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.831983394061582
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.8319833940575245
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 1200,
+    "clock": "00:20",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -38.08305077184191,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.53510661323952,
+        "head_m": 258.89510661323953,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.78894202992643,
+        "head_m": 258.19694202992645,
+        "demand_lps": 3.8319833939939243,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.57319606034764,
+        "head_m": 256.93319606034765,
+        "demand_lps": 3.8319833940622963,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.1953922837036,
+        "head_m": 256.3153922837036,
+        "demand_lps": 5.109311192830156,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.46755015524059,
+        "head_m": 256.8275501552406,
+        "demand_lps": 3.8319833940582484,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.69672056814255,
+        "head_m": 257.05672056814257,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.168358634611252,
+        "head_m": 254.15235863461126,
+        "demand_lps": 21.47778939689728,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 38.08305077184191,
+        "velocity_ms": 0.3834584794253386,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.11266260284559,
+        "velocity_ms": 0.3441699550362924,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.13840477500239,
+        "velocity_ms": 0.28179488264853103,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.392746349468447,
+        "velocity_ms": 0.07378352057687067,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.6348732059483084,
+        "velocity_ms": 0.11208615658111133,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.47778939689728,
+        "velocity_ms": 0.4238695950403496,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.9136750314716493,
+        "velocity_ms": 0.15972808943936276,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.195636161358507,
+        "velocity_ms": 0.12036509403748967,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 38.08305077184191,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.168358634611252,
+      "level_pct": 19.16598810057828
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 38.08305077184191,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.8319833939939243
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.8319833940622963
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.8319833940582484
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 1500,
+    "clock": "00:25",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -38.06199328667384,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.55215985124045,
+        "head_m": 258.91215985124046,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.80671004168687,
+        "head_m": 258.2147100416869,
+        "demand_lps": 3.8319833939946055,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.59181723615558,
+        "head_m": 256.9518172361556,
+        "demand_lps": 3.8319833940630104,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.21413141765703,
+        "head_m": 256.33413141765703,
+        "demand_lps": 5.109311192831114,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.48641906871819,
+        "head_m": 256.8464190687182,
+        "demand_lps": 3.831983394058971,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.7159786587506,
+        "head_m": 257.0759786587506,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.192888125064968,
+        "head_m": 254.17688812506498,
+        "demand_lps": 21.456731911726138,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 38.06199328667384,
+        "velocity_ms": 0.38324645147381114,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.09493685999132,
+        "velocity_ms": 0.34392702308528345,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.135073032687911,
+        "velocity_ms": 0.2816921439367274,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.3897150064527666,
+        "velocity_ms": 0.07369004507754634,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.6382049482651833,
+        "velocity_ms": 0.11218889529298882,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.456731911726138,
+        "velocity_ms": 0.4234540202552952,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.9133746321721348,
+        "velocity_ms": 0.159711621506027,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.195936560658979,
+        "velocity_ms": 0.12038156197087793,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 38.06199328667384,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.192888125064968,
+      "level_pct": 19.568374755002758
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 38.06199328667384,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.8319833939946055
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.8319833940630104
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.831983394058971
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 1800,
+    "clock": "00:30",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -38.040943610159346,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.569197338756,
+        "head_m": 258.929197338756,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.82446170125746,
+        "head_m": 258.2324617012575,
+        "demand_lps": 3.831983393995285,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.61042114514618,
+        "head_m": 256.9704211451462,
+        "demand_lps": 3.831983394063723,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.232853066740006,
+        "head_m": 256.35285306674,
+        "demand_lps": 5.10931119283207,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.50527028387717,
+        "head_m": 256.8652702838772,
+        "demand_lps": 3.8319833940596935,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.73521905801863,
+        "head_m": 257.09521905801864,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.2173935660519533,
+        "head_m": 254.20139356605196,
+        "demand_lps": 21.435682235208574,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 38.040943610159346,
+        "velocity_ms": 0.38303450214766604,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.077216387985608,
+        "velocity_ms": 0.3436841633714458,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.131743828178452,
+        "velocity_ms": 0.2815894834815217,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.3866856722543734,
+        "velocity_ms": 0.07359663152277862,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.6415341527770333,
+        "velocity_ms": 0.11229155574826828,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.435682235208574,
+        "velocity_ms": 0.42303859957599016,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.9130747618603565,
+        "velocity_ms": 0.15969518257187595,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1962364309717133,
+        "velocity_ms": 0.1203980009050814,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 38.040943610159346,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.2173935660519533,
+      "level_pct": 19.970366897177712
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 38.040943610159346,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393995285
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.831983394063723
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.8319833940596935
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 2100,
+    "clock": "00:35",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -38.01990174816101,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.5862190815339,
+        "head_m": 258.9462190815339,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.84219701453429,
+        "head_m": 258.2501970145343,
+        "demand_lps": 3.831983393995965,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.629007793768665,
+        "head_m": 256.9890077937687,
+        "demand_lps": 3.8319833940644354,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.25155723767074,
+        "head_m": 256.37155723767074,
+        "demand_lps": 5.109311192833026,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.52410380759164,
+        "head_m": 256.88410380759166,
+        "demand_lps": 3.831983394060415,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.754441772069015,
+        "head_m": 257.11444177206903,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.2418749664903714,
+        "head_m": 254.22587496649038,
+        "demand_lps": 21.41464037320717,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 38.01990174816101,
+        "velocity_ms": 0.3828226315059336,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.05950119254306,
+        "velocity_ms": 0.3434413759730984,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.128417161621988,
+        "velocity_ms": 0.28148690128747683,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.383658347567008,
+        "velocity_ms": 0.07350327993395989,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.6448608193358876,
+        "velocity_ms": 0.11239413794238683,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.41464037320717,
+        "velocity_ms": 0.422623333118134,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.9127754199905453,
+        "velocity_ms": 0.15967877260699045,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1965357728424806,
+        "velocity_ms": 0.12041441087001929,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 38.01990174816101,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.2418749664903714,
+      "level_pct": 20.371964673398484
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 38.01990174816101,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393995965
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.8319833940644354
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.831983394060415
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 2400,
+    "clock": "00:40",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -37.998867706545326,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.60322508532522,
+        "head_m": 258.96322508532523,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.8599159874168,
+        "head_m": 258.2679159874168,
+        "demand_lps": 3.831983393996644,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.64757718847551,
+        "head_m": 257.0075771884755,
+        "demand_lps": 3.8319833940651464,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.27024393717056,
+        "head_m": 256.39024393717057,
+        "demand_lps": 5.109311192833981,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.54291964673905,
+        "head_m": 256.90291964673906,
+        "demand_lps": 3.8319833940611363,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.77364680702783,
+        "head_m": 257.13364680702784,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.2663323353050657,
+        "head_m": 254.25033233530507,
+        "demand_lps": 21.39360633158842,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 37.998867706545326,
+        "velocity_ms": 0.3826108396076836,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.041791279383045,
+        "velocity_ms": 0.3431986609686254,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.125093033165635,
+        "velocity_ms": 0.28138439735912946,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.38063303308469,
+        "velocity_ms": 0.07340999033249118,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.648184947794627,
+        "velocity_ms": 0.11249664187080784,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.39360633158842,
+        "velocity_ms": 0.42220822099750344,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.9124766060158,
+        "velocity_ms": 0.15966239158138937,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1968345868181802,
+        "velocity_ms": 0.12043079189567273,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 37.998867706545326,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.2663323353050657,
+      "level_pct": 20.773168230069974
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 37.998867706545326,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393996644
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.8319833940651464
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.8319833940611363
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": []
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 2400,
+    "clock": "00:40",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -37.998867706545326,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.60322508532522,
+        "head_m": 258.96322508532523,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.8599159874168,
+        "head_m": 258.2679159874168,
+        "demand_lps": 3.831983393996644,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.64757718847551,
+        "head_m": 257.0075771884755,
+        "demand_lps": 3.8319833940651464,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.27024393717056,
+        "head_m": 256.39024393717057,
+        "demand_lps": 5.109311192833981,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.54291964673905,
+        "head_m": 256.90291964673906,
+        "demand_lps": 3.8319833940611363,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.77364680702783,
+        "head_m": 257.13364680702784,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.2663323353050657,
+        "head_m": 254.25033233530507,
+        "demand_lps": 21.39360633158842,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 37.998867706545326,
+        "velocity_ms": 0.3826108396076836,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.041791279383045,
+        "velocity_ms": 0.3431986609686254,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.125093033165635,
+        "velocity_ms": 0.28138439735912946,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.38063303308469,
+        "velocity_ms": 0.07340999033249118,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.648184947794627,
+        "velocity_ms": 0.11249664187080784,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.39360633158842,
+        "velocity_ms": 0.42220822099750344,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.9124766060158,
+        "velocity_ms": 0.15966239158138937,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1968345868181802,
+        "velocity_ms": 0.12043079189567273,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 37.998867706545326,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.2663323353050657,
+      "level_pct": 20.773168230069974
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 37.998867706545326,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393996644
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.8319833940651464
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.8319833940611363
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 2700,
+    "clock": "00:45",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -37.977841491183106,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.62021535588434,
+        "head_m": 258.98021535588435,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.877618625807884,
+        "head_m": 258.2856186258079,
+        "demand_lps": 3.831983393997322,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.66612933572236,
+        "head_m": 257.0261293357224,
+        "demand_lps": 3.831983394065858,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.28891317196366,
+        "head_m": 256.40891317196366,
+        "demand_lps": 5.109311192834934,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.56171780820023,
+        "head_m": 256.92171780820024,
+        "demand_lps": 3.831983394061856,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.792834169025525,
+        "head_m": 257.15283416902554,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.2907656814276152,
+        "head_m": 254.27476568142762,
+        "demand_lps": 21.372580116223133,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 37.977841491183106,
+        "velocity_ms": 0.3823991265120293,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.02408665422935,
+        "velocity_ms": 0.34295601843647144,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.121771442956433,
+        "velocity_ms": 0.28128197170101354,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.3776097295000986,
+        "velocity_ms": 0.07331676273973217,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.651506538006215,
+        "velocity_ms": 0.11259906752899726,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.372580116223133,
+        "velocity_ms": 0.42179326332996053,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.912178319390476,
+        "velocity_ms": 0.15964603946516032,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1971328734444575,
+        "velocity_ms": 0.12044714401195403,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 37.977841491183106,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.2907656814276152,
+      "level_pct": 21.173977713707597
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 37.977841491183106,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393997322
+      },
+      "T2": {
+        "open": false,
+        "demand_lps": 3.831983394065858
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.831983394061856
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 2700,
+    "clock": "00:45",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -37.977841491183106,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.62021535588434,
+        "head_m": 258.98021535588435,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.877618625807884,
+        "head_m": 258.2856186258079,
+        "demand_lps": 3.831983393997322,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.66612933572236,
+        "head_m": 257.0261293357224,
+        "demand_lps": 3.831983394065858,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.28891317196366,
+        "head_m": 256.40891317196366,
+        "demand_lps": 5.109311192834934,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.56171780820023,
+        "head_m": 256.92171780820024,
+        "demand_lps": 3.831983394061856,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.792834169025525,
+        "head_m": 257.15283416902554,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.2907656814276152,
+        "head_m": 254.27476568142762,
+        "demand_lps": 21.372580116223133,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 37.977841491183106,
+        "velocity_ms": 0.3823991265120293,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.02408665422935,
+        "velocity_ms": 0.34295601843647144,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.121771442956433,
+        "velocity_ms": 0.28128197170101354,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.3776097295000986,
+        "velocity_ms": 0.07331676273973217,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "5": {
+        "flow_lps": 3.651506538006215,
+        "velocity_ms": 0.11259906752899726,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.372580116223133,
+        "velocity_ms": 0.42179326332996053,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.912178319390476,
+        "velocity_ms": 0.15964603946516032,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1971328734444575,
+        "velocity_ms": 0.12044714401195403,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 37.977841491183106,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.2907656814276152,
+      "level_pct": 21.173977713707597
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 37.977841491183106,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393997322
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 3.831983394065858
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.831983394061856
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 2700,
+    "clock": "00:45",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -37.977841491183106,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 45.62021535588434,
+        "head_m": 258.98021535588435,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 41.877618625807884,
+        "head_m": 258.2856186258079,
+        "demand_lps": 3.831983393997322,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 43.66612933572236,
+        "head_m": 257.0261293357224,
+        "demand_lps": 3.831983394065858,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 58.28891317196366,
+        "head_m": 256.40891317196366,
+        "demand_lps": 5.109311192834934,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 43.56171780820023,
+        "head_m": 256.92171780820024,
+        "demand_lps": 3.831983394061856,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 43.792834169025525,
+        "head_m": 257.15283416902554,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.2907656814276152,
+        "head_m": 254.27476568142762,
+        "demand_lps": 21.372580116223133,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 37.977841491183106,
+        "velocity_ms": 0.3823991265120293,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 25.02408665422935,
+        "velocity_ms": 0.34295601843647144,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 9.121771442956433,
+        "velocity_ms": 0.28128197170101354,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 2.3776097295000986,
+        "velocity_ms": 0.07331676273973217,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 3.651506538006215,
+        "velocity_ms": 0.11259906752899726,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 21.372580116223133,
+        "velocity_ms": 0.42179326332996053,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.912178319390476,
+        "velocity_ms": 0.15964603946516032,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1971328734444575,
+        "velocity_ms": 0.12044714401195403,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 37.977841491183106,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.2907656814276152,
+      "level_pct": 21.173977713707597
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 37.977841491183106,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393997322
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 3.831983394065858
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.831983394061856
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 3000,
+    "clock": "00:50",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -39.71586560276848,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 44.18406355028219,
+        "head_m": 257.5440635502822,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 40.38145133329971,
+        "head_m": 256.7894513332997,
+        "demand_lps": 3.831983393939989,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 41.22888436904523,
+        "head_m": 254.58888436904525,
+        "demand_lps": 8.831983395033907,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 55.92181542723549,
+        "head_m": 254.0418154272355,
+        "demand_lps": 5.109311192713991,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 41.27682312734993,
+        "head_m": 254.63682312734994,
+        "demand_lps": 3.8319833939743,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 42.41675995500378,
+        "head_m": 255.7767599550038,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.3151750137962495,
+        "head_m": 254.29917501379626,
+        "demand_lps": 14.911201966568482,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 39.71586560276848,
+        "velocity_ms": 0.3998993022995708,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 23.554740338101997,
+        "velocity_ms": 0.3228185736918831,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 12.329141870726497,
+        "velocity_ms": 0.38018551072745127,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 0.7686415864636612,
+        "velocity_ms": 0.02370208706981372,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 8.643538371533513,
+        "velocity_ms": 0.2665350179866293,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 14.911201966568482,
+        "velocity_ms": 0.2942763346048688,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.728516889228929,
+        "velocity_ms": 0.1495776931236715,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.3807943034850623,
+        "velocity_ms": 0.13051549034681278,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 39.71586560276848,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.3151750137962495,
+      "level_pct": 21.57439327093585
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 39.71586560276848,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.831983393939989
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 8.831983395033907
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.8319833939743
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 3300,
+    "clock": "00:55",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -39.70094728519246,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 44.19666414402741,
+        "head_m": 257.5566641440274,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 40.394576793197984,
+        "head_m": 256.802576793198,
+        "demand_lps": 3.8319833939404924,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 41.24249452165975,
+        "head_m": 254.60249452165976,
+        "demand_lps": 8.831983395035108,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 55.935469528351604,
+        "head_m": 254.0554695283516,
+        "demand_lps": 5.1093111927146895,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 41.290532011580865,
+        "head_m": 254.65053201158088,
+        "demand_lps": 3.8319833939748253,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 42.430956235579515,
+        "head_m": 255.79095623557953,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.332204894271058,
+        "head_m": 254.31620489427107,
+        "demand_lps": 14.895754717228774,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 39.70094728519246,
+        "velocity_ms": 0.3997490896654109,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 23.54128840263326,
+        "velocity_ms": 0.32263421442665324,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 12.327675488618706,
+        "velocity_ms": 0.38014029288208806,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 0.7672935625052576,
+        "velocity_ms": 0.02366051895562766,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 8.645533685404487,
+        "velocity_ms": 0.2665965461473928,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 14.895754717228774,
+        "velocity_ms": 0.2939714792400492,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.7283985310783403,
+        "velocity_ms": 0.14957120471262397,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.3809126616363496,
+        "velocity_ms": 0.1305219787578986,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 39.70094728519246,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.332204894271058,
+      "level_pct": 21.853754827281136
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 39.70094728519246,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.8319833939404924
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 8.831983395035108
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.8319833939748253
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 3600,
+    "clock": "01:00",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -39.34906739266055,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 44.492502930989986,
+        "head_m": 257.85250293099,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 40.70274691401863,
+        "head_m": 257.11074691401865,
+        "demand_lps": 3.443648206726297,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 41.706315405931974,
+        "head_m": 255.066315405932,
+        "demand_lps": 8.443648207846174,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 56.49695507065334,
+        "head_m": 254.61695507065335,
+        "demand_lps": 4.5915309430269255,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 41.74450025211968,
+        "head_m": 255.1045002521197,
+        "demand_lps": 3.4436482067621714,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 42.697732876604334,
+        "head_m": 256.05773287660435,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.3492171326529956,
+        "head_m": 254.333217132653,
+        "demand_lps": 16.20883616561163,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 39.34906739266055,
+        "velocity_ms": 0.3962060087988327,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 24.05661063233391,
+        "velocity_ms": 0.32969672434167824,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 11.848808553600342,
+        "velocity_ms": 0.36537379313949747,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 0.9516465314762079,
+        "velocity_ms": 0.029345288292961333,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 7.847774466722282,
+        "velocity_ms": 0.24199657810644148,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 16.20883616561163,
+        "velocity_ms": 0.3198854730638941,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.453513814277961,
+        "velocity_ms": 0.13450198451601603,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1380171287489644,
+        "velocity_ms": 0.11720641028083954,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 39.34906739266055,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.3492171326529956,
+      "level_pct": 22.132826979215807
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 39.34906739266055,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.443648206726297
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 8.443648207846174
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.4436482067621714
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 3900,
+    "clock": "01:05",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -39.332942661633574,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 44.505996493727366,
+        "head_m": 257.8659964937274,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 40.71680331252719,
+        "head_m": 257.1248033125272,
+        "demand_lps": 3.443648206726781,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 41.72091724185111,
+        "head_m": 255.08091724185113,
+        "demand_lps": 8.443648207847406,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 56.51160679664696,
+        "head_m": 254.63160679664696,
+        "demand_lps": 4.591530943027599,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 41.75921409870284,
+        "head_m": 255.11921409870286,
+        "demand_lps": 3.443648206762678,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 42.71295776393782,
+        "head_m": 256.07295776393784,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.367729023455297,
+        "head_m": 254.3517290234553,
+        "demand_lps": 16.192146947974035,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 39.332942661633574,
+        "velocity_ms": 0.39604364877999415,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 24.0421929037161,
+        "velocity_ms": 0.3294991288461869,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 11.847101551190699,
+        "velocity_ms": 0.36532115544664523,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 0.9500866182484735,
+        "velocity_ms": 0.029297186290940833,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 7.850045955742066,
+        "velocity_ms": 0.24206662249575525,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 16.192146947974035,
+        "velocity_ms": 0.3195561071412256,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.4533667250948206,
+        "velocity_ms": 0.13449392106558095,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1381642179327778,
+        "velocity_ms": 0.11721447373131152,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 39.332942661633574,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.367729023455297,
+      "level_pct": 22.436499728597393
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 39.332942661633574,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.443648206726781
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 8.443648207847406
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.443648206762678
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 4200,
+    "clock": "01:10",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -39.316826521981646,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 44.51947734079687,
+        "head_m": 257.8794773407969,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 40.73084649908941,
+        "head_m": 257.1388464990894,
+        "demand_lps": 3.4436482067272647,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 41.73550522999466,
+        "head_m": 255.09550522999467,
+        "demand_lps": 8.443648207848637,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 56.52624462965014,
+        "head_m": 254.64624462965014,
+        "demand_lps": 4.591530943028271,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 41.77391400280172,
+        "head_m": 255.13391400280173,
+        "demand_lps": 3.4436482067631844,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 42.7281682909117,
+        "head_m": 256.0881682909117,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.3862218537296656,
+        "head_m": 254.37022185372967,
+        "demand_lps": 16.175466957588934,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 39.316826521981646,
+        "velocity_ms": 0.3958813752677653,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 24.027781985793105,
+        "velocity_ms": 0.3293016266915158,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 11.845396329461275,
+        "velocity_ms": 0.3652685726634392,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 0.9485283598990063,
+        "velocity_ms": 0.029249135319295832,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 7.852315028204172,
+        "velocity_ms": 0.24213659236729448,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 16.175466957588934,
+        "velocity_ms": 0.3192269233207143,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.4532197617136307,
+        "velocity_ms": 0.13448586451162708,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.1383111813146405,
+        "velocity_ms": 0.11722253028530223,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 39.316826521981646,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.3862218537296656,
+      "level_pct": 22.739859805276666
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 39.316826521981646,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.4436482067272647
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 8.443648207848637
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.4436482067631844
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 4500,
+    "clock": "01:15",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -39.30071897699188,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 44.53294547828614,
+        "head_m": 257.89294547828615,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 40.74487647998046,
+        "head_m": 257.1528764799805,
+        "demand_lps": 3.443648206727748,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 41.75007937715861,
+        "head_m": 255.11007937715863,
+        "demand_lps": 8.443648207849867,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 56.5408685764568,
+        "head_m": 254.6608685764568,
+        "demand_lps": 4.591530943028942,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 41.78859997119005,
+        "head_m": 255.14859997119007,
+        "demand_lps": 3.44364820676369,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 42.74336446424854,
+        "head_m": 256.10336446424856,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.4046956340144163,
+        "head_m": 254.38869563401443,
+        "demand_lps": 16.158796197141964,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 39.30071897699188,
+        "velocity_ms": 0.3957191882952443,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 24.013377882831342,
+        "velocity_ms": 0.32910421793613653,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 11.843692887432793,
+        "velocity_ms": 0.3652160447596821,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 0.9469717554232961,
+        "velocity_ms": 0.029201135347050915,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 7.8545816856893795,
+        "velocity_ms": 0.24220648776980452,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 16.158796197141964,
+        "velocity_ms": 0.31889792165536157,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.4530729241596303,
+        "velocity_ms": 0.1344778148555381,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.138458018869311,
+        "velocity_ms": 0.11723057994142796,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 39.30071897699188,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.4046956340144163,
+      "level_pct": 23.042907382126252
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 39.30071897699188,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.443648206727748
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 8.443648207849867
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.44364820676369
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 4800,
+    "clock": "01:20",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -39.28462002994849,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 44.54640091228487,
+        "head_m": 257.9064009122849,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 40.758893261477624,
+        "head_m": 257.16689326147764,
+        "demand_lps": 3.4436482067282306,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 41.76463969014057,
+        "head_m": 255.12463969014058,
+        "demand_lps": 8.443648207851098,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 56.55547864386236,
+        "head_m": 254.67547864386236,
+        "demand_lps": 4.591530943029612,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 41.80327201064324,
+        "head_m": 255.16327201064325,
+        "demand_lps": 3.443648206764195,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 42.75854629067328,
+        "head_m": 256.1185462906733,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.4231503748509624,
+        "head_m": 254.40715037485097,
+        "demand_lps": 16.14213466931654,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 39.28462002994849,
+        "velocity_ms": 0.39555708789549976,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 23.998980599094235,
+        "velocity_ms": 0.3289069026384794,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 11.841991224126026,
+        "velocity_ms": 0.36516357170517816,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 0.9454168038166203,
+        "velocity_ms": 0.02915318634322412,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 7.856845929777694,
+        "velocity_ms": 0.24227630875200695,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 16.14213466931654,
+        "velocity_ms": 0.31856910219812573,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.452926212458309,
+        "velocity_ms": 0.1344697720987113,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.138604730571304,
+        "velocity_ms": 0.11723862269829158,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 39.28462002994849,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.4231503748509624,
+      "level_pct": 23.345642632069595
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 39.28462002994849,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.4436482067282306
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 8.443648207851098
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.443648206764195
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  },
+  {
+    "session_id": "sess_a122e8",
+    "sim_time_s": 5100,
+    "clock": "01:25",
+    "speed": 1,
+    "nodes": {
+      "1": {
+        "pressure_m": 0,
+        "head_m": 213.36,
+        "demand_lps": -39.26852968413377,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "2": {
+        "pressure_m": 44.55984364888451,
+        "head_m": 257.9198436488845,
+        "demand_lps": 0,
+        "is_sensor": true,
+        "sensor_id": "S1",
+        "status": "ok"
+      },
+      "3": {
+        "pressure_m": 40.77289684985999,
+        "head_m": 257.18089684986,
+        "demand_lps": 3.443648206728713,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "4": {
+        "pressure_m": 41.77918617573977,
+        "head_m": 255.13918617573978,
+        "demand_lps": 8.443648207852325,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      },
+      "5": {
+        "pressure_m": 56.5700748386642,
+        "head_m": 254.6900748386642,
+        "demand_lps": 4.591530943030283,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "6": {
+        "pressure_m": 41.81793012793884,
+        "head_m": 255.17793012793885,
+        "demand_lps": 3.4436482067647,
+        "is_sensor": true,
+        "sensor_id": "S3",
+        "status": "ok"
+      },
+      "7": {
+        "pressure_m": 42.77371377691338,
+        "head_m": 256.1337137769134,
+        "demand_lps": 0,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      },
+      "8": {
+        "pressure_m": 1.4415860867837296,
+        "head_m": 254.42558608678374,
+        "demand_lps": 16.125482376794956,
+        "is_sensor": false,
+        "sensor_id": null,
+        "status": "ok"
+      }
+    },
+    "links": {
+      "1": {
+        "flow_lps": 39.26852968413377,
+        "velocity_ms": 0.3953950741015811,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "2": {
+        "flow_lps": 23.98459013884411,
+        "velocity_ms": 0.3287096808569596,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "3": {
+        "flow_lps": 11.840291338560945,
+        "velocity_ms": 0.3651111534697069,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "4": {
+        "flow_lps": 0.9438635040742468,
+        "velocity_ms": 0.029105288276833206,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "LEAK"
+      },
+      "5": {
+        "flow_lps": 7.859107762049155,
+        "velocity_ms": 0.24234605536262446,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "6": {
+        "flow_lps": 16.125482376794956,
+        "velocity_ms": 0.31824046500194214,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "7": {
+        "flow_lps": 2.4527796266343733,
+        "velocity_ms": 0.1344617362425011,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      },
+      "8": {
+        "flow_lps": 2.13875131639591,
+        "velocity_ms": 0.11724665855453853,
+        "status": "OPEN",
+        "direction": -1,
+        "visual_fault": "NONE"
+      },
+      "9": {
+        "flow_lps": 39.26852968413377,
+        "velocity_ms": 0,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 1.4415860867837296,
+      "level_pct": 23.648065728079555
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 39.26852968413377,
+      "status": "ON"
+    },
+    "taps": {
+      "T1": {
+        "open": false,
+        "demand_lps": 3.443648206728713
+      },
+      "T2": {
+        "open": true,
+        "demand_lps": 8.443648207852325
+      },
+      "T3": {
+        "open": false,
+        "demand_lps": 3.4436482067647
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false,
+      "challenge_id": null,
+      "state": null
+    },
+    "events": [
+      {
+        "sim_time_s": 2400,
+        "text": "Tap T2 closed"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Tap T2 opened"
+      },
+      {
+        "sim_time_s": 2700,
+        "text": "Leak on pipe 4"
+      }
+    ]
+  }
+]

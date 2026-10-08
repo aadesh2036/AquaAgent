@@ -7,8 +7,9 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "lint": "tsc --noEmit",
-    "check:no-hydraulics": "bash scripts/check-no-hydraulics.sh"
+    "lint": "tsc --noEmit && bash scripts/check-no-hydraulics.sh && bash scripts/check-no-truth-fields.sh",
+    "check:no-hydraulics": "bash scripts/check-no-hydraulics.sh",
+    "check:firewall": "bash scripts/check-no-truth-fields.sh"
   },
   "dependencies": {
     "react": "^18.3.1",

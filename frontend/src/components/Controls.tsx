@@ -11,10 +11,10 @@ export function Controls(): JSX.Element {
       <div className="mono-label text-paler">// CONTROLS</div>
       <div className="flex gap-2">
         <button className={`flex-1 py-2 font-mono-cad font-bold text-xs flex items-center justify-center gap-2 ${running ? "cad-btn-active" : "cad-btn-primary"}`} disabled={disabled} onClick={toggleRun} aria-pressed={running}>
-          <span className="material-symbols-outlined">{running ? "pause" : "play_arrow"}</span>{running ? "PAUSE" : "RUN"}
+          <span aria-hidden="true" className="material-symbols-outlined">{running ? "pause" : "play_arrow"}</span>{running ? "PAUSE" : "RUN"}
         </button>
         <button className="cad-btn-secondary px-4 py-2 font-mono-cad font-bold text-xs flex items-center gap-2" disabled={disabled} onClick={() => void reset()}>
-          <span className="material-symbols-outlined">restart_alt</span>RESET
+          <span aria-hidden="true" className="material-symbols-outlined">restart_alt</span>RESET
         </button>
       </div>
       <div>

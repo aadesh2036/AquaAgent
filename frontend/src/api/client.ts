@@ -64,8 +64,8 @@ export function createHttpApi(baseUrl: string, apiKey?: string, opts: HttpApiOpt
     tap: (tap_id, open) => call<NetworkView>("POST", "/tap", { tap_id, open }),
     pipeFault: (link_id, kind) => call<NetworkView>("POST", "/pipe/fault", { link_id, kind }),
     valve: (valve_id, open) => call<NetworkView>("POST", "/valve", { valve_id, open }),
-    challengeStart: notYet("The leak challenge"),
-    challengeStatus: notYet("The leak challenge"),
+    challengeStart: notYet("The hidden-leak challenge"),
+    challengeStatus: notYet("The hidden-leak challenge"),
     diagnose: notYet("The evidence report"),
     reveal: notYet("The reveal"),
   };

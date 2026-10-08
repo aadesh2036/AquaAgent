@@ -1,6 +1,6 @@
 // Mock API (module 09): serves RECORDED fixtures only. Never computes hydraulics.
-// Phase 1: src/api/fixtures/ is empty, so values are NaN placeholders that render as "—" and the UI shows
-// "MOCK DATA — fixtures not recorded yet". Drop topology.json / view.json (real API responses) into fixtures/.
+// With no fixtures recorded, values are NaN placeholders that render as "—" and the UI shows
+// "MOCK DATA — fixtures not recorded yet". Record real ones with: node scripts/record_fixtures.mjs
 import netconfig from "@netconfig";
 import type { HealthResponse, NetworkTopology, NetworkView, PipeFaultKind } from "@contracts";
 import type { AquaApi } from "./client";
@@ -9,7 +9,7 @@ import { DEFAULT_SENSOR_LAYOUT } from "../lib/display";
 const fixtures = import.meta.glob("./fixtures/*.json", { eager: true, import: "default" }) as Record<string, unknown>;
 const fixture = <T,>(name: string): T | null => (fixtures[`./fixtures/${name}.json`] as T | undefined) ?? null;
 
-export const MOCK_HAS_FIXTURES = fixture<NetworkView>("view") !== null;
+export const MOCK_HAS_FIXTURES = fixture<NetworkView>("view") !== null || fixture<NetworkView[]>("views_sequence") !== null;
 
 function mockTopology(): NetworkTopology {
   const recorded = fixture<NetworkTopology>("topology");
@@ -48,7 +48,11 @@ function placeholderView(topo: NetworkTopology): NetworkView {
 
 export function createMockApi(): AquaApi {
   const topo = mockTopology();
-  let view: NetworkView = fixture<NetworkView>("view") ?? placeholderView(topo);
+  // Recorded session (views_sequence.json): each step replays the next recorded frame, clamped at the end.
+  const seq = fixture<NetworkView[]>("views_sequence");
+  let idx = 0;
+  const base = (): NetworkView => (seq ? seq[idx] : fixture<NetworkView>("view") ?? placeholderView(topo));
+  let view: NetworkView = base();
   const fresh = (): NetworkView => structuredClone(view);
   const unavailable = (what: string) => (): Promise<never> => Promise.reject(new Error(`${what}: no recorded fixture`));
   const mockEvent = (text: string): void => {
@@ -56,10 +60,13 @@ export function createMockApi(): AquaApi {
   };
   return {
     health: async (): Promise<HealthResponse> => ({ status: "mock", sim: "mock", predictor: "template", agent: "template" }),
-    sessionReset: async () => { view = fixture<NetworkView>("view") ?? placeholderView(topo); return fresh(); },
+    sessionReset: async () => { idx = 0; view = base(); return fresh(); },
     topology: async () => topo,
     state: async () => fresh(),
-    step: async () => fresh(),
+    step: async (steps) => {
+      if (seq) { idx = Math.min(seq.length - 1, idx + steps); view = base(); }
+      return fresh();
+    },
     tap: async (id, open) => {
       view = { ...view, taps: { ...view.taps, [id]: { ...view.taps[id], open } } };
       mockEvent(`Tap ${id} ${open ? "opened" : "closed"}`);

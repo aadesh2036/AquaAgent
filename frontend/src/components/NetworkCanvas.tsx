@@ -54,7 +54,12 @@ export function NetworkCanvas({ topology, view, running, selection, onSelect }: 
   const isSel = (kind: "node" | "link" | "tap" | "valve", id: string): boolean => selection?.kind === kind && selection.id === id;
   const sensorOfLink = new Map(layout.flow.map((f) => [f.link_id, f.sensor_id]));
   const tapAt = new Map(topology.taps.map((t) => [t.node_id, t.tap_id]));
-  const tapOffset: Record<string, [number, number]> = { "3": [0, -17], "4": [-19, 0], "6": [19, 0] };
+  const tapOffset: Record<string, [number, number]> = { "3": [-12, -14], "4": [-18, -6], "6": [19, -6] };
+  // Per-node label placement [dx, dy, anchor], chosen so labels do not cross pipes or each other.
+  const labelAt: Record<string, [number, number, "start" | "middle" | "end"]> = {
+    "1": [0, 17, "middle"], "2": [-4, 14, "start"], "3": [6, -9, "start"], "4": [-6, 14, "end"],
+    "5": [0, 14, "middle"], "6": [7, 14, "start"], "7": [6, -9, "start"], "8": [0, 36, "middle"],
+  };
   const tank = topology.nodes.find((n) => n.node_type === "tank");
   const TH = 28, TW = 20;
   const pct = view.tank.level_pct;
@@ -108,7 +113,7 @@ export function NetworkCanvas({ topology, view, running, selection, onSelect }: 
         if (!sid) return null;
         const { mx, my } = linkGeom(l);
         return (
-          <g key={`ft${l.link_id}`} transform={`translate(${mx} ${my})`} role="presentation">
+          <g key={`ft${l.link_id}`} transform={`translate(${mx} ${my})`} aria-hidden="true">
             <rect x="-7" y="-4.5" width="14" height="9" fill={WELL} stroke={W} strokeWidth="1" />
             <text textAnchor="middle" y="2.4" fontFamily="JetBrains Mono" fontSize="6" fontWeight="700" fill={W}>{sid}</text>
           </g>
@@ -124,7 +129,7 @@ export function NetworkCanvas({ topology, view, running, selection, onSelect }: 
             <title>Pump {l.link_id}: {view.pump.status}, {fmtLps(view.pump.flow_lps)}</title>
             <circle r="7" fill={WELL} stroke={W} strokeWidth="1.5" strokeOpacity={off ? 0.4 : 1} />
             <path d="M-3 -4 L5 0 L-3 4 Z" fill={W} fillOpacity={off ? 0.4 : 1} />
-            <text y="15" textAnchor="middle" fontFamily="JetBrains Mono" fontSize="5" fill={W} fillOpacity="0.8">PUMP {view.pump.status}</text>
+            <text y="17" textAnchor="middle" fontFamily="JetBrains Mono" fontSize="5" fill={W} fillOpacity="0.8">PUMP {view.pump.status}</text>
           </g>
         );
       })}
@@ -170,13 +175,13 @@ export function NetworkCanvas({ topology, view, running, selection, onSelect }: 
         return (
           <g key={n.node_id} transform={`translate(${n.x} ${n.y})`}>
             {n.node_type === "reservoir" && (
-              <g role="presentation">
+              <g aria-hidden="true">
                 <path d="M-11 -8 H11 L8 8 H-8 Z" fill={WELL} stroke={W} strokeWidth="1.5" />
                 <path d="M-9 -2 q3 -3 6 0 t6 0 t6 0" fill="none" stroke={W} strokeWidth="1" />
               </g>
             )}
             {n.node_type === "tank" && (
-              <g role="presentation">
+              <g aria-hidden="true">
                 <rect x={-TW / 2} y={-TH / 2} width={TW} height={TH} fill={WELL} stroke={W} strokeWidth="1.5" />
                 <g clipPath="url(#tankclip)" transform={`translate(${-n.x} ${-n.y})`}>
                   <rect x={n.x - TW / 2} y={n.y + TH / 2 - fillH} width={TW} height={fillH} fill={W} fillOpacity="0.75" />
@@ -195,12 +200,11 @@ export function NetworkCanvas({ topology, view, running, selection, onSelect }: 
             )}
             {sel && <circle r="14" fill="none" stroke={W} strokeDasharray="2.5 2.5" strokeWidth="1" />}
             {vn?.is_sensor && vn.sensor_id && (
-              <text x="9" y="-8" fontFamily="JetBrains Mono" fontSize="7" fontWeight="700" fill={W}>{vn.sensor_id}</text>
+              <text x={n.node_id === "6" ? -9 : 9} y="-8" textAnchor={n.node_id === "6" ? "end" : "start"} fontFamily="JetBrains Mono" fontSize="8" fontWeight="700" fill={W}>{vn.sensor_id}</text>
             )}
-            {n.ui_label && n.node_type !== "reservoir" && (
-              <text className="aq-node-label" y={n.node_type === "tank" ? TH / 2 + 16 : 14} textAnchor="middle" fontFamily="Inter" fontSize="4.6" fill={W} stroke={WELL} strokeWidth="2" paintOrder="stroke">{n.ui_label}</text>
+            {n.ui_label && labelAt[n.node_id] && (
+              <text className="aq-node-label" x={labelAt[n.node_id][0]} y={labelAt[n.node_id][1]} textAnchor={labelAt[n.node_id][2]} fontFamily="Inter" fontSize="4.6" fill={W} stroke={WELL} strokeWidth="2" paintOrder="stroke">{n.ui_label}</text>
             )}
-            {n.node_type === "reservoir" && n.ui_label && <text className="aq-node-label" y="17" textAnchor="middle" fontFamily="Inter" fontSize="4.6" fill={W} stroke={WELL} strokeWidth="2" paintOrder="stroke">{n.ui_label}</text>}
             <title>{`Node ${n.node_id}${n.ui_label ? ` — ${n.ui_label}` : ""}${vn ? `, ${fmtM(vn.pressure_m)}` : ""}`}</title>
             <circle r="9" fill="transparent" className="aq-hit" tabIndex={0} role="button" aria-label={`Node ${n.node_id}${n.ui_label ? ` ${n.ui_label}` : ""}`}
               onClick={() => onSelect({ kind: "node", id: n.node_id })} onKeyDown={(e) => key(e, () => onSelect({ kind: "node", id: n.node_id }))} />

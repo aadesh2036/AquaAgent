@@ -22,6 +22,7 @@ jobs:
         with: { node-version: "22" }
       - run: node --test shared/tests/*.test.ts
       - run: bash frontend/scripts/check-no-hydraulics.sh
+      - run: bash frontend/scripts/check-no-truth-fields.sh
   infra:
     runs-on: ubuntu-latest
     steps:

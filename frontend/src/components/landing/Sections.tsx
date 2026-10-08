@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export function Telemetry(): JSX.Element {
   const wells = [
     ["// NETWORK", "EPA EPANET 2.2 tutorial", "|-- 8 nodes · 9 links · 2 loops --|"],
-    ["// SENSING", "3 pressure + 2 flow", "|-- every other node stays hiddden --|"],
+    ["// SENSING", "3 pressure + 2 flow", "|-- every other node stays hidden --|"],
     ["// PHYSICS", "WNTR 1.5, pressure-driven", "|-- 5-minute steps, real orifice leaks --|"],
     ["// EXPLANATION", "Evidence-only reports", "|-- every number comes from a reading --|"],
   ];
@@ -31,7 +31,7 @@ const LAYERS: Layer[] = [
     body: "The aquaagent-sim container runs the EPA tutorial network in 5-minute steps and answers the orchestrator over HTTP.",
     wells: [["STEP", "≈5 ms"], ["NETWORK", "8 nodes"], ["STATUS", "LIVE"]] },
   { n: "02", tag: "ORCHESTRATOR", title: "FastAPI service", sub: "session + firewall", icon: "hub", status: "LIVE",
-    body: "Owns the session, applies taps, faults and valves, and strips hiddden truth before anything reaches the browser.",
+    body: "Owns the session, applies taps, faults and valves, and strips hidden truth before anything reaches the browser.",
     wells: [["ROLE", "Session owner"], ["FIREWALL", "Truth stripped"], ["STATUS", "LIVE"]] },
   { n: "03", tag: "PREDICTOR", title: "Healthy-state model", sub: "MLP", icon: "neurology", status: "BUILDING",
     body: "An MLP trained on normal days, locally first; SageMaker training and a real-time endpoint come next.",
@@ -65,7 +65,7 @@ export function ArchitectureDeck(): JSX.Element {
             <h2 className="font-heading font-bold text-3xl sm:text-4xl mt-1">Five layers, honestly labelled</h2>
           </div>
           <button className="cad-btn-secondary h-10 px-3 flex items-center gap-2 mono-label" onClick={() => setAuto((a) => !a)} aria-pressed={auto}>
-            <span className="material-symbols-outlined">{auto ? "pause" : "play_arrow"}</span>{auto ? "AUTO-ADVANCE ON" : "AUTO-ADVANCE OFF"}
+            <span aria-hidden="true" className="material-symbols-outlined">{auto ? "pause" : "play_arrow"}</span>{auto ? "AUTO-ADVANCE ON" : "AUTO-ADVANCE OFF"}
           </button>
         </div>
 
@@ -84,7 +84,7 @@ export function ArchitectureDeck(): JSX.Element {
                 <span className="font-mono-cad text-[10px] text-paler">// LAYER {l.n}</span>
                 <span className={`font-mono-cad text-[9px] px-2 py-0.5 ${statusClass(l.status)}`}>{l.status}</span>
               </div>
-              <div className="w-10 h-10 border border-white/60 bg-well flex items-center justify-center"><span className="material-symbols-outlined">{l.icon}</span></div>
+              <div className="w-10 h-10 border border-white/60 bg-well flex items-center justify-center"><span aria-hidden="true" className="material-symbols-outlined">{l.icon}</span></div>
               <div className="font-heading font-bold">{l.title}</div>
               <div className="font-mono-cad text-[10px] text-paler">{l.tag} · {l.sub}</div>
               <p className="text-xs text-pale leading-relaxed">{l.body}</p>
@@ -94,7 +94,7 @@ export function ArchitectureDeck(): JSX.Element {
 
         <div className="mt-6 border-2 border-white blueprint-hatch-subtle bg-panel p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5" aria-live="polite">
           <div className="lg:col-span-7 flex gap-4">
-            <div className="w-12 h-12 shrink-0 border border-white bg-well flex items-center justify-center"><span className="material-symbols-outlined">{L.icon}</span></div>
+            <div className="w-12 h-12 shrink-0 border border-white bg-well flex items-center justify-center"><span aria-hidden="true" className="material-symbols-outlined">{L.icon}</span></div>
             <div>
               <div className="font-mono-cad text-[10px] text-paler">// LAYER {L.n} · {L.tag}</div>
               <h3 className="font-heading font-bold text-xl">{L.title}</h3>
@@ -117,7 +117,7 @@ export function ArchitectureDeck(): JSX.Element {
 
 export function HonestLimits(): JSX.Element {
   const pods = [
-    ["WHAT WE SHOW", "In our simulated network, five sensors plus a learned model of normal behaviour can flag hiddden leaks — measured on held-out simulations.", "verified"],
+    ["WHAT WE SHOW", "In our simulated network, five sensors plus a learned model of normal behaviour can flag hidden leaks — measured on held-out simulations.", "verified"],
     ["WHAT WE DON'T CLAIM", "This is not a real city, it won't catch every leak, and three pressure sensors are not enough for every network.", "gpp_maybe"],
     ["WHAT COMES NEXT", "Model training on SageMaker, a Bedrock explainer, larger networks, then real telemetry.", "arrow_circle_right"],
   ];
@@ -131,7 +131,7 @@ export function HonestLimits(): JSX.Element {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {pods.map(([t, b, icon], i) => (
             <div key={t} className={`cad-panel crosshair-corner blueprint-hatch-subtle p-6 flex flex-col gap-3 ${i === 1 ? "border-2 border-white" : ""}`}>
-              <span className="material-symbols-outlined">{icon}</span>
+              <span aria-hidden="true" className="material-symbols-outlined">{icon}</span>
               <div className="mono-label text-paler">// {t}</div>
               <p className={`${i === 1 ? "font-heading text-lg font-semibold" : "text-pale"} leading-relaxed`}>{b}</p>
             </div>
