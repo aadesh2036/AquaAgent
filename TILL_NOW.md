@@ -8,13 +8,13 @@
 
 ## 1. Current state at a glance (2026-10-08)
 
-**Phase:** repository setup **complete**. The contracts, docs, stubs and environment are ready, and the simulation approach is feasibility-validated. **No module logic is implemented yet.** Every code file outside `shared/` is a typed stub that raises `NotImplementedError` / exits 2 with `NOT IMPLEMENTED — see docs/modules/NN`.
+**Phase:** setup complete; **module 01 (simulation engine) done — gate G1 passed** on branch `simulation` (commits `536af6a`…`ba1926e`). The `aquaagent-sim` container builds and serves the §7.14.2 API locally. All other modules are still stubs.
 
 **Build focus (BACKBONE §2, v1.1.0):** T1 = the **local MVP detection loop**: simulation → dataset → MLP → residual detector → challenge → template explanation → SVG UI. Gate **MVP** must pass before any AWS / SageMaker / localisation / Bedrock work.
 
-**Next action:** module 01 is done (G1 passed). Start **module 02** (data generation); module 08 steps 1–2 can use the sim API (`sim/README.md`). Module 09 step 1 (static SVG network in mock mode) can run in parallel.
+**Next action:** link the simulation to the frontend: module 08 steps 1–2 (orchestrator skeleton: session, network state, step, tap/pipe/valve via the visibility filter, calling the sim API) + module 09 steps 1–3 (live SVG network). Then module 02 (data generation). AWS deployment stays last (owner decision).
 
-**Git:** the human manages branches and commits. Nothing has been committed by agents.
+**Git:** branch `simulation`. Commits are made per step after the lead's review (owner request, 2026-10-08). No pushes.
 
 ## 2. Module status
 
@@ -22,11 +22,11 @@
 |---|---|---|---|---|---|
 | — | shared/contracts + units + ids | all | T1 | **done** (`backbone/1.1.0`) | — |
 | 01 | [Simulation engine](docs/modules/01_SIMULATION_ENGINE.md) | G1 | **T1 core** | **done (G1 passed)** — 8 steps, last = step 8 (container + smoke + docs) | — |
-| 02 | [Data generation](docs/modules/02_DATA_GENERATION.md) | G2 | T1 | stubs | after 01 |
+| 02 | [Data generation](docs/modules/02_DATA_GENERATION.md) | G2 | T1 | stubs | after 08/09 link-up |
 | 04 | [ML predictor](docs/modules/04_ML_PREDICTOR.md) | G4 | T1 | stubs | after 02 |
 | 05 | [Detector (+ localisation T2c)](docs/modules/05_ANOMALY_LOCALISATION.md) | G5 | T1 / T2c | stubs | after 04 |
 | 07 | [Explanation: template (+ Bedrock T2d)](docs/modules/07_AQUAAGENT_BEDROCK.md) | G7 | T1 / T2d | stubs | step 1 anytime |
-| 08 | [Orchestrator API](docs/modules/08_ORCHESTRATOR_API.md) | G8 + **MVP** | T1 | stubs | steps 1–2 after 01 step 7 |
+| 08 | [Orchestrator API](docs/modules/08_ORCHESTRATOR_API.md) | G8 + **MVP** | T1 | stubs | **steps 1–2 next** (sim API ready) |
 | 09 | [Frontend](docs/modules/09_FRONTEND.md) | G9 | T1 | skeleton | step 1 anytime (mock) |
 | 10 | [Demo and pitch](docs/modules/10_DEMO_AND_PITCH.md) | G10 | T1 | — | after MVP |
 | 03 | [AWS infra](docs/modules/03_AWS_INFRA.md) | G3 | T2a | scripts written, not executed | after MVP |
@@ -81,3 +81,5 @@
 | 2026-10-08 | 01 | 5–6 session + fork | done | sim/engine/session.py, sim/tests/test_engine_session.py | stepwise == replay ≤ 1e-6 m over 288 steps; CLOSE == WNTR control ≤ 1e-6 m; 20 steps ≈ 32 ms | pipe status via `link.initial_status` (restart re-reads it); events act from the NEXT step; rollback on failure by replay |
 | 2026-10-08 | 01 | 7 FastAPI server | done | sim/server/app.py, sim/cli.py, sim/tests/test_server.py, requirements-dev.txt | 42 sim tests passed; live curl health/create/advance OK | LRU sessions + per-session lock; 422/404/503 mapping |
 | 2026-10-08 | 01 | 8 container + smoke + docs | done (G1 passed) | sim/smoke.py, sim/Dockerfile, .dockerignore, docker-compose.yml, Makefile, sim/README.md, docs/modules/01 §9 | `make sim-smoke` OK (leak 3.30 L/s, 5 ms/step); image 784 MB; container health `{"status":"ok","wntr_version":"1.5.0"}` | podman ignores HEALTHCHECK in OCI format (works with `--format docker`); server needs ~6–8 s to start |
+| 2026-10-08 | 01 | review fix: smoke compares vs no-leak twin | done | sim/smoke.py | pipe-4 leak 1.5e-4 m² at 12 h → after 1 h ΔP vs twin S1 −0.62, S2 −0.92, S3 −0.92 m; leak 3.30 L/s | earlier before/after comparison mixed in the diurnal change (showed only −0.06 m) |
+| 2026-10-08 | 01 | commits | done | branch `simulation` | `536af6a` step 1 · `418bdf3` step 2 · `d62cee3` step 3 · `ebaa4fe` step 4 · `0f0dc49` steps 5–6 · `22c7900` step 7 · `ba1926e` step 8 | 42 sim tests, `make lint`, `make sim-smoke` green |
