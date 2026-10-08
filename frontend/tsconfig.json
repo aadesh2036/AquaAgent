@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": { "@contracts": ["../shared/contracts/contracts.ts"], "@units": ["../shared/units.ts"] }
+  },
+  "include": ["src", "../shared/contracts/contracts.ts", "../shared/units.ts"]
+}

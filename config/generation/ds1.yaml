@@ -1,0 +1,38 @@
+# ds1 generation config — BACKBONE §8. Owned by module 02.
+# Leak area ranges are PROVISIONAL until G2 calibration; record final values here (§8.1).
+# Feasibility preview (pipe 4, docs/research/WNTR_FEASIBILITY.md): 2e-5→1.0%, 8e-5→4.0%, 2.5e-4→12.1%, 6e-4→25.7%, 3e-3→72.9% of mean demand.
+schema_version: "1.0"
+dataset_version: ds1
+dataset_seed: 20261008
+network_id: net_epa_tutorial_v1
+sensor_layout_id: sensors_default_v1
+timestep_s: 300   # single cadence (§5.3)
+duration_s: 86400
+fault_start_window_h: [6, 18]
+leak_end_probability: 0.30
+leak_end_duration_h: [2, 6]
+counts:            # §8.1 (backbone/1.1.0) — 8 types, sum 1200 (D7). ds2 types are T3.
+  NORMAL: 320
+  HIGH_DEMAND: 100
+  LOW_DEMAND: 80
+  DEMAND_SHIFT: 100
+  SMALL_LEAK: 150
+  MEDIUM_LEAK: 200
+  LARGE_LEAK: 150
+  PIPE_BURST: 100
+leak_area_m2:      # PROVISIONAL — calibrate in G2 (module 02 §6 step 3)
+  SMALL_LEAK: [2.0e-5, 8.0e-5]
+  MEDIUM_LEAK: [8.0e-5, 2.5e-4]
+  LARGE_LEAK: [2.5e-4, 6.0e-4]
+  PIPE_BURST: [1.0e-3, 3.0e-3]
+calibration:       # filled by module 02 after calibration
+  done: false
+  realised_pct_of_system_demand: {}
+fault_locations:
+  junctions: ["2", "3", "4", "5", "6", "7"]
+  pipes: ["1", "2", "3", "4", "5", "6", "7", "8"]
+  pipe_position: [0.2, 0.8]
+holdout_test_only: ["pipe:5", "junction:6"]   # D9
+splits: {train: 0.70, val: 0.15, test: 0.15}
+noise: {pressure_sigma_m: 0.05, flow_sigma_lps: 0.10, missing_rate: 0.0}
+num_shards: 8

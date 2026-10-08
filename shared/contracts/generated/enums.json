@@ -1,0 +1,145 @@
+{
+  "NodeType": [
+    "junction",
+    "reservoir",
+    "tank"
+  ],
+  "LinkType": [
+    "pipe",
+    "pump",
+    "valve"
+  ],
+  "LinkStatus": [
+    "OPEN",
+    "CLOSED",
+    "ACTIVE"
+  ],
+  "LocationKind": [
+    "pipe",
+    "junction"
+  ],
+  "ScenarioType": [
+    "NORMAL",
+    "HIGH_DEMAND",
+    "LOW_DEMAND",
+    "DEMAND_SHIFT",
+    "DEMAND_SPIKE",
+    "VALVE_CLOSURE",
+    "PARTIAL_VALVE",
+    "PUMP_DEGRADE",
+    "LOW_RESERVOIR",
+    "SMALL_LEAK",
+    "MEDIUM_LEAK",
+    "LARGE_LEAK",
+    "PIPE_BURST",
+    "SENSOR_FAULT"
+  ],
+  "FaultType": [
+    "LEAK",
+    "BURST",
+    "VALVE_CLOSURE",
+    "PARTIAL_VALVE",
+    "PUMP_DEGRADE",
+    "PUMP_TRIP",
+    "LOW_RESERVOIR",
+    "DEMAND_SPIKE",
+    "DEMAND_SHIFT"
+  ],
+  "SensorFaultKind": [
+    "SPIKE",
+    "BIAS",
+    "DRIFT",
+    "STUCK",
+    "MISSING"
+  ],
+  "SeverityBucket": [
+    "<5%",
+    "5-15%",
+    "15-25%",
+    ">25%"
+  ],
+  "Split": [
+    "train",
+    "val",
+    "test"
+  ],
+  "EventSource": [
+    "user",
+    "challenge",
+    "system"
+  ],
+  "EventKind": [
+    "TAP_SET",
+    "PIPE_FAULT",
+    "PIPE_RESET",
+    "VALVE_SET",
+    "SPEED",
+    "RESET"
+  ],
+  "PredictorMode": [
+    "reconstruct",
+    "leave_one_out"
+  ],
+  "AnomalyStatus": [
+    "NORMAL",
+    "WATCH",
+    "ANOMALY",
+    "SENSOR_FAULT"
+  ],
+  "NetworkStatus": [
+    "NORMAL",
+    "WATCH",
+    "ANOMALY"
+  ],
+  "NodeUiStatus": [
+    "ok",
+    "low",
+    "critical"
+  ],
+  "VisualFault": [
+    "NONE",
+    "LEAK",
+    "BURST"
+  ],
+  "PumpUiStatus": [
+    "ON",
+    "OFF"
+  ],
+  "PipeFaultKind": [
+    "LEAK",
+    "BURST",
+    "CLOSE",
+    "RESET"
+  ],
+  "Difficulty": [
+    "small",
+    "medium",
+    "large"
+  ],
+  "ChallengeState": [
+    "RUNNING",
+    "DETECTED",
+    "TIMEOUT"
+  ],
+  "UiChallengeState": [
+    "IDLE",
+    "RUNNING",
+    "DETECTED",
+    "REVEALED"
+  ],
+  "Confidence": [
+    "HIGH",
+    "MEDIUM",
+    "LOW"
+  ],
+  "WhatIfAction": [
+    "isolate_pipe",
+    "close_valve",
+    "reduce_pump_speed"
+  ],
+  "HealthStatus": [
+    "ok",
+    "degraded",
+    "template"
+  ]
+}

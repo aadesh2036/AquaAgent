@@ -1,0 +1,622 @@
+{
+  "6.4": {
+    "sensor_layout_id": "sensors_default_v1",
+    "pressure": [
+      {
+        "sensor_id": "S1",
+        "node_id": "2"
+      },
+      {
+        "sensor_id": "S2",
+        "node_id": "4"
+      },
+      {
+        "sensor_id": "S3",
+        "node_id": "6"
+      }
+    ],
+    "flow": [
+      {
+        "sensor_id": "F1",
+        "link_id": "3"
+      },
+      {
+        "sensor_id": "F2",
+        "link_id": "6"
+      }
+    ],
+    "context": [
+      "tank_level_m",
+      "pump_status",
+      "pump_flow_lps",
+      "reservoir_head_m",
+      "time_of_day_s"
+    ]
+  },
+  "7.1": {
+    "schema_version": "1.0",
+    "network_id": "net_epa_tutorial_v1",
+    "source": "epanet_tutorial",
+    "inp_path": "config/networks/net_epa_tutorial_v1.inp",
+    "nodes": [
+      {
+        "node_id": "3",
+        "node_type": "junction",
+        "elevation_m": 216.41,
+        "base_demand_m3s": 0.00946,
+        "x": 300,
+        "y": 120,
+        "ui_label": "Commercial District",
+        "zone_id": "Z1"
+      }
+    ],
+    "links": [
+      {
+        "link_id": "4",
+        "link_type": "pipe",
+        "start_node": "4",
+        "end_node": "5",
+        "length_m": 1524.0,
+        "diameter_m": 0.2032,
+        "roughness_hw": 100,
+        "initial_status": "OPEN",
+        "zone_id": "Z2"
+      }
+    ],
+    "zones": [
+      {
+        "zone_id": "Z1",
+        "name": "Commercial"
+      },
+      {
+        "zone_id": "Z2",
+        "name": "West"
+      }
+    ],
+    "hydraulics": {
+      "demand_model": "PDD",
+      "required_pressure_m": 20,
+      "minimum_pressure_m": 0,
+      "headloss": "H-W",
+      "tank_init_level_m": 1.07
+    },
+    "taps": [
+      {
+        "tap_id": "T1",
+        "node_id": "3"
+      },
+      {
+        "tap_id": "T2",
+        "node_id": "4"
+      },
+      {
+        "tap_id": "T3",
+        "node_id": "6"
+      }
+    ],
+    "valves": [
+      {
+        "valve_id": "V1",
+        "link_id": "7",
+        "impl": "pipe_status"
+      }
+    ]
+  },
+  "7.2": {
+    "schema_version": "1.0",
+    "simulation_id": "sim_ds1_000417",
+    "network_id": "net_epa_tutorial_v1",
+    "sensor_layout_id": "sensors_default_v1",
+    "seed": 8812736451,
+    "duration_s": 86400,
+    "timestep_s": 300,
+    "demand_profile": {
+      "profile_id": "diurnal_random",
+      "night_min": 0.35,
+      "morning_peak_mult": 1.45,
+      "morning_peak_h": 7.5,
+      "evening_peak_mult": 1.6,
+      "evening_peak_h": 19.0,
+      "node_multipliers": {
+        "3": 1.05,
+        "4": 0.92,
+        "5": 1.1,
+        "6": 0.98
+      },
+      "noise_sigma": 0.03,
+      "weekend": false
+    },
+    "operations": {
+      "reservoir_head_offset_m": 0.0,
+      "pump_speed": 1.0,
+      "tank_init_level_m": 1.07
+    },
+    "scenario_type": "MEDIUM_LEAK",
+    "faults": [
+      {
+        "fault_id": "f0",
+        "fault_type": "LEAK",
+        "location_kind": "pipe",
+        "location_id": "4",
+        "position": 0.4,
+        "leak_area_m2": 0.00015,
+        "discharge_coeff": 0.75,
+        "start_s": 39600,
+        "end_s": 86400
+      }
+    ],
+    "sensor_faults": [],
+    "noise": {
+      "pressure_sigma_m": 0.05,
+      "flow_sigma_lps": 0.1,
+      "missing_rate": 0.0
+    },
+    "config_hash": "sha256:\u2026",
+    "generator_version": "sim-0.3.1"
+  },
+  "7.3": {
+    "event_id": "ev_0007",
+    "sim_time_s": 43500,
+    "source": "user",
+    "kind": "TAP_SET",
+    "target_id": "T2",
+    "params": {
+      "open": true
+    },
+    "hidden": false
+  },
+  "7.4": {
+    "schema_version": "1.0",
+    "network_id": "net_epa_tutorial_v1",
+    "sim_time_s": 43200,
+    "converged": true,
+    "nodes": {
+      "4": {
+        "pressure_m": 38.42,
+        "head_m": 251.78,
+        "demand_m3s": 0.00946,
+        "base_demand_m3s": 0.00946,
+        "leak_m3s": 0.0
+      }
+    },
+    "links": {
+      "4": {
+        "flow_m3s": 0.0121,
+        "velocity_ms": 0.37,
+        "headloss_m": 1.92,
+        "status": "OPEN"
+      }
+    },
+    "tanks": {
+      "8": {
+        "level_m": 2.31,
+        "head_m": 255.29,
+        "volume_m3": 606.8,
+        "net_inflow_m3s": 0.0018
+      }
+    },
+    "pumps": {
+      "9": {
+        "flow_m3s": 0.0362,
+        "head_gain_m": 46.1,
+        "status": "OPEN"
+      }
+    },
+    "hidden": {
+      "leak_nodes": {
+        "LK_4": {
+          "leak_m3s": 0.0031
+        }
+      }
+    }
+  },
+  "7.6": {
+    "schema_version": "1.0",
+    "dataset_version": "ds1",
+    "created_utc": "2026-10-09T10:12:00Z",
+    "git_sha": "a1b2c3d",
+    "generator_version": "sim-0.3.1",
+    "wntr_version": "<pinned>",
+    "network_ids": [
+      "net_epa_tutorial_v1"
+    ],
+    "sensor_layout_ids": [
+      "sensors_default_v1"
+    ],
+    "dataset_seed": 20261008,
+    "n_requested": 1200,
+    "n_valid": 1188,
+    "n_failed": 12,
+    "counts_by_split": {
+      "train": 832,
+      "val": 178,
+      "test": 178
+    },
+    "counts_by_scenario_type": {
+      "NORMAL": 316,
+      "SMALL_LEAK": 148
+    },
+    "holdout": {
+      "fault_locations_test_only": [
+        "pipe:5",
+        "junction:6"
+      ]
+    },
+    "timestep_s": 300,
+    "duration_s": 86400,
+    "files": {
+      "node_states": "processed/ds1/node_states/",
+      "sensors": "processed/ds1/sensors/"
+    }
+  },
+  "7.8": {
+    "schema_version": "1.0",
+    "network_id": "net_epa_tutorial_v1",
+    "sensor_layout_id": "sensors_default_v1",
+    "window": [
+      {
+        "sim_time_s": 42900,
+        "pressure_m": {
+          "S1": 51.2,
+          "S2": 38.4,
+          "S3": 36.9
+        },
+        "flow_lps": {
+          "F1": 12.1,
+          "F2": 8.3
+        },
+        "context": {
+          "tank_level_m": 2.31,
+          "pump_status": 1,
+          "pump_flow_lps": 36.2,
+          "reservoir_head_m": 213.36,
+          "time_of_day_s": 42900
+        }
+      }
+    ]
+  },
+  "7.9.request": {
+    "model_version": "mlp_ds1_202610091830",
+    "mode": "reconstruct",
+    "sensor_window": {
+      "schema_version": "1.0",
+      "network_id": "net_epa_tutorial_v1",
+      "sensor_layout_id": "sensors_default_v1",
+      "window": [
+        {
+          "sim_time_s": 42900,
+          "pressure_m": {
+            "S1": 51.2,
+            "S2": 38.4,
+            "S3": 36.9
+          },
+          "flow_lps": {
+            "F1": 12.1,
+            "F2": 8.3
+          },
+          "context": {
+            "tank_level_m": 2.31,
+            "pump_status": 1,
+            "pump_flow_lps": 36.2,
+            "reservoir_head_m": 213.36,
+            "time_of_day_s": 42900
+          }
+        }
+      ]
+    }
+  },
+  "7.9.response": {
+    "model_version": "mlp_ds1_202610091830",
+    "sim_time_s": 43200,
+    "reconstruct": {
+      "pressure_m": {
+        "2": 51.18,
+        "3": 44.02,
+        "4": 38.47,
+        "5": 53.11,
+        "6": 36.95,
+        "7": 40.3,
+        "8": 42.2
+      },
+      "pressure_std_m": {
+        "5": 0.41,
+        "7": 0.38
+      }
+    },
+    "leave_one_out": {
+      "S1": {
+        "predicted_m": 51.05,
+        "observed_m": 51.2
+      },
+      "S2": {
+        "predicted_m": 41.1,
+        "observed_m": 38.4
+      },
+      "S3": {
+        "predicted_m": 37.02,
+        "observed_m": 36.9
+      }
+    },
+    "leave_one_out_flow": {
+      "F1": {
+        "predicted_lps": 10.7,
+        "observed_lps": 12.1
+      },
+      "F2": {
+        "predicted_lps": 8.25,
+        "observed_lps": 8.3
+      }
+    },
+    "latency_ms": 18
+  },
+  "7.10.residual": {
+    "sim_time_s": 43200,
+    "residuals": {
+      "S1": 0.15,
+      "S2": -2.7,
+      "S3": -0.12,
+      "F1": 1.4,
+      "F2": 0.05
+    },
+    "z": {
+      "S1": 0.6,
+      "S2": -6.1,
+      "S3": -0.4,
+      "F1": 3.2,
+      "F2": 0.1
+    },
+    "instant_flags": [
+      "S2",
+      "F1"
+    ],
+    "cumulative_flags": [
+      "S2"
+    ]
+  },
+  "7.10.anomaly": {
+    "status": "NORMAL",
+    "anomaly_score": 0.93,
+    "first_flag_time_s": 42600,
+    "confirmed_time_s": 43200,
+    "detection_delay_steps": 2,
+    "suspected_class": "LEAK",
+    "class_probs": {
+      "LEAK": 0.81,
+      "DEMAND_SPIKE": 0.12,
+      "VALVE_CLOSURE": 0.07
+    },
+    "driving_sensors": [
+      "S2",
+      "F1"
+    ],
+    "residual_history_ref": "session buffer last 12 frames",
+    "thresholds_version": "thr_ds1_202610100900"
+  },
+  "7.11": {
+    "method": "signature_cosine_v1",
+    "candidates": [
+      {
+        "rank": 1,
+        "location_kind": "pipe",
+        "location_id": "4",
+        "zone_id": "Z2",
+        "score": 0.81,
+        "similarity": 0.94
+      },
+      {
+        "rank": 2,
+        "location_kind": "pipe",
+        "location_id": "5",
+        "zone_id": "Z2",
+        "score": 0.13,
+        "similarity": 0.71
+      },
+      {
+        "rank": 3,
+        "location_kind": "junction",
+        "location_id": "5",
+        "zone_id": "Z2",
+        "score": 0.06,
+        "similarity": 0.55
+      }
+    ],
+    "probable_zone": {
+      "zone_id": "Z2",
+      "score": 0.94
+    },
+    "signatures_version": "sig_ds1_202610101000"
+  },
+  "7.12": {
+    "incident_id": "inc_3f9a1c_43200",
+    "session_id": "sess_3f9a1c",
+    "created_sim_time_s": 43200,
+    "network_id": "net_epa_tutorial_v1",
+    "sensor_layout_id": "sensors_default_v1",
+    "anomaly": {
+      "status": "NORMAL",
+      "anomaly_score": 0.93,
+      "first_flag_time_s": 42600,
+      "confirmed_time_s": 43200,
+      "detection_delay_steps": 2,
+      "suspected_class": "LEAK",
+      "class_probs": {
+        "LEAK": 0.81,
+        "DEMAND_SPIKE": 0.12,
+        "VALVE_CLOSURE": 0.07
+      },
+      "driving_sensors": [
+        "S2",
+        "F1"
+      ],
+      "residual_history_ref": "session buffer last 12 frames",
+      "thresholds_version": "thr_ds1_202610100900"
+    },
+    "localisation": {
+      "method": "signature_cosine_v1",
+      "candidates": [
+        {
+          "rank": 1,
+          "location_kind": "pipe",
+          "location_id": "4",
+          "zone_id": "Z2",
+          "score": 0.81,
+          "similarity": 0.94
+        },
+        {
+          "rank": 2,
+          "location_kind": "pipe",
+          "location_id": "5",
+          "zone_id": "Z2",
+          "score": 0.13,
+          "similarity": 0.71
+        },
+        {
+          "rank": 3,
+          "location_kind": "junction",
+          "location_id": "5",
+          "zone_id": "Z2",
+          "score": 0.06,
+          "similarity": 0.55
+        }
+      ],
+      "probable_zone": {
+        "zone_id": "Z2",
+        "score": 0.94
+      },
+      "signatures_version": "sig_ds1_202610101000"
+    },
+    "evidence": {
+      "sensor_deltas": [
+        {
+          "sensor_id": "S2",
+          "baseline_m": 41.1,
+          "observed_m": 38.4,
+          "pct_change": -6.6
+        }
+      ],
+      "flow_deltas": [
+        {
+          "sensor_id": "F1",
+          "baseline_lps": 10.7,
+          "observed_lps": 12.1,
+          "pct_change": 13.1
+        }
+      ],
+      "context_summary": {
+        "time_of_day": "12:00",
+        "tank_level_m": 2.31,
+        "pump_status": "ON"
+      }
+    },
+    "model_versions": {
+      "predictor": "mlp_ds1_202610091830",
+      "thresholds": "thr_ds1_\u2026",
+      "signatures": "sig_ds1_\u2026"
+    }
+  },
+  "7.13": {
+    "incident_id": "inc_3f9a1c_43200",
+    "headline": "Probable leak in West Residential zone (pipe 4)",
+    "what_happened": "\u2026",
+    "why_suspicious": "\u2026",
+    "where": "\u2026",
+    "evidence": [
+      {
+        "claim": "Pressure at S2 is 2.7 m below expected",
+        "source_tool": "get_incident",
+        "fields": [
+          "evidence.sensor_deltas[0]"
+        ]
+      }
+    ],
+    "recommended_actions": [
+      {
+        "priority": 1,
+        "action": "Dispatch acoustic survey to pipe 4",
+        "rationale": "\u2026"
+      }
+    ],
+    "confidence": "HIGH",
+    "caveats": [
+      "Simulated network and synthetic sensor data"
+    ],
+    "grounding_check": {
+      "passed": true,
+      "unmatched_numbers": []
+    }
+  },
+  "7.14.1.view": {
+    "session_id": "sess_3f9a1c",
+    "sim_time_s": 43200,
+    "clock": "12:00",
+    "speed": 5,
+    "nodes": {
+      "4": {
+        "pressure_m": 38.4,
+        "head_m": 251.8,
+        "demand_lps": 9.46,
+        "is_sensor": true,
+        "sensor_id": "S2",
+        "status": "ok"
+      }
+    },
+    "links": {
+      "4": {
+        "flow_lps": 12.1,
+        "velocity_ms": 0.37,
+        "status": "OPEN",
+        "direction": 1,
+        "visual_fault": "NONE"
+      }
+    },
+    "tank": {
+      "tank_id": "8",
+      "level_m": 2.31,
+      "level_pct": 37.9
+    },
+    "pump": {
+      "pump_id": "9",
+      "flow_lps": 36.2,
+      "status": "ON"
+    },
+    "taps": {
+      "T2": {
+        "open": true,
+        "demand_lps": 9.46
+      }
+    },
+    "valves": {
+      "V1": {
+        "open": true
+      }
+    },
+    "network_status": "NORMAL",
+    "challenge": {
+      "active": false
+    },
+    "events": [
+      {
+        "sim_time_s": 42900,
+        "text": "Tap 2 opened"
+      }
+    ]
+  },
+  "7.14.1.reveal": {
+    "truth": {
+      "fault_type": "LEAK",
+      "location_kind": "pipe",
+      "location_id": "4",
+      "zone_id": "Z2",
+      "start_sim_time_s": 42300,
+      "leak_peak_lps": 3.1,
+      "severity_bucket": "5-15%"
+    },
+    "ai": {
+      "detected": true,
+      "detection_delay_s": 900,
+      "true_location_rank": 1,
+      "zone_correct": true,
+      "report_incident_id": "inc_\u2026"
+    }
+  }
+}

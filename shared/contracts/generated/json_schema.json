@@ -1,0 +1,4727 @@
+{
+  "6.4": {
+    "$defs": {
+      "FlowSensorDef": {
+        "additionalProperties": false,
+        "properties": {
+          "sensor_id": {
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "link_id": {
+            "title": "Link Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "link_id"
+        ],
+        "title": "FlowSensorDef",
+        "type": "object"
+      },
+      "PressureSensorDef": {
+        "additionalProperties": false,
+        "properties": {
+          "sensor_id": {
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "node_id": {
+            "title": "Node Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "node_id"
+        ],
+        "title": "PressureSensorDef",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "sensor_layout_id": {
+        "title": "Sensor Layout Id",
+        "type": "string"
+      },
+      "pressure": {
+        "items": {
+          "$ref": "#/$defs/PressureSensorDef"
+        },
+        "title": "Pressure",
+        "type": "array"
+      },
+      "flow": {
+        "items": {
+          "$ref": "#/$defs/FlowSensorDef"
+        },
+        "title": "Flow",
+        "type": "array"
+      },
+      "context": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Context",
+        "type": "array"
+      }
+    },
+    "required": [
+      "sensor_layout_id",
+      "pressure",
+      "flow",
+      "context"
+    ],
+    "title": "SensorLayout",
+    "type": "object"
+  },
+  "7.1": {
+    "$defs": {
+      "HydraulicsConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "demand_model": {
+            "enum": [
+              "PDD",
+              "DD"
+            ],
+            "title": "Demand Model",
+            "type": "string"
+          },
+          "required_pressure_m": {
+            "title": "Required Pressure M",
+            "type": "number"
+          },
+          "minimum_pressure_m": {
+            "title": "Minimum Pressure M",
+            "type": "number"
+          },
+          "headloss": {
+            "enum": [
+              "H-W",
+              "D-W",
+              "C-M"
+            ],
+            "title": "Headloss",
+            "type": "string"
+          },
+          "tank_init_level_m": {
+            "title": "Tank Init Level M",
+            "type": "number"
+          }
+        },
+        "required": [
+          "demand_model",
+          "required_pressure_m",
+          "minimum_pressure_m",
+          "headloss",
+          "tank_init_level_m"
+        ],
+        "title": "HydraulicsConfig",
+        "type": "object"
+      },
+      "LinkConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "link_id": {
+            "title": "Link Id",
+            "type": "string"
+          },
+          "link_type": {
+            "$ref": "#/$defs/LinkType"
+          },
+          "start_node": {
+            "title": "Start Node",
+            "type": "string"
+          },
+          "end_node": {
+            "title": "End Node",
+            "type": "string"
+          },
+          "length_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Length M"
+          },
+          "diameter_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Diameter M"
+          },
+          "roughness_hw": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Roughness Hw"
+          },
+          "initial_status": {
+            "$ref": "#/$defs/LinkStatus",
+            "default": "OPEN"
+          },
+          "zone_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Zone Id"
+          }
+        },
+        "required": [
+          "link_id",
+          "link_type",
+          "start_node",
+          "end_node"
+        ],
+        "title": "LinkConfig",
+        "type": "object"
+      },
+      "LinkStatus": {
+        "enum": [
+          "OPEN",
+          "CLOSED",
+          "ACTIVE"
+        ],
+        "title": "LinkStatus",
+        "type": "string"
+      },
+      "LinkType": {
+        "enum": [
+          "pipe",
+          "pump",
+          "valve"
+        ],
+        "title": "LinkType",
+        "type": "string"
+      },
+      "NodeConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "title": "Node Id",
+            "type": "string"
+          },
+          "node_type": {
+            "$ref": "#/$defs/NodeType"
+          },
+          "elevation_m": {
+            "title": "Elevation M",
+            "type": "number"
+          },
+          "base_demand_m3s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Base Demand M3S"
+          },
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          },
+          "ui_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Ui Label"
+          },
+          "zone_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Zone Id"
+          }
+        },
+        "required": [
+          "node_id",
+          "node_type",
+          "elevation_m",
+          "x",
+          "y"
+        ],
+        "title": "NodeConfig",
+        "type": "object"
+      },
+      "NodeType": {
+        "enum": [
+          "junction",
+          "reservoir",
+          "tank"
+        ],
+        "title": "NodeType",
+        "type": "string"
+      },
+      "TapDef": {
+        "additionalProperties": false,
+        "properties": {
+          "tap_id": {
+            "title": "Tap Id",
+            "type": "string"
+          },
+          "node_id": {
+            "title": "Node Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tap_id",
+          "node_id"
+        ],
+        "title": "TapDef",
+        "type": "object"
+      },
+      "ValveDef": {
+        "additionalProperties": false,
+        "properties": {
+          "valve_id": {
+            "title": "Valve Id",
+            "type": "string"
+          },
+          "link_id": {
+            "title": "Link Id",
+            "type": "string"
+          },
+          "impl": {
+            "const": "pipe_status",
+            "title": "Impl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "valve_id",
+          "link_id",
+          "impl"
+        ],
+        "title": "ValveDef",
+        "type": "object"
+      },
+      "Zone": {
+        "additionalProperties": false,
+        "properties": {
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "zone_id",
+          "name"
+        ],
+        "title": "Zone",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "network_id": {
+        "title": "Network Id",
+        "type": "string"
+      },
+      "source": {
+        "title": "Source",
+        "type": "string"
+      },
+      "inp_path": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Inp Path"
+      },
+      "nodes": {
+        "items": {
+          "$ref": "#/$defs/NodeConfig"
+        },
+        "title": "Nodes",
+        "type": "array"
+      },
+      "links": {
+        "items": {
+          "$ref": "#/$defs/LinkConfig"
+        },
+        "title": "Links",
+        "type": "array"
+      },
+      "zones": {
+        "items": {
+          "$ref": "#/$defs/Zone"
+        },
+        "title": "Zones",
+        "type": "array"
+      },
+      "hydraulics": {
+        "$ref": "#/$defs/HydraulicsConfig"
+      },
+      "taps": {
+        "items": {
+          "$ref": "#/$defs/TapDef"
+        },
+        "title": "Taps",
+        "type": "array"
+      },
+      "valves": {
+        "items": {
+          "$ref": "#/$defs/ValveDef"
+        },
+        "title": "Valves",
+        "type": "array"
+      }
+    },
+    "required": [
+      "network_id",
+      "source",
+      "nodes",
+      "links",
+      "zones",
+      "hydraulics",
+      "taps",
+      "valves"
+    ],
+    "title": "NetworkConfig",
+    "type": "object"
+  },
+  "7.2": {
+    "$defs": {
+      "DemandProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "profile_id": {
+            "title": "Profile Id",
+            "type": "string"
+          },
+          "night_min": {
+            "title": "Night Min",
+            "type": "number"
+          },
+          "morning_peak_mult": {
+            "title": "Morning Peak Mult",
+            "type": "number"
+          },
+          "morning_peak_h": {
+            "title": "Morning Peak H",
+            "type": "number"
+          },
+          "evening_peak_mult": {
+            "title": "Evening Peak Mult",
+            "type": "number"
+          },
+          "evening_peak_h": {
+            "title": "Evening Peak H",
+            "type": "number"
+          },
+          "node_multipliers": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Node Multipliers",
+            "type": "object"
+          },
+          "noise_sigma": {
+            "title": "Noise Sigma",
+            "type": "number"
+          },
+          "weekend": {
+            "default": false,
+            "title": "Weekend",
+            "type": "boolean"
+          },
+          "global_mult": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Global Mult"
+          }
+        },
+        "required": [
+          "profile_id",
+          "night_min",
+          "morning_peak_mult",
+          "morning_peak_h",
+          "evening_peak_mult",
+          "evening_peak_h",
+          "noise_sigma"
+        ],
+        "title": "DemandProfile",
+        "type": "object"
+      },
+      "FaultSpec": {
+        "additionalProperties": false,
+        "properties": {
+          "fault_id": {
+            "title": "Fault Id",
+            "type": "string"
+          },
+          "fault_type": {
+            "$ref": "#/$defs/FaultType"
+          },
+          "location_kind": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/LocationKind"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "location_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Location Id"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Position"
+          },
+          "leak_area_m2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Leak Area M2"
+          },
+          "discharge_coeff": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Discharge Coeff"
+          },
+          "start_s": {
+            "title": "Start S",
+            "type": "integer"
+          },
+          "end_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "End S"
+          },
+          "params": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Params"
+          }
+        },
+        "required": [
+          "fault_id",
+          "fault_type",
+          "start_s"
+        ],
+        "title": "FaultSpec",
+        "type": "object"
+      },
+      "FaultType": {
+        "description": "\u00a77.2 hydraulic fault types.",
+        "enum": [
+          "LEAK",
+          "BURST",
+          "VALVE_CLOSURE",
+          "PARTIAL_VALVE",
+          "PUMP_DEGRADE",
+          "PUMP_TRIP",
+          "LOW_RESERVOIR",
+          "DEMAND_SPIKE",
+          "DEMAND_SHIFT"
+        ],
+        "title": "FaultType",
+        "type": "string"
+      },
+      "LocationKind": {
+        "description": "Fault / candidate location kind (\u00a77.2, \u00a77.11, \u00a78.2).",
+        "enum": [
+          "pipe",
+          "junction"
+        ],
+        "title": "LocationKind",
+        "type": "string"
+      },
+      "NoiseSpec": {
+        "additionalProperties": false,
+        "properties": {
+          "pressure_sigma_m": {
+            "title": "Pressure Sigma M",
+            "type": "number"
+          },
+          "flow_sigma_lps": {
+            "title": "Flow Sigma Lps",
+            "type": "number"
+          },
+          "missing_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Missing Rate",
+            "type": "number"
+          }
+        },
+        "required": [
+          "pressure_sigma_m",
+          "flow_sigma_lps",
+          "missing_rate"
+        ],
+        "title": "NoiseSpec",
+        "type": "object"
+      },
+      "Operations": {
+        "additionalProperties": false,
+        "properties": {
+          "reservoir_head_offset_m": {
+            "default": 0.0,
+            "title": "Reservoir Head Offset M",
+            "type": "number"
+          },
+          "pump_speed": {
+            "default": 1.0,
+            "title": "Pump Speed",
+            "type": "number"
+          },
+          "tank_init_level_m": {
+            "title": "Tank Init Level M",
+            "type": "number"
+          }
+        },
+        "required": [
+          "tank_init_level_m"
+        ],
+        "title": "Operations",
+        "type": "object"
+      },
+      "ScenarioType": {
+        "description": "\u00a78.1 scenario catalogue (14 types).",
+        "enum": [
+          "NORMAL",
+          "HIGH_DEMAND",
+          "LOW_DEMAND",
+          "DEMAND_SHIFT",
+          "DEMAND_SPIKE",
+          "VALVE_CLOSURE",
+          "PARTIAL_VALVE",
+          "PUMP_DEGRADE",
+          "LOW_RESERVOIR",
+          "SMALL_LEAK",
+          "MEDIUM_LEAK",
+          "LARGE_LEAK",
+          "PIPE_BURST",
+          "SENSOR_FAULT"
+        ],
+        "title": "ScenarioType",
+        "type": "string"
+      },
+      "SensorFaultKind": {
+        "description": "\u00a77.2 sensor_faults[].kind.",
+        "enum": [
+          "SPIKE",
+          "BIAS",
+          "DRIFT",
+          "STUCK",
+          "MISSING"
+        ],
+        "title": "SensorFaultKind",
+        "type": "string"
+      },
+      "SensorFaultSpec": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "$ref": "#/$defs/SensorFaultKind"
+          },
+          "sensor_id": {
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "start_s": {
+            "title": "Start S",
+            "type": "integer"
+          },
+          "end_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "End S"
+          },
+          "magnitude": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Magnitude"
+          }
+        },
+        "required": [
+          "kind",
+          "sensor_id",
+          "start_s"
+        ],
+        "title": "SensorFaultSpec",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "simulation_id": {
+        "title": "Simulation Id",
+        "type": "string"
+      },
+      "network_id": {
+        "title": "Network Id",
+        "type": "string"
+      },
+      "sensor_layout_id": {
+        "title": "Sensor Layout Id",
+        "type": "string"
+      },
+      "seed": {
+        "title": "Seed",
+        "type": "integer"
+      },
+      "duration_s": {
+        "default": 86400,
+        "title": "Duration S",
+        "type": "integer"
+      },
+      "timestep_s": {
+        "default": 300,
+        "title": "Timestep S",
+        "type": "integer"
+      },
+      "demand_profile": {
+        "$ref": "#/$defs/DemandProfile"
+      },
+      "operations": {
+        "$ref": "#/$defs/Operations"
+      },
+      "scenario_type": {
+        "$ref": "#/$defs/ScenarioType"
+      },
+      "faults": {
+        "items": {
+          "$ref": "#/$defs/FaultSpec"
+        },
+        "title": "Faults",
+        "type": "array"
+      },
+      "sensor_faults": {
+        "items": {
+          "$ref": "#/$defs/SensorFaultSpec"
+        },
+        "title": "Sensor Faults",
+        "type": "array"
+      },
+      "noise": {
+        "$ref": "#/$defs/NoiseSpec"
+      },
+      "config_hash": {
+        "title": "Config Hash",
+        "type": "string"
+      },
+      "generator_version": {
+        "title": "Generator Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "simulation_id",
+      "network_id",
+      "sensor_layout_id",
+      "seed",
+      "demand_profile",
+      "operations",
+      "scenario_type",
+      "noise",
+      "config_hash",
+      "generator_version"
+    ],
+    "title": "ScenarioSpec",
+    "type": "object"
+  },
+  "7.3": {
+    "$defs": {
+      "EventKind": {
+        "enum": [
+          "TAP_SET",
+          "PIPE_FAULT",
+          "PIPE_RESET",
+          "VALVE_SET",
+          "SPEED",
+          "RESET"
+        ],
+        "title": "EventKind",
+        "type": "string"
+      },
+      "EventSource": {
+        "enum": [
+          "user",
+          "challenge",
+          "system"
+        ],
+        "title": "EventSource",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "event_id": {
+        "title": "Event Id",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "title": "Sim Time S",
+        "type": "integer"
+      },
+      "source": {
+        "$ref": "#/$defs/EventSource"
+      },
+      "kind": {
+        "$ref": "#/$defs/EventKind"
+      },
+      "target_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Target Id"
+      },
+      "params": {
+        "additionalProperties": true,
+        "title": "Params",
+        "type": "object"
+      },
+      "hidden": {
+        "default": false,
+        "title": "Hidden",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "event_id",
+      "sim_time_s",
+      "source",
+      "kind"
+    ],
+    "title": "SimEvent",
+    "type": "object"
+  },
+  "7.4": {
+    "$defs": {
+      "HiddenState": {
+        "additionalProperties": false,
+        "properties": {
+          "leak_nodes": {
+            "additionalProperties": {
+              "$ref": "#/$defs/LeakNodeState"
+            },
+            "title": "Leak Nodes",
+            "type": "object"
+          }
+        },
+        "title": "HiddenState",
+        "type": "object"
+      },
+      "LeakNodeState": {
+        "additionalProperties": false,
+        "properties": {
+          "leak_m3s": {
+            "title": "Leak M3S",
+            "type": "number"
+          }
+        },
+        "required": [
+          "leak_m3s"
+        ],
+        "title": "LeakNodeState",
+        "type": "object"
+      },
+      "LinkState": {
+        "additionalProperties": false,
+        "properties": {
+          "flow_m3s": {
+            "title": "Flow M3S",
+            "type": "number"
+          },
+          "velocity_ms": {
+            "title": "Velocity Ms",
+            "type": "number"
+          },
+          "headloss_m": {
+            "title": "Headloss M",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/$defs/LinkStatus"
+          }
+        },
+        "required": [
+          "flow_m3s",
+          "velocity_ms",
+          "headloss_m",
+          "status"
+        ],
+        "title": "LinkState",
+        "type": "object"
+      },
+      "LinkStatus": {
+        "enum": [
+          "OPEN",
+          "CLOSED",
+          "ACTIVE"
+        ],
+        "title": "LinkStatus",
+        "type": "string"
+      },
+      "NodeState": {
+        "additionalProperties": false,
+        "properties": {
+          "pressure_m": {
+            "title": "Pressure M",
+            "type": "number"
+          },
+          "head_m": {
+            "title": "Head M",
+            "type": "number"
+          },
+          "demand_m3s": {
+            "title": "Demand M3S",
+            "type": "number"
+          },
+          "base_demand_m3s": {
+            "title": "Base Demand M3S",
+            "type": "number"
+          },
+          "leak_m3s": {
+            "default": 0.0,
+            "title": "Leak M3S",
+            "type": "number"
+          }
+        },
+        "required": [
+          "pressure_m",
+          "head_m",
+          "demand_m3s",
+          "base_demand_m3s"
+        ],
+        "title": "NodeState",
+        "type": "object"
+      },
+      "PumpState": {
+        "additionalProperties": false,
+        "properties": {
+          "flow_m3s": {
+            "title": "Flow M3S",
+            "type": "number"
+          },
+          "head_gain_m": {
+            "title": "Head Gain M",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/$defs/LinkStatus"
+          }
+        },
+        "required": [
+          "flow_m3s",
+          "head_gain_m",
+          "status"
+        ],
+        "title": "PumpState",
+        "type": "object"
+      },
+      "TankState": {
+        "additionalProperties": false,
+        "properties": {
+          "level_m": {
+            "title": "Level M",
+            "type": "number"
+          },
+          "head_m": {
+            "title": "Head M",
+            "type": "number"
+          },
+          "volume_m3": {
+            "title": "Volume M3",
+            "type": "number"
+          },
+          "net_inflow_m3s": {
+            "title": "Net Inflow M3S",
+            "type": "number"
+          }
+        },
+        "required": [
+          "level_m",
+          "head_m",
+          "volume_m3",
+          "net_inflow_m3s"
+        ],
+        "title": "TankState",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "network_id": {
+        "title": "Network Id",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "title": "Sim Time S",
+        "type": "integer"
+      },
+      "converged": {
+        "title": "Converged",
+        "type": "boolean"
+      },
+      "nodes": {
+        "additionalProperties": {
+          "$ref": "#/$defs/NodeState"
+        },
+        "title": "Nodes",
+        "type": "object"
+      },
+      "links": {
+        "additionalProperties": {
+          "$ref": "#/$defs/LinkState"
+        },
+        "title": "Links",
+        "type": "object"
+      },
+      "tanks": {
+        "additionalProperties": {
+          "$ref": "#/$defs/TankState"
+        },
+        "title": "Tanks",
+        "type": "object"
+      },
+      "pumps": {
+        "additionalProperties": {
+          "$ref": "#/$defs/PumpState"
+        },
+        "title": "Pumps",
+        "type": "object"
+      },
+      "hidden": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HiddenState"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "network_id",
+      "sim_time_s",
+      "converged",
+      "nodes",
+      "links"
+    ],
+    "title": "HydraulicSnapshot",
+    "type": "object"
+  },
+  "7.5": {
+    "$defs": {
+      "FaultType": {
+        "description": "\u00a77.2 hydraulic fault types.",
+        "enum": [
+          "LEAK",
+          "BURST",
+          "VALVE_CLOSURE",
+          "PARTIAL_VALVE",
+          "PUMP_DEGRADE",
+          "PUMP_TRIP",
+          "LOW_RESERVOIR",
+          "DEMAND_SPIKE",
+          "DEMAND_SHIFT"
+        ],
+        "title": "FaultType",
+        "type": "string"
+      },
+      "LocationKind": {
+        "description": "Fault / candidate location kind (\u00a77.2, \u00a77.11, \u00a78.2).",
+        "enum": [
+          "pipe",
+          "junction"
+        ],
+        "title": "LocationKind",
+        "type": "string"
+      },
+      "ScenarioType": {
+        "description": "\u00a78.1 scenario catalogue (14 types).",
+        "enum": [
+          "NORMAL",
+          "HIGH_DEMAND",
+          "LOW_DEMAND",
+          "DEMAND_SHIFT",
+          "DEMAND_SPIKE",
+          "VALVE_CLOSURE",
+          "PARTIAL_VALVE",
+          "PUMP_DEGRADE",
+          "LOW_RESERVOIR",
+          "SMALL_LEAK",
+          "MEDIUM_LEAK",
+          "LARGE_LEAK",
+          "PIPE_BURST",
+          "SENSOR_FAULT"
+        ],
+        "title": "ScenarioType",
+        "type": "string"
+      },
+      "SeverityBucket": {
+        "enum": [
+          "<5%",
+          "5-15%",
+          "15-25%",
+          ">25%"
+        ],
+        "title": "SeverityBucket",
+        "type": "string"
+      },
+      "Split": {
+        "enum": [
+          "train",
+          "val",
+          "test"
+        ],
+        "title": "Split",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "description": "One row of the `scenarios` table (\u00a77.5).",
+    "properties": {
+      "simulation_id": {
+        "title": "Simulation Id",
+        "type": "string"
+      },
+      "dataset_version": {
+        "title": "Dataset Version",
+        "type": "string"
+      },
+      "network_id": {
+        "title": "Network Id",
+        "type": "string"
+      },
+      "sensor_layout_id": {
+        "title": "Sensor Layout Id",
+        "type": "string"
+      },
+      "scenario_type": {
+        "$ref": "#/$defs/ScenarioType"
+      },
+      "is_anomalous": {
+        "title": "Is Anomalous",
+        "type": "boolean"
+      },
+      "has_sensor_fault": {
+        "title": "Has Sensor Fault",
+        "type": "boolean"
+      },
+      "fault_type": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FaultType"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "location_kind": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LocationKind"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "location_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Location Id"
+      },
+      "zone_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Zone Id"
+      },
+      "position": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Position"
+      },
+      "leak_area_m2": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Leak Area M2"
+      },
+      "fault_start_s": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Fault Start S"
+      },
+      "fault_end_s": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Fault End S"
+      },
+      "realised_leak_peak_m3s": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Realised Leak Peak M3S"
+      },
+      "severity_bucket": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SeverityBucket"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "seed": {
+        "title": "Seed",
+        "type": "integer"
+      },
+      "config_hash": {
+        "title": "Config Hash",
+        "type": "string"
+      },
+      "generator_version": {
+        "title": "Generator Version",
+        "type": "string"
+      },
+      "spec_json": {
+        "title": "Spec Json",
+        "type": "string"
+      },
+      "split": {
+        "$ref": "#/$defs/Split"
+      },
+      "valid": {
+        "default": true,
+        "title": "Valid",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "simulation_id",
+      "dataset_version",
+      "network_id",
+      "sensor_layout_id",
+      "scenario_type",
+      "is_anomalous",
+      "has_sensor_fault",
+      "seed",
+      "config_hash",
+      "generator_version",
+      "spec_json",
+      "split"
+    ],
+    "title": "ScenarioRow",
+    "type": "object"
+  },
+  "7.6": {
+    "$defs": {
+      "Holdout": {
+        "additionalProperties": false,
+        "properties": {
+          "fault_locations_test_only": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fault Locations Test Only",
+            "type": "array"
+          }
+        },
+        "required": [
+          "fault_locations_test_only"
+        ],
+        "title": "Holdout",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "dataset_version": {
+        "title": "Dataset Version",
+        "type": "string"
+      },
+      "created_utc": {
+        "title": "Created Utc",
+        "type": "string"
+      },
+      "git_sha": {
+        "title": "Git Sha",
+        "type": "string"
+      },
+      "generator_version": {
+        "title": "Generator Version",
+        "type": "string"
+      },
+      "wntr_version": {
+        "title": "Wntr Version",
+        "type": "string"
+      },
+      "network_ids": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Network Ids",
+        "type": "array"
+      },
+      "sensor_layout_ids": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Sensor Layout Ids",
+        "type": "array"
+      },
+      "dataset_seed": {
+        "title": "Dataset Seed",
+        "type": "integer"
+      },
+      "n_requested": {
+        "title": "N Requested",
+        "type": "integer"
+      },
+      "n_valid": {
+        "title": "N Valid",
+        "type": "integer"
+      },
+      "n_failed": {
+        "title": "N Failed",
+        "type": "integer"
+      },
+      "counts_by_split": {
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "title": "Counts By Split",
+        "type": "object"
+      },
+      "counts_by_scenario_type": {
+        "additionalProperties": {
+          "type": "integer"
+        },
+        "title": "Counts By Scenario Type",
+        "type": "object"
+      },
+      "holdout": {
+        "$ref": "#/$defs/Holdout"
+      },
+      "timestep_s": {
+        "title": "Timestep S",
+        "type": "integer"
+      },
+      "duration_s": {
+        "title": "Duration S",
+        "type": "integer"
+      },
+      "files": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "title": "Files",
+        "type": "object"
+      }
+    },
+    "required": [
+      "dataset_version",
+      "created_utc",
+      "git_sha",
+      "generator_version",
+      "wntr_version",
+      "network_ids",
+      "sensor_layout_ids",
+      "dataset_seed",
+      "n_requested",
+      "n_valid",
+      "n_failed",
+      "counts_by_split",
+      "counts_by_scenario_type",
+      "holdout",
+      "timestep_s",
+      "duration_s",
+      "files"
+    ],
+    "title": "DatasetManifest",
+    "type": "object"
+  },
+  "7.7": {
+    "$defs": {
+      "GraphSampleMeta": {
+        "additionalProperties": false,
+        "properties": {
+          "simulation_id": {
+            "title": "Simulation Id",
+            "type": "string"
+          },
+          "sim_time_s": {
+            "title": "Sim Time S",
+            "type": "integer"
+          },
+          "hop_to_nearest_sensor": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Hop To Nearest Sensor",
+            "type": "array"
+          }
+        },
+        "required": [
+          "simulation_id",
+          "sim_time_s",
+          "hop_to_nearest_sensor"
+        ],
+        "title": "GraphSampleMeta",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "Shape/metadata contract for a GraphSample (\u00a77.7). Tensors are not serialised here.",
+    "properties": {
+      "n_nodes": {
+        "title": "N Nodes",
+        "type": "integer"
+      },
+      "n_edges_directed": {
+        "title": "N Edges Directed",
+        "type": "integer"
+      },
+      "node_features": {
+        "default": [
+          "elevation_m_z",
+          "base_demand_lps_z",
+          "is_junction",
+          "is_tank",
+          "is_reservoir",
+          "obs_mask",
+          "observed_pressure_m_z",
+          "observed_pressure_lag1_z",
+          "observed_pressure_lag3_z",
+          "tod_sin",
+          "tod_cos",
+          "tank_level_m_z",
+          "pump_on",
+          "pump_flow_lps_z",
+          "reservoir_head_m_z"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "title": "Node Features",
+        "type": "array"
+      },
+      "edge_features": {
+        "default": [
+          "length_m_z",
+          "diameter_m_z",
+          "roughness_hw_z",
+          "is_pump",
+          "is_open",
+          "observed_flow_lps_z",
+          "flow_obs_mask"
+        ],
+        "items": {
+          "type": "string"
+        },
+        "title": "Edge Features",
+        "type": "array"
+      },
+      "node_order": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Node Order",
+        "type": "array"
+      },
+      "meta": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GraphSampleMeta"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      }
+    },
+    "required": [
+      "n_nodes",
+      "n_edges_directed",
+      "node_order"
+    ],
+    "title": "GraphSampleSpec",
+    "type": "object"
+  },
+  "7.8": {
+    "$defs": {
+      "WindowContext": {
+        "additionalProperties": false,
+        "properties": {
+          "tank_level_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tank Level M"
+          },
+          "pump_status": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pump Status"
+          },
+          "pump_flow_lps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pump Flow Lps"
+          },
+          "reservoir_head_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reservoir Head M"
+          },
+          "time_of_day_s": {
+            "title": "Time Of Day S",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tank_level_m",
+          "pump_status",
+          "pump_flow_lps",
+          "reservoir_head_m",
+          "time_of_day_s"
+        ],
+        "title": "WindowContext",
+        "type": "object"
+      },
+      "WindowStep": {
+        "additionalProperties": false,
+        "properties": {
+          "sim_time_s": {
+            "title": "Sim Time S",
+            "type": "integer"
+          },
+          "pressure_m": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Pressure M",
+            "type": "object"
+          },
+          "flow_lps": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Flow Lps",
+            "type": "object"
+          },
+          "context": {
+            "$ref": "#/$defs/WindowContext"
+          }
+        },
+        "required": [
+          "sim_time_s",
+          "pressure_m",
+          "flow_lps",
+          "context"
+        ],
+        "title": "WindowStep",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "schema_version": {
+        "default": "1.0",
+        "title": "Schema Version",
+        "type": "string"
+      },
+      "network_id": {
+        "title": "Network Id",
+        "type": "string"
+      },
+      "sensor_layout_id": {
+        "title": "Sensor Layout Id",
+        "type": "string"
+      },
+      "window": {
+        "items": {
+          "$ref": "#/$defs/WindowStep"
+        },
+        "maxItems": 12,
+        "minItems": 1,
+        "title": "Window",
+        "type": "array"
+      }
+    },
+    "required": [
+      "network_id",
+      "sensor_layout_id",
+      "window"
+    ],
+    "title": "SensorWindow",
+    "type": "object"
+  },
+  "7.9.request": {
+    "$defs": {
+      "PredictorMode": {
+        "enum": [
+          "reconstruct",
+          "leave_one_out"
+        ],
+        "title": "PredictorMode",
+        "type": "string"
+      },
+      "SensorWindow": {
+        "additionalProperties": false,
+        "properties": {
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "network_id": {
+            "title": "Network Id",
+            "type": "string"
+          },
+          "sensor_layout_id": {
+            "title": "Sensor Layout Id",
+            "type": "string"
+          },
+          "window": {
+            "items": {
+              "$ref": "#/$defs/WindowStep"
+            },
+            "maxItems": 12,
+            "minItems": 1,
+            "title": "Window",
+            "type": "array"
+          }
+        },
+        "required": [
+          "network_id",
+          "sensor_layout_id",
+          "window"
+        ],
+        "title": "SensorWindow",
+        "type": "object"
+      },
+      "WindowContext": {
+        "additionalProperties": false,
+        "properties": {
+          "tank_level_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tank Level M"
+          },
+          "pump_status": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pump Status"
+          },
+          "pump_flow_lps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pump Flow Lps"
+          },
+          "reservoir_head_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reservoir Head M"
+          },
+          "time_of_day_s": {
+            "title": "Time Of Day S",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "tank_level_m",
+          "pump_status",
+          "pump_flow_lps",
+          "reservoir_head_m",
+          "time_of_day_s"
+        ],
+        "title": "WindowContext",
+        "type": "object"
+      },
+      "WindowStep": {
+        "additionalProperties": false,
+        "properties": {
+          "sim_time_s": {
+            "title": "Sim Time S",
+            "type": "integer"
+          },
+          "pressure_m": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Pressure M",
+            "type": "object"
+          },
+          "flow_lps": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Flow Lps",
+            "type": "object"
+          },
+          "context": {
+            "$ref": "#/$defs/WindowContext"
+          }
+        },
+        "required": [
+          "sim_time_s",
+          "pressure_m",
+          "flow_lps",
+          "context"
+        ],
+        "title": "WindowStep",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "model_version": {
+        "title": "Model Version",
+        "type": "string"
+      },
+      "mode": {
+        "$ref": "#/$defs/PredictorMode"
+      },
+      "sensor_window": {
+        "$ref": "#/$defs/SensorWindow"
+      }
+    },
+    "required": [
+      "model_version",
+      "mode",
+      "sensor_window"
+    ],
+    "title": "PredictorRequest",
+    "type": "object"
+  },
+  "7.9.response": {
+    "$defs": {
+      "LooEntry": {
+        "additionalProperties": false,
+        "properties": {
+          "predicted_m": {
+            "title": "Predicted M",
+            "type": "number"
+          },
+          "observed_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed M"
+          }
+        },
+        "required": [
+          "predicted_m",
+          "observed_m"
+        ],
+        "title": "LooEntry",
+        "type": "object"
+      },
+      "LooFlowEntry": {
+        "additionalProperties": false,
+        "description": "Leave-one-out for a flow sensor (backbone/1.1.0, \u00a77.9).",
+        "properties": {
+          "predicted_lps": {
+            "title": "Predicted Lps",
+            "type": "number"
+          },
+          "observed_lps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Lps"
+          }
+        },
+        "required": [
+          "predicted_lps",
+          "observed_lps"
+        ],
+        "title": "LooFlowEntry",
+        "type": "object"
+      },
+      "Reconstruction": {
+        "additionalProperties": false,
+        "properties": {
+          "pressure_m": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Pressure M",
+            "type": "object"
+          },
+          "pressure_std_m": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Pressure Std M",
+            "type": "object"
+          }
+        },
+        "required": [
+          "pressure_m"
+        ],
+        "title": "Reconstruction",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "model_version": {
+        "title": "Model Version",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "title": "Sim Time S",
+        "type": "integer"
+      },
+      "reconstruct": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Reconstruction"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "leave_one_out": {
+        "anyOf": [
+          {
+            "additionalProperties": {
+              "$ref": "#/$defs/LooEntry"
+            },
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Leave One Out"
+      },
+      "leave_one_out_flow": {
+        "anyOf": [
+          {
+            "additionalProperties": {
+              "$ref": "#/$defs/LooFlowEntry"
+            },
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Leave One Out Flow"
+      },
+      "latency_ms": {
+        "title": "Latency Ms",
+        "type": "number"
+      }
+    },
+    "required": [
+      "model_version",
+      "sim_time_s",
+      "latency_ms"
+    ],
+    "title": "PredictorResponse",
+    "type": "object"
+  },
+  "7.10.residual": {
+    "additionalProperties": false,
+    "properties": {
+      "sim_time_s": {
+        "title": "Sim Time S",
+        "type": "integer"
+      },
+      "residuals": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "title": "Residuals",
+        "type": "object"
+      },
+      "z": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "title": "Z",
+        "type": "object"
+      },
+      "instant_flags": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Instant Flags",
+        "type": "array"
+      },
+      "cumulative_flags": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Cumulative Flags",
+        "type": "array"
+      }
+    },
+    "required": [
+      "sim_time_s",
+      "residuals",
+      "z"
+    ],
+    "title": "ResidualFrame",
+    "type": "object"
+  },
+  "7.10.anomaly": {
+    "$defs": {
+      "AnomalyStatus": {
+        "enum": [
+          "NORMAL",
+          "WATCH",
+          "ANOMALY",
+          "SENSOR_FAULT"
+        ],
+        "title": "AnomalyStatus",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "status": {
+        "$ref": "#/$defs/AnomalyStatus"
+      },
+      "anomaly_score": {
+        "title": "Anomaly Score",
+        "type": "number"
+      },
+      "first_flag_time_s": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "First Flag Time S"
+      },
+      "confirmed_time_s": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Confirmed Time S"
+      },
+      "detection_delay_steps": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Detection Delay Steps"
+      },
+      "suspected_class": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Suspected Class"
+      },
+      "class_probs": {
+        "anyOf": [
+          {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Class Probs"
+      },
+      "driving_sensors": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Driving Sensors",
+        "type": "array"
+      },
+      "residual_history_ref": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Residual History Ref"
+      },
+      "thresholds_version": {
+        "title": "Thresholds Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "status",
+      "anomaly_score",
+      "thresholds_version"
+    ],
+    "title": "AnomalyResult",
+    "type": "object"
+  },
+  "7.11": {
+    "$defs": {
+      "Candidate": {
+        "additionalProperties": false,
+        "properties": {
+          "rank": {
+            "minimum": 1,
+            "title": "Rank",
+            "type": "integer"
+          },
+          "location_kind": {
+            "$ref": "#/$defs/LocationKind"
+          },
+          "location_id": {
+            "title": "Location Id",
+            "type": "string"
+          },
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "similarity": {
+            "title": "Similarity",
+            "type": "number"
+          }
+        },
+        "required": [
+          "rank",
+          "location_kind",
+          "location_id",
+          "zone_id",
+          "score",
+          "similarity"
+        ],
+        "title": "Candidate",
+        "type": "object"
+      },
+      "LocationKind": {
+        "description": "Fault / candidate location kind (\u00a77.2, \u00a77.11, \u00a78.2).",
+        "enum": [
+          "pipe",
+          "junction"
+        ],
+        "title": "LocationKind",
+        "type": "string"
+      },
+      "ProbableZone": {
+        "additionalProperties": false,
+        "properties": {
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "zone_id",
+          "score"
+        ],
+        "title": "ProbableZone",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "method": {
+        "title": "Method",
+        "type": "string"
+      },
+      "candidates": {
+        "items": {
+          "$ref": "#/$defs/Candidate"
+        },
+        "title": "Candidates",
+        "type": "array"
+      },
+      "probable_zone": {
+        "$ref": "#/$defs/ProbableZone"
+      },
+      "signatures_version": {
+        "title": "Signatures Version",
+        "type": "string"
+      }
+    },
+    "required": [
+      "method",
+      "candidates",
+      "probable_zone",
+      "signatures_version"
+    ],
+    "title": "LocalisationResult",
+    "type": "object"
+  },
+  "7.12": {
+    "$defs": {
+      "AnomalyResult": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "$ref": "#/$defs/AnomalyStatus"
+          },
+          "anomaly_score": {
+            "title": "Anomaly Score",
+            "type": "number"
+          },
+          "first_flag_time_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "First Flag Time S"
+          },
+          "confirmed_time_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Confirmed Time S"
+          },
+          "detection_delay_steps": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Detection Delay Steps"
+          },
+          "suspected_class": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Suspected Class"
+          },
+          "class_probs": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Class Probs"
+          },
+          "driving_sensors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Driving Sensors",
+            "type": "array"
+          },
+          "residual_history_ref": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Residual History Ref"
+          },
+          "thresholds_version": {
+            "title": "Thresholds Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "anomaly_score",
+          "thresholds_version"
+        ],
+        "title": "AnomalyResult",
+        "type": "object"
+      },
+      "AnomalyStatus": {
+        "enum": [
+          "NORMAL",
+          "WATCH",
+          "ANOMALY",
+          "SENSOR_FAULT"
+        ],
+        "title": "AnomalyStatus",
+        "type": "string"
+      },
+      "Candidate": {
+        "additionalProperties": false,
+        "properties": {
+          "rank": {
+            "minimum": 1,
+            "title": "Rank",
+            "type": "integer"
+          },
+          "location_kind": {
+            "$ref": "#/$defs/LocationKind"
+          },
+          "location_id": {
+            "title": "Location Id",
+            "type": "string"
+          },
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "similarity": {
+            "title": "Similarity",
+            "type": "number"
+          }
+        },
+        "required": [
+          "rank",
+          "location_kind",
+          "location_id",
+          "zone_id",
+          "score",
+          "similarity"
+        ],
+        "title": "Candidate",
+        "type": "object"
+      },
+      "ContextSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "time_of_day": {
+            "title": "Time Of Day",
+            "type": "string"
+          },
+          "tank_level_m": {
+            "title": "Tank Level M",
+            "type": "number"
+          },
+          "pump_status": {
+            "$ref": "#/$defs/PumpUiStatus"
+          }
+        },
+        "required": [
+          "time_of_day",
+          "tank_level_m",
+          "pump_status"
+        ],
+        "title": "ContextSummary",
+        "type": "object"
+      },
+      "Evidence": {
+        "additionalProperties": false,
+        "properties": {
+          "sensor_deltas": {
+            "items": {
+              "$ref": "#/$defs/SensorDelta"
+            },
+            "title": "Sensor Deltas",
+            "type": "array"
+          },
+          "flow_deltas": {
+            "items": {
+              "$ref": "#/$defs/FlowDelta"
+            },
+            "title": "Flow Deltas",
+            "type": "array"
+          },
+          "context_summary": {
+            "$ref": "#/$defs/ContextSummary"
+          }
+        },
+        "required": [
+          "context_summary"
+        ],
+        "title": "Evidence",
+        "type": "object"
+      },
+      "FlowDelta": {
+        "additionalProperties": false,
+        "properties": {
+          "sensor_id": {
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "baseline_lps": {
+            "title": "Baseline Lps",
+            "type": "number"
+          },
+          "observed_lps": {
+            "title": "Observed Lps",
+            "type": "number"
+          },
+          "pct_change": {
+            "title": "Pct Change",
+            "type": "number"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "baseline_lps",
+          "observed_lps",
+          "pct_change"
+        ],
+        "title": "FlowDelta",
+        "type": "object"
+      },
+      "LocalisationResult": {
+        "additionalProperties": false,
+        "properties": {
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/$defs/Candidate"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "probable_zone": {
+            "$ref": "#/$defs/ProbableZone"
+          },
+          "signatures_version": {
+            "title": "Signatures Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "method",
+          "candidates",
+          "probable_zone",
+          "signatures_version"
+        ],
+        "title": "LocalisationResult",
+        "type": "object"
+      },
+      "LocationKind": {
+        "description": "Fault / candidate location kind (\u00a77.2, \u00a77.11, \u00a78.2).",
+        "enum": [
+          "pipe",
+          "junction"
+        ],
+        "title": "LocationKind",
+        "type": "string"
+      },
+      "ModelVersions": {
+        "additionalProperties": false,
+        "properties": {
+          "predictor": {
+            "title": "Predictor",
+            "type": "string"
+          },
+          "thresholds": {
+            "title": "Thresholds",
+            "type": "string"
+          },
+          "signatures": {
+            "title": "Signatures",
+            "type": "string"
+          }
+        },
+        "required": [
+          "predictor",
+          "thresholds",
+          "signatures"
+        ],
+        "title": "ModelVersions",
+        "type": "object"
+      },
+      "ProbableZone": {
+        "additionalProperties": false,
+        "properties": {
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "zone_id",
+          "score"
+        ],
+        "title": "ProbableZone",
+        "type": "object"
+      },
+      "PumpUiStatus": {
+        "enum": [
+          "ON",
+          "OFF"
+        ],
+        "title": "PumpUiStatus",
+        "type": "string"
+      },
+      "SensorDelta": {
+        "additionalProperties": false,
+        "properties": {
+          "sensor_id": {
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "baseline_m": {
+            "title": "Baseline M",
+            "type": "number"
+          },
+          "observed_m": {
+            "title": "Observed M",
+            "type": "number"
+          },
+          "pct_change": {
+            "title": "Pct Change",
+            "type": "number"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "baseline_m",
+          "observed_m",
+          "pct_change"
+        ],
+        "title": "SensorDelta",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "Handed to the agent. Contains NO ground truth (\u00a77.12, \u00a711).",
+    "properties": {
+      "incident_id": {
+        "title": "Incident Id",
+        "type": "string"
+      },
+      "session_id": {
+        "title": "Session Id",
+        "type": "string"
+      },
+      "created_sim_time_s": {
+        "title": "Created Sim Time S",
+        "type": "integer"
+      },
+      "network_id": {
+        "title": "Network Id",
+        "type": "string"
+      },
+      "sensor_layout_id": {
+        "title": "Sensor Layout Id",
+        "type": "string"
+      },
+      "anomaly": {
+        "$ref": "#/$defs/AnomalyResult"
+      },
+      "localisation": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/LocalisationResult"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "evidence": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "model_versions": {
+        "$ref": "#/$defs/ModelVersions"
+      }
+    },
+    "required": [
+      "incident_id",
+      "session_id",
+      "created_sim_time_s",
+      "network_id",
+      "sensor_layout_id",
+      "anomaly",
+      "evidence",
+      "model_versions"
+    ],
+    "title": "Incident",
+    "type": "object"
+  },
+  "7.13": {
+    "$defs": {
+      "Confidence": {
+        "enum": [
+          "HIGH",
+          "MEDIUM",
+          "LOW"
+        ],
+        "title": "Confidence",
+        "type": "string"
+      },
+      "EvidenceClaim": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "title": "Claim",
+            "type": "string"
+          },
+          "source_tool": {
+            "title": "Source Tool",
+            "type": "string"
+          },
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fields",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "source_tool"
+        ],
+        "title": "EvidenceClaim",
+        "type": "object"
+      },
+      "GroundingCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "unmatched_numbers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unmatched Numbers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "passed"
+        ],
+        "title": "GroundingCheck",
+        "type": "object"
+      },
+      "RecommendedAction": {
+        "additionalProperties": false,
+        "properties": {
+          "priority": {
+            "minimum": 1,
+            "title": "Priority",
+            "type": "integer"
+          },
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          }
+        },
+        "required": [
+          "priority",
+          "action",
+          "rationale"
+        ],
+        "title": "RecommendedAction",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "incident_id": {
+        "title": "Incident Id",
+        "type": "string"
+      },
+      "headline": {
+        "title": "Headline",
+        "type": "string"
+      },
+      "what_happened": {
+        "title": "What Happened",
+        "type": "string"
+      },
+      "why_suspicious": {
+        "title": "Why Suspicious",
+        "type": "string"
+      },
+      "where": {
+        "title": "Where",
+        "type": "string"
+      },
+      "evidence": {
+        "items": {
+          "$ref": "#/$defs/EvidenceClaim"
+        },
+        "title": "Evidence",
+        "type": "array"
+      },
+      "recommended_actions": {
+        "items": {
+          "$ref": "#/$defs/RecommendedAction"
+        },
+        "title": "Recommended Actions",
+        "type": "array"
+      },
+      "confidence": {
+        "$ref": "#/$defs/Confidence"
+      },
+      "caveats": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Caveats",
+        "type": "array"
+      },
+      "grounding_check": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GroundingCheck"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "generated_by": {
+        "anyOf": [
+          {
+            "enum": [
+              "bedrock",
+              "template"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Generated By"
+      }
+    },
+    "required": [
+      "incident_id",
+      "headline",
+      "what_happened",
+      "why_suspicious",
+      "where",
+      "evidence",
+      "recommended_actions",
+      "confidence"
+    ],
+    "title": "AgentReport",
+    "type": "object"
+  },
+  "7.14.1.view": {
+    "$defs": {
+      "ChallengeState": {
+        "description": "Server-side `/challenge/status` state (\u00a77.14.1).",
+        "enum": [
+          "RUNNING",
+          "DETECTED",
+          "TIMEOUT"
+        ],
+        "title": "ChallengeState",
+        "type": "string"
+      },
+      "LinkStatus": {
+        "enum": [
+          "OPEN",
+          "CLOSED",
+          "ACTIVE"
+        ],
+        "title": "LinkStatus",
+        "type": "string"
+      },
+      "NetworkStatus": {
+        "enum": [
+          "NORMAL",
+          "WATCH",
+          "ANOMALY"
+        ],
+        "title": "NetworkStatus",
+        "type": "string"
+      },
+      "NodeUiStatus": {
+        "enum": [
+          "ok",
+          "low",
+          "critical"
+        ],
+        "title": "NodeUiStatus",
+        "type": "string"
+      },
+      "PumpUiStatus": {
+        "enum": [
+          "ON",
+          "OFF"
+        ],
+        "title": "PumpUiStatus",
+        "type": "string"
+      },
+      "ViewChallenge": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "challenge_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Challenge Id"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ChallengeState"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "active"
+        ],
+        "title": "ViewChallenge",
+        "type": "object"
+      },
+      "ViewEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "sim_time_s": {
+            "title": "Sim Time S",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sim_time_s",
+          "text"
+        ],
+        "title": "ViewEvent",
+        "type": "object"
+      },
+      "ViewLink": {
+        "additionalProperties": false,
+        "properties": {
+          "flow_lps": {
+            "title": "Flow Lps",
+            "type": "number"
+          },
+          "velocity_ms": {
+            "title": "Velocity Ms",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/$defs/LinkStatus"
+          },
+          "direction": {
+            "enum": [
+              -1,
+              0,
+              1
+            ],
+            "title": "Direction",
+            "type": "integer"
+          },
+          "visual_fault": {
+            "$ref": "#/$defs/VisualFault",
+            "default": "NONE"
+          }
+        },
+        "required": [
+          "flow_lps",
+          "velocity_ms",
+          "status",
+          "direction"
+        ],
+        "title": "ViewLink",
+        "type": "object"
+      },
+      "ViewNode": {
+        "additionalProperties": false,
+        "properties": {
+          "pressure_m": {
+            "title": "Pressure M",
+            "type": "number"
+          },
+          "head_m": {
+            "title": "Head M",
+            "type": "number"
+          },
+          "demand_lps": {
+            "title": "Demand Lps",
+            "type": "number"
+          },
+          "is_sensor": {
+            "title": "Is Sensor",
+            "type": "boolean"
+          },
+          "sensor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sensor Id"
+          },
+          "status": {
+            "$ref": "#/$defs/NodeUiStatus"
+          }
+        },
+        "required": [
+          "pressure_m",
+          "head_m",
+          "demand_lps",
+          "is_sensor",
+          "status"
+        ],
+        "title": "ViewNode",
+        "type": "object"
+      },
+      "ViewPump": {
+        "additionalProperties": false,
+        "properties": {
+          "pump_id": {
+            "title": "Pump Id",
+            "type": "string"
+          },
+          "flow_lps": {
+            "title": "Flow Lps",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/$defs/PumpUiStatus"
+          }
+        },
+        "required": [
+          "pump_id",
+          "flow_lps",
+          "status"
+        ],
+        "title": "ViewPump",
+        "type": "object"
+      },
+      "ViewTank": {
+        "additionalProperties": false,
+        "properties": {
+          "tank_id": {
+            "title": "Tank Id",
+            "type": "string"
+          },
+          "level_m": {
+            "title": "Level M",
+            "type": "number"
+          },
+          "level_pct": {
+            "title": "Level Pct",
+            "type": "number"
+          }
+        },
+        "required": [
+          "tank_id",
+          "level_m",
+          "level_pct"
+        ],
+        "title": "ViewTank",
+        "type": "object"
+      },
+      "ViewTap": {
+        "additionalProperties": false,
+        "properties": {
+          "open": {
+            "title": "Open",
+            "type": "boolean"
+          },
+          "demand_lps": {
+            "title": "Demand Lps",
+            "type": "number"
+          }
+        },
+        "required": [
+          "open",
+          "demand_lps"
+        ],
+        "title": "ViewTap",
+        "type": "object"
+      },
+      "ViewValve": {
+        "additionalProperties": false,
+        "properties": {
+          "open": {
+            "title": "Open",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "open"
+        ],
+        "title": "ViewValve",
+        "type": "object"
+      },
+      "VisualFault": {
+        "enum": [
+          "NONE",
+          "LEAK",
+          "BURST"
+        ],
+        "title": "VisualFault",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "description": "UI-shaped state: units converted, hidden fields stripped (\u00a77.14.1).",
+    "properties": {
+      "session_id": {
+        "title": "Session Id",
+        "type": "string"
+      },
+      "sim_time_s": {
+        "title": "Sim Time S",
+        "type": "integer"
+      },
+      "clock": {
+        "title": "Clock",
+        "type": "string"
+      },
+      "speed": {
+        "enum": [
+          1,
+          5,
+          20
+        ],
+        "title": "Speed",
+        "type": "integer"
+      },
+      "nodes": {
+        "additionalProperties": {
+          "$ref": "#/$defs/ViewNode"
+        },
+        "title": "Nodes",
+        "type": "object"
+      },
+      "links": {
+        "additionalProperties": {
+          "$ref": "#/$defs/ViewLink"
+        },
+        "title": "Links",
+        "type": "object"
+      },
+      "tank": {
+        "$ref": "#/$defs/ViewTank"
+      },
+      "pump": {
+        "$ref": "#/$defs/ViewPump"
+      },
+      "taps": {
+        "additionalProperties": {
+          "$ref": "#/$defs/ViewTap"
+        },
+        "title": "Taps",
+        "type": "object"
+      },
+      "valves": {
+        "additionalProperties": {
+          "$ref": "#/$defs/ViewValve"
+        },
+        "title": "Valves",
+        "type": "object"
+      },
+      "network_status": {
+        "$ref": "#/$defs/NetworkStatus"
+      },
+      "challenge": {
+        "$ref": "#/$defs/ViewChallenge"
+      },
+      "events": {
+        "items": {
+          "$ref": "#/$defs/ViewEvent"
+        },
+        "title": "Events",
+        "type": "array"
+      }
+    },
+    "required": [
+      "session_id",
+      "sim_time_s",
+      "clock",
+      "speed",
+      "nodes",
+      "links",
+      "tank",
+      "pump",
+      "taps",
+      "valves",
+      "network_status",
+      "challenge"
+    ],
+    "title": "NetworkView",
+    "type": "object"
+  },
+  "7.14.1.reveal": {
+    "$defs": {
+      "FaultType": {
+        "description": "\u00a77.2 hydraulic fault types.",
+        "enum": [
+          "LEAK",
+          "BURST",
+          "VALVE_CLOSURE",
+          "PARTIAL_VALVE",
+          "PUMP_DEGRADE",
+          "PUMP_TRIP",
+          "LOW_RESERVOIR",
+          "DEMAND_SPIKE",
+          "DEMAND_SHIFT"
+        ],
+        "title": "FaultType",
+        "type": "string"
+      },
+      "LocationKind": {
+        "description": "Fault / candidate location kind (\u00a77.2, \u00a77.11, \u00a78.2).",
+        "enum": [
+          "pipe",
+          "junction"
+        ],
+        "title": "LocationKind",
+        "type": "string"
+      },
+      "RevealAI": {
+        "additionalProperties": false,
+        "properties": {
+          "detected": {
+            "title": "Detected",
+            "type": "boolean"
+          },
+          "detection_delay_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Detection Delay S"
+          },
+          "true_location_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "True Location Rank"
+          },
+          "zone_correct": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Zone Correct"
+          },
+          "report_incident_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Report Incident Id"
+          }
+        },
+        "required": [
+          "detected"
+        ],
+        "title": "RevealAI",
+        "type": "object"
+      },
+      "RevealTruth": {
+        "additionalProperties": false,
+        "properties": {
+          "fault_type": {
+            "$ref": "#/$defs/FaultType"
+          },
+          "location_kind": {
+            "$ref": "#/$defs/LocationKind"
+          },
+          "location_id": {
+            "title": "Location Id",
+            "type": "string"
+          },
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          },
+          "start_sim_time_s": {
+            "title": "Start Sim Time S",
+            "type": "integer"
+          },
+          "leak_peak_lps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Leak Peak Lps"
+          },
+          "severity_bucket": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SeverityBucket"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "fault_type",
+          "location_kind",
+          "location_id",
+          "zone_id",
+          "start_sim_time_s"
+        ],
+        "title": "RevealTruth",
+        "type": "object"
+      },
+      "SeverityBucket": {
+        "enum": [
+          "<5%",
+          "5-15%",
+          "15-25%",
+          ">25%"
+        ],
+        "title": "SeverityBucket",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "truth": {
+        "$ref": "#/$defs/RevealTruth"
+      },
+      "ai": {
+        "$ref": "#/$defs/RevealAI"
+      }
+    },
+    "required": [
+      "truth",
+      "ai"
+    ],
+    "title": "ChallengeReveal",
+    "type": "object"
+  },
+  "7.15": {
+    "$defs": {
+      "AgentReport": {
+        "additionalProperties": false,
+        "properties": {
+          "incident_id": {
+            "title": "Incident Id",
+            "type": "string"
+          },
+          "headline": {
+            "title": "Headline",
+            "type": "string"
+          },
+          "what_happened": {
+            "title": "What Happened",
+            "type": "string"
+          },
+          "why_suspicious": {
+            "title": "Why Suspicious",
+            "type": "string"
+          },
+          "where": {
+            "title": "Where",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/$defs/EvidenceClaim"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "recommended_actions": {
+            "items": {
+              "$ref": "#/$defs/RecommendedAction"
+            },
+            "title": "Recommended Actions",
+            "type": "array"
+          },
+          "confidence": {
+            "$ref": "#/$defs/Confidence"
+          },
+          "caveats": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Caveats",
+            "type": "array"
+          },
+          "grounding_check": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/GroundingCheck"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "generated_by": {
+            "anyOf": [
+              {
+                "enum": [
+                  "bedrock",
+                  "template"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Generated By"
+          }
+        },
+        "required": [
+          "incident_id",
+          "headline",
+          "what_happened",
+          "why_suspicious",
+          "where",
+          "evidence",
+          "recommended_actions",
+          "confidence"
+        ],
+        "title": "AgentReport",
+        "type": "object"
+      },
+      "ChallengeReveal": {
+        "additionalProperties": false,
+        "properties": {
+          "truth": {
+            "$ref": "#/$defs/RevealTruth"
+          },
+          "ai": {
+            "$ref": "#/$defs/RevealAI"
+          }
+        },
+        "required": [
+          "truth",
+          "ai"
+        ],
+        "title": "ChallengeReveal",
+        "type": "object"
+      },
+      "ChallengeState": {
+        "description": "Server-side `/challenge/status` state (\u00a77.14.1).",
+        "enum": [
+          "RUNNING",
+          "DETECTED",
+          "TIMEOUT"
+        ],
+        "title": "ChallengeState",
+        "type": "string"
+      },
+      "Confidence": {
+        "enum": [
+          "HIGH",
+          "MEDIUM",
+          "LOW"
+        ],
+        "title": "Confidence",
+        "type": "string"
+      },
+      "EvidenceClaim": {
+        "additionalProperties": false,
+        "properties": {
+          "claim": {
+            "title": "Claim",
+            "type": "string"
+          },
+          "source_tool": {
+            "title": "Source Tool",
+            "type": "string"
+          },
+          "fields": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Fields",
+            "type": "array"
+          }
+        },
+        "required": [
+          "claim",
+          "source_tool"
+        ],
+        "title": "EvidenceClaim",
+        "type": "object"
+      },
+      "FaultType": {
+        "description": "\u00a77.2 hydraulic fault types.",
+        "enum": [
+          "LEAK",
+          "BURST",
+          "VALVE_CLOSURE",
+          "PARTIAL_VALVE",
+          "PUMP_DEGRADE",
+          "PUMP_TRIP",
+          "LOW_RESERVOIR",
+          "DEMAND_SPIKE",
+          "DEMAND_SHIFT"
+        ],
+        "title": "FaultType",
+        "type": "string"
+      },
+      "FlowSensorDef": {
+        "additionalProperties": false,
+        "properties": {
+          "sensor_id": {
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "link_id": {
+            "title": "Link Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "link_id"
+        ],
+        "title": "FlowSensorDef",
+        "type": "object"
+      },
+      "GroundingCheck": {
+        "additionalProperties": false,
+        "properties": {
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "unmatched_numbers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unmatched Numbers",
+            "type": "array"
+          }
+        },
+        "required": [
+          "passed"
+        ],
+        "title": "GroundingCheck",
+        "type": "object"
+      },
+      "LinkConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "link_id": {
+            "title": "Link Id",
+            "type": "string"
+          },
+          "link_type": {
+            "$ref": "#/$defs/LinkType"
+          },
+          "start_node": {
+            "title": "Start Node",
+            "type": "string"
+          },
+          "end_node": {
+            "title": "End Node",
+            "type": "string"
+          },
+          "length_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Length M"
+          },
+          "diameter_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Diameter M"
+          },
+          "roughness_hw": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Roughness Hw"
+          },
+          "initial_status": {
+            "$ref": "#/$defs/LinkStatus",
+            "default": "OPEN"
+          },
+          "zone_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Zone Id"
+          }
+        },
+        "required": [
+          "link_id",
+          "link_type",
+          "start_node",
+          "end_node"
+        ],
+        "title": "LinkConfig",
+        "type": "object"
+      },
+      "LinkStatus": {
+        "enum": [
+          "OPEN",
+          "CLOSED",
+          "ACTIVE"
+        ],
+        "title": "LinkStatus",
+        "type": "string"
+      },
+      "LinkType": {
+        "enum": [
+          "pipe",
+          "pump",
+          "valve"
+        ],
+        "title": "LinkType",
+        "type": "string"
+      },
+      "LocationKind": {
+        "description": "Fault / candidate location kind (\u00a77.2, \u00a77.11, \u00a78.2).",
+        "enum": [
+          "pipe",
+          "junction"
+        ],
+        "title": "LocationKind",
+        "type": "string"
+      },
+      "NetworkStatus": {
+        "enum": [
+          "NORMAL",
+          "WATCH",
+          "ANOMALY"
+        ],
+        "title": "NetworkStatus",
+        "type": "string"
+      },
+      "NetworkTopology": {
+        "additionalProperties": false,
+        "description": "`GET /network/topology` (\u00a77.14.1): NetworkConfig minus hydraulics internals.",
+        "properties": {
+          "schema_version": {
+            "default": "1.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "network_id": {
+            "title": "Network Id",
+            "type": "string"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/$defs/NodeConfig"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/$defs/LinkConfig"
+            },
+            "title": "Links",
+            "type": "array"
+          },
+          "zones": {
+            "items": {
+              "$ref": "#/$defs/Zone"
+            },
+            "title": "Zones",
+            "type": "array"
+          },
+          "taps": {
+            "items": {
+              "$ref": "#/$defs/TapDef"
+            },
+            "title": "Taps",
+            "type": "array"
+          },
+          "valves": {
+            "items": {
+              "$ref": "#/$defs/ValveDef"
+            },
+            "title": "Valves",
+            "type": "array"
+          },
+          "sensor_layout": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SensorLayout"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "network_id",
+          "nodes",
+          "links",
+          "zones",
+          "taps",
+          "valves"
+        ],
+        "title": "NetworkTopology",
+        "type": "object"
+      },
+      "NetworkView": {
+        "additionalProperties": false,
+        "description": "UI-shaped state: units converted, hidden fields stripped (\u00a77.14.1).",
+        "properties": {
+          "session_id": {
+            "title": "Session Id",
+            "type": "string"
+          },
+          "sim_time_s": {
+            "title": "Sim Time S",
+            "type": "integer"
+          },
+          "clock": {
+            "title": "Clock",
+            "type": "string"
+          },
+          "speed": {
+            "enum": [
+              1,
+              5,
+              20
+            ],
+            "title": "Speed",
+            "type": "integer"
+          },
+          "nodes": {
+            "additionalProperties": {
+              "$ref": "#/$defs/ViewNode"
+            },
+            "title": "Nodes",
+            "type": "object"
+          },
+          "links": {
+            "additionalProperties": {
+              "$ref": "#/$defs/ViewLink"
+            },
+            "title": "Links",
+            "type": "object"
+          },
+          "tank": {
+            "$ref": "#/$defs/ViewTank"
+          },
+          "pump": {
+            "$ref": "#/$defs/ViewPump"
+          },
+          "taps": {
+            "additionalProperties": {
+              "$ref": "#/$defs/ViewTap"
+            },
+            "title": "Taps",
+            "type": "object"
+          },
+          "valves": {
+            "additionalProperties": {
+              "$ref": "#/$defs/ViewValve"
+            },
+            "title": "Valves",
+            "type": "object"
+          },
+          "network_status": {
+            "$ref": "#/$defs/NetworkStatus"
+          },
+          "challenge": {
+            "$ref": "#/$defs/ViewChallenge"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/$defs/ViewEvent"
+            },
+            "title": "Events",
+            "type": "array"
+          }
+        },
+        "required": [
+          "session_id",
+          "sim_time_s",
+          "clock",
+          "speed",
+          "nodes",
+          "links",
+          "tank",
+          "pump",
+          "taps",
+          "valves",
+          "network_status",
+          "challenge"
+        ],
+        "title": "NetworkView",
+        "type": "object"
+      },
+      "NodeConfig": {
+        "additionalProperties": false,
+        "properties": {
+          "node_id": {
+            "title": "Node Id",
+            "type": "string"
+          },
+          "node_type": {
+            "$ref": "#/$defs/NodeType"
+          },
+          "elevation_m": {
+            "title": "Elevation M",
+            "type": "number"
+          },
+          "base_demand_m3s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Base Demand M3S"
+          },
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          },
+          "ui_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Ui Label"
+          },
+          "zone_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Zone Id"
+          }
+        },
+        "required": [
+          "node_id",
+          "node_type",
+          "elevation_m",
+          "x",
+          "y"
+        ],
+        "title": "NodeConfig",
+        "type": "object"
+      },
+      "NodeType": {
+        "enum": [
+          "junction",
+          "reservoir",
+          "tank"
+        ],
+        "title": "NodeType",
+        "type": "string"
+      },
+      "NodeUiStatus": {
+        "enum": [
+          "ok",
+          "low",
+          "critical"
+        ],
+        "title": "NodeUiStatus",
+        "type": "string"
+      },
+      "PressureSensorDef": {
+        "additionalProperties": false,
+        "properties": {
+          "sensor_id": {
+            "title": "Sensor Id",
+            "type": "string"
+          },
+          "node_id": {
+            "title": "Node Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sensor_id",
+          "node_id"
+        ],
+        "title": "PressureSensorDef",
+        "type": "object"
+      },
+      "PumpUiStatus": {
+        "enum": [
+          "ON",
+          "OFF"
+        ],
+        "title": "PumpUiStatus",
+        "type": "string"
+      },
+      "RecommendedAction": {
+        "additionalProperties": false,
+        "properties": {
+          "priority": {
+            "minimum": 1,
+            "title": "Priority",
+            "type": "integer"
+          },
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          }
+        },
+        "required": [
+          "priority",
+          "action",
+          "rationale"
+        ],
+        "title": "RecommendedAction",
+        "type": "object"
+      },
+      "RevealAI": {
+        "additionalProperties": false,
+        "properties": {
+          "detected": {
+            "title": "Detected",
+            "type": "boolean"
+          },
+          "detection_delay_s": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Detection Delay S"
+          },
+          "true_location_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "True Location Rank"
+          },
+          "zone_correct": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Zone Correct"
+          },
+          "report_incident_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Report Incident Id"
+          }
+        },
+        "required": [
+          "detected"
+        ],
+        "title": "RevealAI",
+        "type": "object"
+      },
+      "RevealTruth": {
+        "additionalProperties": false,
+        "properties": {
+          "fault_type": {
+            "$ref": "#/$defs/FaultType"
+          },
+          "location_kind": {
+            "$ref": "#/$defs/LocationKind"
+          },
+          "location_id": {
+            "title": "Location Id",
+            "type": "string"
+          },
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          },
+          "start_sim_time_s": {
+            "title": "Start Sim Time S",
+            "type": "integer"
+          },
+          "leak_peak_lps": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Leak Peak Lps"
+          },
+          "severity_bucket": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/SeverityBucket"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "fault_type",
+          "location_kind",
+          "location_id",
+          "zone_id",
+          "start_sim_time_s"
+        ],
+        "title": "RevealTruth",
+        "type": "object"
+      },
+      "Selection": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "node",
+              "link",
+              "tap",
+              "valve"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "id"
+        ],
+        "title": "Selection",
+        "type": "object"
+      },
+      "SensorLayout": {
+        "additionalProperties": false,
+        "properties": {
+          "sensor_layout_id": {
+            "title": "Sensor Layout Id",
+            "type": "string"
+          },
+          "pressure": {
+            "items": {
+              "$ref": "#/$defs/PressureSensorDef"
+            },
+            "title": "Pressure",
+            "type": "array"
+          },
+          "flow": {
+            "items": {
+              "$ref": "#/$defs/FlowSensorDef"
+            },
+            "title": "Flow",
+            "type": "array"
+          },
+          "context": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Context",
+            "type": "array"
+          }
+        },
+        "required": [
+          "sensor_layout_id",
+          "pressure",
+          "flow",
+          "context"
+        ],
+        "title": "SensorLayout",
+        "type": "object"
+      },
+      "SeverityBucket": {
+        "enum": [
+          "<5%",
+          "5-15%",
+          "15-25%",
+          ">25%"
+        ],
+        "title": "SeverityBucket",
+        "type": "string"
+      },
+      "StoreChallenge": {
+        "additionalProperties": false,
+        "properties": {
+          "state": {
+            "$ref": "#/$defs/UiChallengeState"
+          },
+          "incidentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Incidentid"
+          },
+          "reveal": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ChallengeReveal"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "state"
+        ],
+        "title": "StoreChallenge",
+        "type": "object"
+      },
+      "TapDef": {
+        "additionalProperties": false,
+        "properties": {
+          "tap_id": {
+            "title": "Tap Id",
+            "type": "string"
+          },
+          "node_id": {
+            "title": "Node Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tap_id",
+          "node_id"
+        ],
+        "title": "TapDef",
+        "type": "object"
+      },
+      "UiChallengeState": {
+        "description": "Frontend store challenge state (\u00a77.15).",
+        "enum": [
+          "IDLE",
+          "RUNNING",
+          "DETECTED",
+          "REVEALED"
+        ],
+        "title": "UiChallengeState",
+        "type": "string"
+      },
+      "ValveDef": {
+        "additionalProperties": false,
+        "properties": {
+          "valve_id": {
+            "title": "Valve Id",
+            "type": "string"
+          },
+          "link_id": {
+            "title": "Link Id",
+            "type": "string"
+          },
+          "impl": {
+            "const": "pipe_status",
+            "title": "Impl",
+            "type": "string"
+          }
+        },
+        "required": [
+          "valve_id",
+          "link_id",
+          "impl"
+        ],
+        "title": "ValveDef",
+        "type": "object"
+      },
+      "ViewChallenge": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "challenge_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Challenge Id"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ChallengeState"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "active"
+        ],
+        "title": "ViewChallenge",
+        "type": "object"
+      },
+      "ViewEvent": {
+        "additionalProperties": false,
+        "properties": {
+          "sim_time_s": {
+            "title": "Sim Time S",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sim_time_s",
+          "text"
+        ],
+        "title": "ViewEvent",
+        "type": "object"
+      },
+      "ViewLink": {
+        "additionalProperties": false,
+        "properties": {
+          "flow_lps": {
+            "title": "Flow Lps",
+            "type": "number"
+          },
+          "velocity_ms": {
+            "title": "Velocity Ms",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/$defs/LinkStatus"
+          },
+          "direction": {
+            "enum": [
+              -1,
+              0,
+              1
+            ],
+            "title": "Direction",
+            "type": "integer"
+          },
+          "visual_fault": {
+            "$ref": "#/$defs/VisualFault",
+            "default": "NONE"
+          }
+        },
+        "required": [
+          "flow_lps",
+          "velocity_ms",
+          "status",
+          "direction"
+        ],
+        "title": "ViewLink",
+        "type": "object"
+      },
+      "ViewNode": {
+        "additionalProperties": false,
+        "properties": {
+          "pressure_m": {
+            "title": "Pressure M",
+            "type": "number"
+          },
+          "head_m": {
+            "title": "Head M",
+            "type": "number"
+          },
+          "demand_lps": {
+            "title": "Demand Lps",
+            "type": "number"
+          },
+          "is_sensor": {
+            "title": "Is Sensor",
+            "type": "boolean"
+          },
+          "sensor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sensor Id"
+          },
+          "status": {
+            "$ref": "#/$defs/NodeUiStatus"
+          }
+        },
+        "required": [
+          "pressure_m",
+          "head_m",
+          "demand_lps",
+          "is_sensor",
+          "status"
+        ],
+        "title": "ViewNode",
+        "type": "object"
+      },
+      "ViewPump": {
+        "additionalProperties": false,
+        "properties": {
+          "pump_id": {
+            "title": "Pump Id",
+            "type": "string"
+          },
+          "flow_lps": {
+            "title": "Flow Lps",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/$defs/PumpUiStatus"
+          }
+        },
+        "required": [
+          "pump_id",
+          "flow_lps",
+          "status"
+        ],
+        "title": "ViewPump",
+        "type": "object"
+      },
+      "ViewTank": {
+        "additionalProperties": false,
+        "properties": {
+          "tank_id": {
+            "title": "Tank Id",
+            "type": "string"
+          },
+          "level_m": {
+            "title": "Level M",
+            "type": "number"
+          },
+          "level_pct": {
+            "title": "Level Pct",
+            "type": "number"
+          }
+        },
+        "required": [
+          "tank_id",
+          "level_m",
+          "level_pct"
+        ],
+        "title": "ViewTank",
+        "type": "object"
+      },
+      "ViewTap": {
+        "additionalProperties": false,
+        "properties": {
+          "open": {
+            "title": "Open",
+            "type": "boolean"
+          },
+          "demand_lps": {
+            "title": "Demand Lps",
+            "type": "number"
+          }
+        },
+        "required": [
+          "open",
+          "demand_lps"
+        ],
+        "title": "ViewTap",
+        "type": "object"
+      },
+      "ViewValve": {
+        "additionalProperties": false,
+        "properties": {
+          "open": {
+            "title": "Open",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "open"
+        ],
+        "title": "ViewValve",
+        "type": "object"
+      },
+      "VisualFault": {
+        "enum": [
+          "NONE",
+          "LEAK",
+          "BURST"
+        ],
+        "title": "VisualFault",
+        "type": "string"
+      },
+      "Zone": {
+        "additionalProperties": false,
+        "properties": {
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "zone_id",
+          "name"
+        ],
+        "title": "Zone",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "topology": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/NetworkTopology"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "view": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/NetworkView"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "speed": {
+        "enum": [
+          1,
+          5,
+          20
+        ],
+        "title": "Speed",
+        "type": "integer"
+      },
+      "running": {
+        "title": "Running",
+        "type": "boolean"
+      },
+      "selection": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Selection"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "challenge": {
+        "$ref": "#/$defs/StoreChallenge"
+      },
+      "report": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AgentReport"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "topology",
+      "view",
+      "speed",
+      "running",
+      "selection",
+      "challenge",
+      "report"
+    ],
+    "title": "SimStore",
+    "type": "object"
+  }
+}

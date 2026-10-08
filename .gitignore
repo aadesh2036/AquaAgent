@@ -1,0 +1,33 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Secrets / local env — NEVER commit
+.env
+infra/env.sh
+infra/.state/
+
+# Data & artefacts (live in S3, BACKBONE §10.2)
+data/*
+!data/.gitkeep
+*.parquet
+*.pt
+*.npz
+model.tar.gz
+
+# Logs
+infra/logs/*
+!infra/logs/.gitkeep
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

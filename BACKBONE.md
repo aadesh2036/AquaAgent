@@ -6,8 +6,8 @@
 | Field | Value |
 |---|---|
 | Document | BACKBONE.md — master PRD + contract spec |
-| Contract version | `backbone/1.0.0` |
-| Status | FROZEN for hackathon (8–11 Oct 2026) unless changed via §17 |
+| Contract version | `backbone/1.1.0` |
+| Status | FROZEN for hackathon (8–11 Oct 2026) unless changed via §17. v1.1.0 resolves `docs/BACKBONE_ISSUES.md` BI-01…BI-21 and re-tiers scope to the **MVP detection loop** (§2) |
 | Owner | Aadesh Deshmukh |
 | Applies to | Every module MD in `docs/modules/` and every coding agent |
 
@@ -15,11 +15,11 @@
 
 ## 0. How to Use This Document (READ FIRST — agents included)
 
-1. **Every agent reads two files:** this `BACKBONE.md` **and** the one module MD it is assigned (e.g. `docs/modules/01_SIMULATION_ENGINE.md`). Nothing else is required context.
+1. **Every agent reads:** `INSTRUCTIONS.md` (process rules, no contracts), this `BACKBONE.md`, **and** the one module MD it is assigned (e.g. `docs/modules/01_SIMULATION_ENGINE.md`). `TILL_NOW.md` is read for status only. Nothing else is required context.
 2. **BACKBONE owns the contracts.** Module MDs own the implementation. A module MD may *add* internal detail but may **never redefine** a schema, ID, unit, endpoint, S3 path or env var defined here.
 3. **If a contract is wrong or missing:** stop, propose the change in the module MD under `## Proposed Backbone Changes`, and the owner bumps `backbone/x.y.z` (§17). Do not silently diverge.
 4. **Every schema here has a Pydantic (Python) and a TypeScript twin.** They live in `shared/contracts/` and are the only place schemas are coded. Modules import them; they do not re-declare them.
-5. **Precedence when documents disagree:** BACKBONE.md > module MD > `AquaAgent_handoff.md` > Simulation Spec v1 > Prototype Guide > README_FOR_SIM.md.
+5. **Precedence when documents disagree:** BACKBONE.md > module MD > `CONTEXT/AquaAgent_handoff.md` > Simulation Spec v1 > Prototype Guide > README_FOR_SIM.md.
 6. Every module ends with an **acceptance gate** (§12). A module is not "done" until its gate passes.
 
 ---
@@ -37,11 +37,12 @@ Healthy network (live WNTR physics, animated)
   → judge opens a tap → pressures/flows change for real
   → judge presses TEST THE AI → backend secretly injects a real WNTR leak
   → only S1/S2/S3 + F1/F2 readings go to the ML pipeline
-  → SageMaker endpoint reconstructs expected state
+  → predictor (MLP) reconstructs the expected state            [T2: served by SageMaker endpoint]
   → residuals cross dual threshold → anomaly detected
-  → localisation ranks candidate pipes/zones
-  → Bedrock AquaAgent explains WHAT / WHY / WHERE / EVIDENCE / ACTION
-  → REVEAL: ground truth vs AI answer, detection delay, rank of true location
+  → AquaAgent explains WHAT / WHY / EVIDENCE / ACTION from the Incident
+       [T1: deterministic TemplateReporter · T2: Bedrock agent, grounded]
+  → REVEAL: ground truth vs AI answer, detected?, detection delay
+       [T2: + localisation rank of the true location / probable zone]
 ```
 
 ### 1.3 Non-negotiable principles
@@ -59,31 +60,32 @@ Healthy network (live WNTR physics, animated)
 
 ## 2. Frozen Scope
 
-### 2.1 In scope (hackathon build)
+### 2.1 In scope (hackathon build) — v1.1.0 re-tier: "one small feature that works"
+
+**T1 = the MVP detection loop, fully working locally (`docker compose up`).** Everything in T1 must work before any T2 item starts. The simulation is the core of everything.
 
 | Tier | Item | Owner MD |
 |---|---|---|
-| **T1 — must work** | WNTR simulation engine (interactive + batch) in a container | 01, 02 |
-| T1 | Synthetic dataset (≥2,000 simulations) in S3, ML-ready | 02, 03 |
-| T1 | Hydraulic state predictor (baseline MLP; GNN if it beats it) trained on SageMaker | 04, 06 |
-| T1 | SageMaker real-time endpoint serving the predictor | 06 |
-| T1 | Residual-based dual-threshold anomaly detector | 05 |
-| T1 | Signature-based localisation (top-k ranking) | 05 |
-| T1 | Orchestrator API coordinating sim ↔ ML ↔ agent | 08 |
-| T1 | React SVG interactive network on Amplify | 09 |
-| T1 | Bedrock AquaAgent (tool-use, grounded, structured report) | 07 |
-| **T2 — high value** | GNN predictor + hop-distance error report | 04 |
-| T2 | Fault-type classifier (leak vs valve vs demand vs sensor fault) | 05 |
-| T2 | Agent "what-if" counterfactual (isolate pipe → simulated impact) | 07, 01 |
-| **T3 — only if T1/T2 green** | Topology family (5–10-node generated networks), unseen-topology test | 02, 04 |
-| T3 | RL / pressure optimisation | — (future) |
-| T3 | Step Functions, IoT Core, MLOps | — (future, pitch slide only) |
+| **T1 — must work** | WNTR simulation engine: EPA tutorial network, PDD, real leaks, stepwise interactive session, sim server, container | 01 |
+| T1 | Synthetic dataset `ds1` (1,200 sims, 8 scenario types §8.1), generated **locally**, split by simulation | 02 |
+| T1 | Hydraulic state predictor: nearest-sensor baseline + **MLP** with leave-one-out over all 5 sensors | 04 |
+| T1 | Residual-based RTCA dual-threshold anomaly detector (thresholds tuned on val, frozen) | 05 |
+| T1 | Orchestrator API: session, challenge (hidden leak), SensorWindow firewall, predictor (in-process), detector, `Incident`, reveal | 08 |
+| T1 | `TemplateReporter`: deterministic WHAT/WHY/EVIDENCE/ACTION from the `Incident` (no LLM) | 07 |
+| T1 | React SVG interactive network (Explore · Break it · Test the AI), challenge + reveal UI | 09 |
+| T1 | Demo script + fallback video + honest metrics | 10 |
+| **T2 — high value, in this order** | T2a: AWS deploy of the T1 stack — S3 (dataset/models) + ECR + ECS (api+sim task, predictor in-process) + ALB + API Gateway + Amplify | 03 |
+| T2 | T2b: SageMaker training job (same `train.py`) → real-time endpoint (`AQUA_MODE=aws` predictor) | 06 |
+| T2 | T2c: signature-based localisation (top-k pipes, probable zone) | 05 |
+| T2 | T2d: Bedrock AquaAgent (Converse tool use, grounding check, template fallback) | 07 |
+| **T3 — only if T1+T2 green** | GNN predictor; ds2 scenario types (valve, pump, reservoir, demand spike, sensor faults); sensor-fault status; fault-type classifier; what-if counterfactual; ECS RunTask batch datagen; alternative sensor layouts; topology family | 02, 04, 05, 07 |
+| T3 (future, pitch only) | RL / pressure optimisation, Step Functions, IoT Core, MLOps | — |
 
 ### 2.2 Explicitly OUT of scope
 
 Real sensors / IoT hardware · Pune map or city-scale network · water quality · 3D/CFD · RL training · MLOps automation · multi-user sessions · authentication beyond an API key.
 
-> **Rule:** Never sacrifice a T1 item to build a T2/T3 item.
+> **Rule:** Never sacrifice a T1 item to build a T2/T3 item. A T2 item is started only after the T1 loop runs end-to-end locally (gate **MVP**, §12).
 
 ---
 
@@ -125,15 +127,15 @@ Real sensors / IoT hardware · Pune map or city-scale network · water quality �
 | Component | AWS service | Notes |
 |---|---|---|
 | Frontend | **Amplify Hosting** (GitHub-connected, branch `main`) | env `VITE_API_BASE_URL` |
-| Public HTTPS entry | **API Gateway HTTP API** → HTTP proxy to ALB | Solves mixed-content: Amplify is HTTPS, a raw ALB is HTTP. (Alt: CloudFront in front of ALB.) |
+| Public HTTPS entry | **API Gateway HTTP API** → HTTP proxy to ALB | Solves mixed-content: Amplify is HTTPS, a raw ALB is HTTP. Integration timeout is a hard **30 s** (not adjustable for HTTP APIs) → every request must finish < 25 s. **CORS is owned by FastAPI** (APIGW CORS unset). Stage throttling on (the API key is visible in the browser). |
 | Orchestrator + Sim engine | **ECS Fargate**, ONE task definition, TWO containers (`api` :8080, `sim` :8000) talking over `localhost` | One task = one in-memory session. `desiredCount = 1`. |
 | Load balancer | **ALB** → target group on `api:8080`, health `/api/health` | |
-| Batch data generation | **ECS RunTask** of the `aquaagent-sim` image with command `generate …`, N parallel shards | Same image as serve mode |
+| Batch data generation | **Local** `aquaagent-sim generate` (≈0.2 s per 24-h sim → minutes for ds1), then `aws s3 sync` | ECS RunTask of the same image = T3 (script exists, not on the critical path) |
 | Images | **ECR** repos `aquaagent-sim`, `aquaagent-api` | tag = git short SHA |
 | Data / models | **S3** bucket `aquaagent-<accountid>-<region>` | layout §10.2 |
 | Training | **SageMaker Training Job** (PyTorch framework container, script mode) | CPU instance is sufficient for an 8-node graph |
 | Inference | **SageMaker real-time endpoint**, 1 instance | Delete after the event (§10.5) |
-| Agent LLM | **Bedrock Converse API** with `toolConfig` | Bedrock Agents/AgentCore = pitch "next step", not required |
+| Agent LLM (T2d) | **Bedrock Converse API** with `toolConfig`; model id may be an **inference-profile id** | Bedrock Agents/AgentCore = pitch "next step", not required |
 | Logs | **CloudWatch Logs** for ECS, SageMaker | |
 
 > **Why not separate ECS services for sim and api?** The interactive session lives in memory. Two containers in one task share a lifecycle and `localhost`, which removes service discovery and state-sync work we do not have time for. The boundary between them is still a clean HTTP contract (§7.14.2), so they can be split later.
@@ -144,7 +146,7 @@ Every component must run locally with `docker compose up` **before** it is deplo
 
 | Client | `AQUA_MODE=local` | `AQUA_MODE=aws` |
 |---|---|---|
-| `PredictorClient` | loads `model.pt` from disk, in-process | invokes SageMaker endpoint |
+| `PredictorClient` | loads `model.tar.gz` content in-process (**T1 default, also used on ECS in T2a**) | invokes SageMaker endpoint (T2b) |
 | `AgentRunner` | Bedrock via local AWS creds, or `TemplateReporter` if `AQUA_AGENT=template` | Bedrock |
 | `DatasetStore` | `./data/` | `s3://…` |
 
@@ -158,11 +160,11 @@ Create these files in `docs/modules/`. Each module MD must contain: **Purpose ·
 |---|---|---|---|---|---|
 | 01 | `01_SIMULATION_ENGINE.md` | `sim/engine/`, `sim/server/` | §6, §7.1–7.4 | `HydraulicSnapshot`, sim HTTP API §7.14.2 | G1 |
 | 02 | `02_DATA_GENERATION.md` | `sim/generate/`, `sim/scenarios/` | §7.1–7.2, §8 | Parquet tables §7.5, manifest §7.6 | G2 |
-| 03 | `03_AWS_INFRA.md` | `infra/` | §3.2, §10 | ECR, ECS, ALB, APIGW, S3, IAM | G3 |
+| 03 | `03_AWS_INFRA.md` (T2a) | `infra/` | §3.2, §10 | ECR, ECS, ALB, APIGW, S3, IAM | G3 |
 | 04 | `04_ML_PREDICTOR.md` | `ml/predictor/`, `ml/features/` | §7.5, §7.7, §9.1–9.2 | `model.tar.gz`, eval report | G4 |
 | 05 | `05_ANOMALY_LOCALISATION.md` | `ml/anomaly/`, `ml/localisation/` | §7.9–7.11, §9.3–9.4 | thresholds.json, signatures.parquet, eval report | G5 |
-| 06 | `06_SAGEMAKER.md` | `ml/sagemaker/` | §7.9, §10 | training job, endpoint | G6 |
-| 07 | `07_AQUAAGENT_BEDROCK.md` | `api/agent/` | §7.12–7.13, §9.6 | `AgentReport` | G7 |
+| 06 | `06_SAGEMAKER.md` (T2b) | `ml/sagemaker/` | §7.9, §10 | training job, endpoint | G6 |
+| 07 | `07_AQUAAGENT_BEDROCK.md` (T1 template, T2d Bedrock) | `api/agent/` | §7.12–7.13, §9.6 | `AgentReport` | G7 |
 | 08 | `08_ORCHESTRATOR_API.md` | `api/` | everything | public API §7.14.1 | G8 |
 | 09 | `09_FRONTEND.md` | `frontend/` | §7.14.1, §7.15 | Amplify site | G9 |
 | 10 | `10_DEMO_AND_PITCH.md` | `docs/demo/` | eval reports | script, slides, fallback video | G10 |
@@ -170,12 +172,11 @@ Create these files in `docs/modules/`. Each module MD must contain: **Purpose ·
 ### Dependency graph (critical path in **bold**)
 
 ```
-**01 Sim engine** ──▶ **02 Data gen** ──▶ **04 Predictor** ──▶ **06 SageMaker** ──┐
-      │                    │                    │                               │
-      │                    └──▶ 05 Anomaly/Loc ◀┘                               ▼
-      ├──▶ 03 AWS infra ──────────────────────────────────────────────▶ **08 Orchestrator** ──▶ 10 Demo
-      └──▶ 09 Frontend (can start on mocked §7.14.1 from Day 1) ───────▶        ▲
-                                                     07 Agent ─────────────────┘
+T1 critical path (local):
+**01 Sim engine** ──▶ **02 Data gen** ──▶ **04 Predictor** ──▶ **05 Detector** ──▶ **08 Orchestrator** ──▶ 10 Demo
+      │                                                         07 TemplateReporter ──▶ ▲
+      └──▶ **09 Frontend** (mock §7.14.1 from Day 1; real sim API as soon as 01 serves) ─┘
+T2 (after gate MVP): 03 AWS deploy (T2a) → 06 SageMaker (T2b) → 05 localisation (T2c) → 07 Bedrock (T2d)
 ```
 
 ---
@@ -198,7 +199,10 @@ Create these files in `docs/modules/`. Each module MD must contain: **Purpose ·
 | Dataset version | `ds<n>` | `ds1` |
 | Model version | `<arch>_<dsVersion>_<yyyymmddhhmm>` | `mlp_ds1_202610091830` |
 | Session | `sess_<uuid4 short>` | `sess_3f9a1c` |
-| Incident | `inc_<sessionId>_<simTimeS>` | `inc_3f9a1c_43200` |
+| Incident | `inc_<sessionShort>_<simTimeS>` (`sessionShort` = session id without `sess_`) | `inc_3f9a1c_43200` |
+| Challenge | `chl_<sessionShort>_<simTimeS>` | `chl_3f9a1c_42300` |
+| Thresholds version | `thr_<dsVersion>_<yyyymmddhhmm>` | `thr_ds1_202610100900` |
+| Signatures version (T2c) | `sig_<dsVersion>_<yyyymmddhhmm>` | `sig_ds1_202610101000` |
 
 ### 5.2 Units (the single biggest source of silent bugs)
 
@@ -211,13 +215,17 @@ Create these files in `docs/modules/`. Each module MD must contain: **Purpose ·
 | Length / diameter | m | m / mm | `_m` / `_mm` |
 | Leak area | m² | cm² (display only) | `_m2` |
 | Time | seconds since sim start (int) | seconds + `HH:MM` label | `_s` |
+| Percentage | 0–100 | 0–100 | `_pct` (also the field `pct_change`) |
+| Tap flow (display only) | — | L/min | `_lpm` |
 
 **Rule:** every numeric column and JSON field carries its unit suffix. A field without a suffix is a bug. Conversions happen in exactly one place: `shared/units.py` / `shared/units.ts`.
+
+**Two layers (v1.1.0):** the **state layer** (`HydraulicSnapshot`, `node_states`, `link_states`, `tank_states`, `pump_states`) is SI (`_m3s`). The **observation layer** (`sensors`, `context`, `SensorWindow`, agent tool outputs) uses SCADA units: pressure m, flow **L/s**. Where a column holds either quantity (`sensors.true_value`, `sensors.measured_value`, `get_sensor_history.value`) the unit is carried by the `measurement`/`unit` column — the only allowed exception to the suffix rule. `pump_status`: state layer `OPEN|CLOSED` (link status), observation layer int `0|1`, UI/Incident `ON|OFF`; converted only via `shared/units`.
 
 ### 5.3 Time
 
 - Dataset hydraulic timestep: **300 s (5 min)**, episode duration **24 h** → 289 snapshots per simulation.
-- Interactive timestep: **60 s**. Speed `1×/5×/20×` = number of 60-s steps advanced per frontend tick (tick = 1 s wall clock). Backend never runs a background clock (§7.14.1 `POST /api/sim/step`).
+- Interactive timestep: **300 s — the same as the dataset (v1.1.0, single cadence everywhere).** Speed `1×/5×/20×` = number of 300-s steps advanced per frontend tick (tick = 1 s wall clock), i.e. 5 / 25 / 100 simulated minutes per second. Backend never runs a background clock (§7.14.1 `POST /api/sim/step`). One cadence means lags, windows and detector constants mean the same thing in training, evaluation and the live demo (measured stepwise cost ≈ 19 ms/step, `docs/research/WNTR_FEASIBILITY.md`).
 - Sim start = 00:00 of a nominal day. Demand pattern indexes by `sim_time_s mod 86400`.
 
 ### 5.4 Seeds and reproducibility
@@ -228,21 +236,21 @@ Create these files in `docs/modules/`. Each module MD must contain: **Purpose ·
 
 ### 5.5 Versioning
 
-- `backbone/x.y.z` — contract version; every API response carries header `X-Aqua-Contract: backbone/1.0.0`.
+- `backbone/x.y.z` — contract version; every API response carries header `X-Aqua-Contract: backbone/1.1.0`.
 - `schema_version` field inside every persisted JSON/Parquet manifest.
-- Library pins live in `sim/requirements.txt`, `api/requirements.txt`, `ml/requirements.txt`. **Pin the exact WNTR version validated in G1 and never float it.**
+- Library pins live in `sim/requirements.txt`, `api/requirements.txt`, `ml/requirements.txt`. **Pin the exact WNTR version validated in G1 and never float it** (feasibility-validated: `wntr==1.5.0`). **Python 3.12** for all Python code (WNTR wheels exist for cp310–cp313 only; 3.14 has none).
 
 ---
 
 ## 6. Canonical Network — `net_epa_tutorial_v1`
 
-Baseline = official EPANET 2.2 tutorial example network, built programmatically in WNTR (or loaded from the tutorial `.inp`). **Connectivity (start/end nodes) is taken from the official tutorial and exported to `config/networks/net_epa_tutorial_v1.json` in G1; that file is the source of truth for topology.** This document does not restate start/end nodes to avoid transcription error.
+Baseline = official EPANET 2.2 tutorial example network (EPANET 2.2 manual, Quick Start, Fig. 2.1 + Table 2.2), built **programmatically** in WNTR. **No official `.inp` file exists** (the tutorial only saves a binary `tutorial.net`; verified 2026-10-08), so v1.1.0 states connectivity here once, transcribed from Fig. 2.1 (copy: `docs/research/epanet22_fig2_1_tutorial_network.jpeg`). Module 01 builds the network from these tables, exports `config/networks/net_epa_tutorial_v1.{inp,json}` in G1, and a unit test asserts the exported topology equals §6.2. Feasibility of this build (PDD, leaks, stepping) is recorded in `docs/research/WNTR_FEASIBILITY.md`.
 
 ### 6.1 Nodes (SI; source values in ft/gpm)
 
 | Node | Type | Elevation (m) | Base demand (L/s) | Role / UI label | Instruments |
 |---|---|---|---|---|---|
-| 1 | Reservoir | 213.36 (700 ft) | — | Source | context: `reservoir_head_m` (known) |
+| 1 | Reservoir | 213.36 (700 ft) = fixed head | — | Source | context: `reservoir_head_m` (known) |
 | 2 | Junction | 213.36 | 0 | Pump discharge header | **S1** |
 | 3 | Junction | 216.41 (710 ft) | 9.46 (150 gpm) | Commercial district | **T1** |
 | 4 | Junction | 213.36 | 9.46 | West residential | **S2**, **T2** |
@@ -253,17 +261,19 @@ Baseline = official EPANET 2.2 tutorial example network, built programmatically 
 
 ### 6.2 Links
 
-| Link | Kind | Length (m) | Diameter (m) | HW C | Instruments / UI |
-|---|---|---|---|---|---|
-| 1 | Pipe | 914.4 | 0.3556 | 100 | |
-| 2 | Pipe | 1524.0 | 0.3048 | 100 | |
-| 3 | Pipe | 1524.0 | 0.2032 | 100 | **F1** |
-| 4 | Pipe | 1524.0 | 0.2032 | 100 | |
-| 5 | Pipe | 1524.0 | 0.2032 | 100 | |
-| 6 | Pipe | 2133.6 | 0.2540 | 100 | **F2** |
-| 7 | Pipe | 1524.0 | 0.1524 | 100 | **V1** (see note) |
-| 8 | Pipe | 2133.6 | 0.1524 | 100 | |
-| 9 | Pump | — | — | — | design point 37.85 L/s @ 45.72 m; context: `pump_status`, `pump_flow_lps` (SCADA-known) |
+| Link | Kind | Start → End | Length (m) | Diameter (m) | HW C | Zone | Instruments / UI |
+|---|---|---|---|---|---|---|---|
+| 1 | Pipe | 2 → 3 | 914.4 (3000 ft) | 0.3556 (14 in) | 100 | Z1 | |
+| 2 | Pipe | 3 → 7 | 1524.0 (5000 ft) | 0.3048 (12 in) | 100 | Z1 | |
+| 3 | Pipe | 3 → 4 | 1524.0 | 0.2032 (8 in) | 100 | Z2 | **F1** |
+| 4 | Pipe | 4 → 6 | 1524.0 | 0.2032 | 100 | Z2 | |
+| 5 | Pipe | 7 → 6 | 1524.0 | 0.2032 | 100 | Z3 | |
+| 6 | Pipe | 7 → 8 (tank) | 2133.6 (7000 ft) | 0.2540 (10 in) | 100 | Z3 | **F2** |
+| 7 | Pipe | 4 → 5 | 1524.0 | 0.1524 (6 in) | 100 | Z2 | **V1** (see note) |
+| 8 | Pipe | 5 → 6 (drawn curved) | 2133.6 | 0.1524 | 100 | Z2 | |
+| 9 | Pump | 1 → 2 | — | — | — | Z1 | single-point curve 37.85 L/s (600 gpm) @ 45.72 m (150 ft); context: `pump_status`, `pump_flow_lps` (SCADA-known) |
+
+Loops: 3–4–6–7 and 4–5–6. **Zones:** Z1 *Supply & Commercial* (nodes 1, 2, 3), Z2 *West & Valley* (nodes 4, 5), Z3 *East & Storage* (nodes 6, 7, 8). **UI coordinates** (Fig. 2.1 layout, x right / y down, arbitrary units; the frontend scales them): 1 (15, 35) · 2 (90, 35) · 3 (143, 35) · 7 (205, 35) · 8 (265, 35) · 4 (143, 100) · 6 (205, 100) · 5 (143, 165).
 
 > **V1 honesty note:** the EPA tutorial network has no valve element. "Valve V1" is implemented as **pipe 7 status OPEN/CLOSED** (and, for partial closure, a reduced HW C / minor loss). The UI may call it a valve; the README and pitch must not claim it is an EPANET valve object.
 
@@ -273,8 +283,10 @@ Baseline = official EPANET 2.2 tutorial example network, built programmatically 
 |---|---|
 | Simulator | **`wntr.sim.WNTRSimulator` for everything** (leaks + PDD require it; one simulator = no cross-simulator discrepancy) |
 | Head loss | Hazen-Williams |
-| Demand model | `PDD`, `required_pressure_m = 20`, `minimum_pressure_m = 0` (tune in G1 so the healthy baseline is ≥ 20 m everywhere; record final values in network config) |
-| Leak model | WNTR `add_leak(area, discharge_coeff=0.75, start_time, end_time)` on a junction; pipe leaks via `wntr.morph.split_pipe` at fraction `pos` then `add_leak` on `LK_<pipe>` |
+| Demand model | `PDD`, `required_pressure_m = 20`, `minimum_pressure_m = 0` (feasibility run: healthy junction pressures 34.9–58.0 m over 24 h, so the baseline is ≥ 20 m; record final values in network config) |
+| Leak model | WNTR `add_leak(area, discharge_coeff=0.75, start_time, end_time)` on a junction. **Pipe leaks use pre-split pipes (v1.1.0):** when a network model is built, every candidate pipe is split once with `wntr.morph.split_pipe(wn, p, f"{p}_B", f"LK_{p}", split_at_point=pos)` (interactive sessions: `pos = 0.5`; dataset: `pos` drawn per simulation). `LK_<p>` is a zero-demand junction, so the healthy hydraulics are unchanged (measured max \|ΔP\| 1.7e-5 m). A leak is then just `add_leak` on an **existing** node, so the topology never changes mid-run. |
+| Stepping | Stop/restart: increase `wn.options.time.duration` and run a new `WNTRSimulator(wn)` on the same model; results continue from the last time (measured: identical to a full run within 3e-14 m, ≈19 ms per 300-s step). Fallback: replay from t = 0 with the event log. |
+| Demand pattern | Per-session/per-sim diurnal profile from §7.2 `demand_profile` (the tutorial's own 4-step pattern is not used) |
 | Tank initial level | Open decision D3 (default 1.07 m ≈ 3.5 ft) |
 
 ### 6.4 Sensor layout `sensors_default_v1`
@@ -361,7 +373,7 @@ All schemas live in `shared/contracts/` (Pydantic v2 + generated TS via `datamod
 ### 7.3 `SimEvent` (interactive mode event log)
 
 ```json
-{"event_id":"ev_0007","sim_time_s":43260,"source":"user|challenge|system",
+{"event_id":"ev_0007","sim_time_s":43500,"source":"user|challenge|system",
  "kind":"TAP_SET|PIPE_FAULT|PIPE_RESET|VALVE_SET|SPEED|RESET",
  "target_id":"T2","params":{"open":true},"hidden":false}
 ```
@@ -392,7 +404,7 @@ The session keeps an append-only event log. Challenge events have `hidden: true`
 Rules:
 - Split-pipe halves are merged back: canonical link `4` reports the **upstream** half's flow; `hidden.leak_nodes` carries the leak node state.
 - `hidden` is populated only inside the sim engine and the dataset writer. The orchestrator strips it before any public response unless `reveal=true`.
-- Mass-balance check (G1): `Σ reservoir outflow + Σ tank outflow ≈ Σ delivered demand + Σ leak`, tolerance 1e-4 m³/s.
+- Mass-balance check (G1): `Σ reservoir outflow + Σ tank outflow ≈ Σ delivered demand + Σ leak`, tolerance 1e-4 m³/s. In WNTR results this is `|Σ_nodes demand + Σ_nodes leak_demand| ≤ 1e-4` per timestep (reservoir/tank demands are negative; `leak_demand` is reported separately from `demand`).
 
 ### 7.5 Dataset tables (Parquet, partitioned by `split=`)
 
@@ -442,9 +454,9 @@ Rules:
   "schema_version":"1.0","dataset_version":"ds1","created_utc":"2026-10-09T10:12:00Z",
   "git_sha":"a1b2c3d","generator_version":"sim-0.3.1","wntr_version":"<pinned>",
   "network_ids":["net_epa_tutorial_v1"],"sensor_layout_ids":["sensors_default_v1"],
-  "dataset_seed":20261008,"n_requested":2400,"n_valid":2371,"n_failed":29,
-  "counts_by_split":{"train":1660,"val":355,"test":356},
-  "counts_by_scenario_type":{"NORMAL":720,"SMALL_LEAK":200},
+  "dataset_seed":20261008,"n_requested":1200,"n_valid":1188,"n_failed":12,
+  "counts_by_split":{"train":832,"val":178,"test":178},
+  "counts_by_scenario_type":{"NORMAL":316,"SMALL_LEAK":148},
   "holdout":{"fault_locations_test_only":["pipe:5","junction:6"]},
   "timestep_s":300,"duration_s":86400,
   "files":{"node_states":"processed/ds1/node_states/","sensors":"processed/ds1/sensors/"}
@@ -472,11 +484,11 @@ One sample = one `(simulation_id, sim_time_s)` on one network.
 **Edge features `F_edge` (order frozen, v1):**
 `[length_m_z, diameter_m_z, roughness_hw_z, is_pump, is_open, observed_flow_lps_z (0 if unobserved), flow_obs_mask]`
 
-`_z` = standardised with statistics computed **on train split only**, saved as `ml/artifacts/<model_version>/scalers.json`.
+`_z` = standardised with statistics computed **on train split only**, written to `features/ds1/scalers.json` and **copied into `model.tar.gz`** (inference reads only the artifact copy).
 
 **Forbidden as input (leakage):** `demand_m3s` of hidden nodes, `leak_m3s`, any `hidden.*`, `scenario_type`, anything from timesteps after `sim_time_s`.
 
-The MLP baseline uses the flattened equivalent: `[observed pressures (3), observed flows (2), lags, context] → hidden pressures`.
+The MLP (T1 ship model) uses the flattened equivalent: `[observed pressures (3), observed flows (2), 5 observation-mask bits, lags (300 s and 900 s), context] → [pressure at every scored node, flow at F1, F2]`. Lags are at the single 300-s cadence (§5.3).
 
 ### 7.8 `SensorWindow` — the ONLY input type allowed into the inference pipeline
 
@@ -492,7 +504,7 @@ The MLP baseline uses the flattened equivalent: `[observed pressures (3), observ
 }
 ```
 
-Window length: last **12 steps** (interactive: 12 min at 60 s; dataset: 1 h at 300 s). Missing readings = `null`, never 0.
+Window length: last **12 steps = 1 h** at the single 300-s cadence (interactive and dataset alike). Missing readings = `null`, never 0.
 
 ### 7.9 Predictor endpoint contract (SageMaker)
 
@@ -513,11 +525,13 @@ Window length: last **12 steps** (interactive: 12 min at 60 s; dataset: 1 h at 3
   "leave_one_out": {"S1":{"predicted_m":51.05,"observed_m":51.20},
                     "S2":{"predicted_m":41.10,"observed_m":38.40},
                     "S3":{"predicted_m":37.02,"observed_m":36.90}},
+  "leave_one_out_flow": {"F1":{"predicted_lps":10.70,"observed_lps":12.10},
+                         "F2":{"predicted_lps":8.25,"observed_lps":8.30}},
   "latency_ms": 18
 }
 ```
 
-`leave_one_out`: for each sensor `s`, mask `s`, predict its pressure from the remaining sensors + context. This is how we get a residual **at an observed location** (see §9.2 — this is the core anomaly signal). One endpoint call returns both, to avoid 4 round trips.
+`leave_one_out` / `leave_one_out_flow` (v1.1.0): for each of the **5 sensors** `s ∈ {S1,S2,S3,F1,F2}`, mask `s` and predict its value from the remaining sensors + context (pressures in m, flows in L/s). This is how we get a residual **at an observed location** (see §9.2 — the core anomaly signal). One call returns `reconstruct` + both LOO maps, to avoid 6 round trips. In T1 this is an in-process Python call with the same request/response; in T2b it is the SageMaker endpoint.
 
 ### 7.10 `ResidualFrame` and `AnomalyResult`
 
@@ -536,7 +550,7 @@ Window length: last **12 steps** (interactive: 12 min at 60 s; dataset: 1 h at 3
   "status":"NORMAL|WATCH|ANOMALY|SENSOR_FAULT",
   "anomaly_score":0.93,
   "first_flag_time_s":42600,"confirmed_time_s":43200,
-  "detection_delay_steps":3,
+  "detection_delay_steps":2,
   "suspected_class":"LEAK","class_probs":{"LEAK":0.81,"DEMAND_SPIKE":0.12,"VALVE_CLOSURE":0.07},
   "driving_sensors":["S2","F1"],
   "residual_history_ref":"session buffer last 12 frames",
@@ -544,7 +558,7 @@ Window length: last **12 steps** (interactive: 12 min at 60 s; dataset: 1 h at 3
 }
 ```
 
-`suspected_class` is T2; in T1 it is `null`.
+`suspected_class` / `class_probs` are T3; in T1/T2 they are `null`. Status `SENSOR_FAULT` is reserved for T3 (ds1 has no sensor-fault scenarios); T1 emits only `NORMAL|WATCH|ANOMALY`. `detection_delay_steps` = steps from `first_flag_time_s` to `confirmed_time_s`; the challenge's `detection_delay_s` (§7.14.1) is measured from the true fault start.
 
 ### 7.11 `LocalisationResult`
 
@@ -561,7 +575,7 @@ Window length: last **12 steps** (interactive: 12 min at 60 s; dataset: 1 h at 3
 }
 ```
 
-Language rule: UI and agent say **"probable leak zone"** / **"most likely pipe"**, never "exact location".
+Language rule: UI and agent say **"probable leak zone"** / **"most likely pipe"**, never "exact location". Localisation is **T2c**; until then `Incident.localisation` is `null` and the reveal's `true_location_rank`/`zone_correct` are `null`.
 
 ### 7.12 `Incident` (the object handed to the agent)
 
@@ -570,7 +584,7 @@ Language rule: UI and agent say **"probable leak zone"** / **"most likely pipe"*
   "incident_id":"inc_3f9a1c_43200","session_id":"sess_3f9a1c","created_sim_time_s":43200,
   "network_id":"net_epa_tutorial_v1","sensor_layout_id":"sensors_default_v1",
   "anomaly": { "…": "AnomalyResult §7.10" },
-  "localisation": { "…": "LocalisationResult §7.11" },
+  "localisation": { "…": "LocalisationResult §7.11 (null until T2c)" },
   "evidence": {
     "sensor_deltas":[{"sensor_id":"S2","baseline_m":41.10,"observed_m":38.40,"pct_change":-6.6}],
     "flow_deltas":[{"sensor_id":"F1","baseline_lps":10.70,"observed_lps":12.10,"pct_change":13.1}],
@@ -610,13 +624,13 @@ No ground truth is ever placed inside an `Incident`.
 }
 ```
 
-`grounding_check` is filled by the orchestrator (§9.6), not by the model.
+`grounding_check` is filled by the orchestrator (§9.6), not by the model. Optional field `generated_by: "template"|"bedrock"` drives the UI label (v1.1.0). **T1 produces `AgentReport` with the deterministic `TemplateReporter` only**; the Bedrock tool loop is T2d and `run_what_if` is T3.
 
 ### 7.14 HTTP APIs
 
 #### 7.14.1 Public orchestrator API (frontend ↔ `aquaagent-api`)
 
-Base: `${VITE_API_BASE_URL}/api`. Header `X-Api-Key` required in `aws` mode. All responses carry `X-Aqua-Contract`.
+Base: `${VITE_API_BASE_URL}/api`. Header `X-Api-Key` required in `aws` mode (`OPTIONS` preflight exempt; the key is visible in the browser bundle — a deterrent, not a secret). All responses carry `X-Aqua-Contract`. CORS is set by FastAPI from `AQUA_CORS_ORIGINS`.
 
 | Method | Path | Body | Returns |
 |---|---|---|---|
@@ -628,10 +642,10 @@ Base: `${VITE_API_BASE_URL}/api`. Header `X-Api-Key` required in `aws` mode. All
 | POST | `/tap` | `{tap_id, open: bool}` | `NetworkView` |
 | POST | `/pipe/fault` | `{link_id, kind: "LEAK"\|"BURST"\|"CLOSE"\|"RESET"}` | `NetworkView` |
 | POST | `/valve` | `{valve_id, open: bool}` | `NetworkView` |
-| POST | `/challenge/start` | `{difficulty?: "small"\|"medium"\|"large"}` | `{challenge_id, started_sim_time_s}` — fault is hidden |
+| POST | `/challenge/start` | `{difficulty?: "small"\|"medium"\|"large"}` (default `medium`) | `{challenge_id, started_sim_time_s}` — fault is hidden. Difficulty → leak-area range of SMALL/MEDIUM/LARGE_LEAK in `config/generation/ds1.yaml`; location drawn (seeded) from the §8.2 candidates excluding sensor nodes; the fault starts 1–3 steps after the call |
 | GET | `/challenge/status` | — | `{state: "RUNNING"\|"DETECTED"\|"TIMEOUT", anomaly: AnomalyResult, incident_id?}` |
-| POST | `/agent/diagnose` | `{incident_id}` | `AgentReport` |
-| POST | `/agent/ask` (T2) | `{incident_id, question}` | `{answer, grounding_check}` |
+| POST | `/agent/diagnose` | `{incident_id}` | `AgentReport` (T1: template, instant; T2d: Bedrock with a hard 20-s server budget, then template fallback — API Gateway cuts at 30 s) |
+| POST | `/agent/ask` (T3) | `{incident_id, question}` | `{answer, grounding_check}` |
 | POST | `/challenge/reveal` | — | `ChallengeReveal` (below) |
 
 **`NetworkView`** (UI-shaped, units converted, hidden fields stripped):
@@ -647,7 +661,7 @@ Base: `${VITE_API_BASE_URL}/api`. Header `X-Api-Key` required in `aws` mode. All
   "valves":{"V1":{"open":true}},
   "network_status":"NORMAL|WATCH|ANOMALY",
   "challenge":{"active":false},
-  "events":[{"sim_time_s":43140,"text":"Tap 2 opened"}]
+  "events":[{"sim_time_s":42900,"text":"Tap 2 opened"}]
 }
 ```
 
@@ -694,38 +708,34 @@ Rendering rules: flow animation speed ∝ `|flow_lps|`, direction from `directio
 
 ## 8. Scenario Catalogue and Generation Plan (`ds1`)
 
-### 8.1 Scenario mix (target 2,400 requested → ≈2,350 valid)
+### 8.1 Scenario mix — `ds1` (T1): 1,200 requested
 
-| scenario_type | count | is_anomalous | parameters (uniform ranges unless stated) |
-|---|---|---|---|
-| NORMAL | 700 | no | demand profile randomised (§7.2), tank init 0.6–2.5 m |
-| HIGH_DEMAND | 150 | no* | global mult 1.3–1.8 for whole episode |
-| LOW_DEMAND | 100 | no* | global mult 0.4–0.7 |
-| DEMAND_SHIFT | 150 | no* | one node ×1.5–2.5, another ×0.3–0.6 |
-| DEMAND_SPIKE | 120 | yes | one node ×2–3 for 30–120 min |
-| VALVE_CLOSURE | 100 | yes | pipe 7 (V1) or random pipe CLOSED at t_f |
-| PARTIAL_VALVE | 80 | yes | HW C reduced to 20–40 on one pipe |
-| PUMP_DEGRADE | 80 | yes | pump speed 0.75–0.9 at t_f |
-| LOW_RESERVOIR | 80 | yes | reservoir head −3 to −8 m at t_f |
-| SMALL_LEAK | 200 | yes | area 2e-5–8e-5 m² |
-| MEDIUM_LEAK | 200 | yes | area 8e-5–2.5e-4 m² |
-| LARGE_LEAK | 150 | yes | area 2.5e-4–6e-4 m² |
-| PIPE_BURST | 120 | yes | area 1e-3–3e-3 m² |
-| SENSOR_FAULT | 170 | no (has_sensor_fault) | one of SPIKE/BIAS/DRIFT/STUCK/MISSING on one sensor |
+| scenario_type | count | is_anomalous | fault_type | parameters (uniform ranges unless stated) |
+|---|---|---|---|---|
+| NORMAL | 320 | no | — | demand profile randomised (§7.2), tank init 0.6–2.5 m |
+| HIGH_DEMAND | 100 | no* | — | `demand_profile.global_mult` 1.3–1.8 for whole episode |
+| LOW_DEMAND | 80 | no* | — | `global_mult` 0.4–0.7 |
+| DEMAND_SHIFT | 100 | no* | DEMAND_SHIFT | one node ×1.5–2.5, another ×0.3–0.6 from t_f |
+| SMALL_LEAK | 150 | yes | LEAK | area 2e-5–8e-5 m² |
+| MEDIUM_LEAK | 200 | yes | LEAK | area 8e-5–2.5e-4 m² |
+| LARGE_LEAK | 150 | yes | LEAK | area 2.5e-4–6e-4 m² |
+| PIPE_BURST | 100 | yes | BURST | area 1e-3–3e-3 m² |
 
-\* operational variation — the detector must **not** fire on these. They exist to kill the "pressure ↓ = leak" shortcut.
+\* operational variation — the detector must **not** fire on these. They exist to kill the "pressure ↓ = leak" shortcut and they define the false-alarm rate (§9.5).
 
 Fault start `t_f` ∈ [6 h, 18 h], snapped to timestep. Leaks run to episode end unless `end_s` drawn (30% of leaks end after 2–6 h).
 
-**Leak area ranges are provisional.** In G2 calibration, measure realised leak flow at baseline pressure and adjust so the buckets roughly correspond to `<5% / 5–15% / 15–25% / >25%` of total system demand. Record final ranges in `config/generation/ds1.yaml`.
+**Leak area ranges** were checked in the feasibility run (pipe 4, mean demand 40.9 L/s): 2e-5 → 1.0%, 8e-5 → 4.0%, 2.5e-4 → 12.1%, 6e-4 → 25.7%, 3e-3 → 72.9% of mean system demand, i.e. the ranges already map onto the `<5% / 5–15% / 15–25% / >25%` severity buckets. G2 still runs the calibration over all 14 locations and records final ranges in `config/generation/ds1.yaml`.
+
+**ds2 (T3, not built unless T1+T2 are green):** VALVE_CLOSURE, PARTIAL_VALVE, PUMP_DEGRADE, PUMP_TRIP, LOW_RESERVOIR, DEMAND_SPIKE, SENSOR_FAULT. Labelling rules are fixed now so ds2 needs no contract change: DEMAND_SPIKE is a hydraulic event (`is_anomalous=true`) reported in its own row, never in leak recall and never in FAR; SENSOR_FAULT sims have `is_anomalous=false, has_sensor_fault=true`; `PIPE_BURST→BURST`, `*_LEAK→LEAK` (`shared.contracts.models.SCENARIO_TO_FAULT`).
 
 ### 8.2 Fault locations
 
-Candidate set (14): junctions `2–7` + pipes `1–8` (pipe leaks at `position ~ U(0.2, 0.8)`). Pump link `9` is not a leak location.
+Candidate set (14): junctions `2–7` + pipes `1–8` (pipe leaks at `position ~ U(0.2, 0.8)` in the dataset; `0.5` in interactive sessions, §6.3). Pump link `9` is not a leak location. Challenge leaks (§7.14.1) exclude sensor junctions 2, 4, 6.
 
 ### 8.3 Sensor noise (applied to `sensors.measured_value` only)
 
-Default: pressure σ = 0.05 m, flow σ = 0.10 L/s, missing 0%. Robustness variants (T2): σ ×{2, 5}, missing 5%.
+Default: pressure σ = 0.05 m, flow σ = 0.10 L/s, missing 0%. The orchestrator applies the **same** noise to live sensor readings (seeded per session). Robustness variants (T3): σ ×{2, 5}, missing 5%.
 
 ### 8.4 Validation per simulation (all logged to `validation_log`)
 
@@ -739,8 +749,7 @@ Default: pressure σ = 0.05 m, flow σ = 0.10 L/s, missing 0%. Robustness varian
 
 ### 8.6 Batch execution
 
-`aquaagent-sim generate --config config/generation/ds1.yaml --shard i --num-shards 8 --out s3://…/raw/ds1/shard=i/`
-Each shard writes its own Parquet files; a final `merge` step (local or one more RunTask) writes `processed/ds1/` + `manifest.json`. Expected runtime is small for an 8-node network; measure on 20 sims locally before launching.
+T1 (local): `python -m sim.cli generate --config config/generation/ds1.yaml --shard i --num-shards N --out data/raw/ds1/shard=i/` for i in 0..N−1 (parallel processes on the laptop), then `python -m sim.cli merge … --out data/processed/ds1/`. A 24-h simulation takes ≈0.2 s, so ds1 takes minutes. Upload with `aws s3 sync data/processed/ds1 s3://…/processed/ds1/` (T2a). ECS RunTask of the same `generate` command (`infra/scripts/07_run_datagen.sh`) is T3.
 
 ---
 
@@ -749,11 +758,11 @@ Each shard writes its own Parquet files; a final `merge` step (local or one more
 ### 9.1 Predictor — "what should the network look like right now?"
 
 - **Train only on hydraulically normal simulations** (NORMAL, HIGH/LOW_DEMAND, DEMAND_SHIFT, and pre-fault timesteps of anomalous sims). If the predictor learns from leak states it learns to *reconstruct* leaks, and residuals collapse. This is the most important ML rule in the project.
-- **Random sensor masking during training:** each sample randomly hides 0–1 of the 3 pressure sensors in addition to all hidden nodes, so one model handles both `reconstruct` and `leave_one_out`.
+- **Random sensor masking during training:** each sample randomly hides 0–1 of the **5 sensors** (S1–S3, F1–F2) in addition to all hidden nodes, so one model handles `reconstruct`, `leave_one_out` and `leave_one_out_flow` (v1.1.0).
 - **Model ladder (stop at the first that meets G4 targets, then try the next only if time allows):**
   1. Nearest-sensor + elevation-corrected baseline (no training; sanity floor)
-  2. **MLP** on flattened features (§7.7) — expected T1 ship model
-  3. GraphSAGE / GAT (PyTorch Geometric) — T2
+  2. **MLP** on flattened features (§7.7) — the T1 ship model
+  3. GraphSAGE / GAT (PyTorch Geometric) — T3
 - Loss: MSE on `y_mask` nodes; report MAE/RMSE/R², and **MAE by hop distance** (1/2/3+ hops from nearest sensor).
 - Honest framing: on a fixed 8-node graph an MLP may match a GNN; the GNN earns its place only on unseen topologies (T3). Report whichever wins — do not ship a GNN just for the slide.
 
@@ -762,21 +771,21 @@ Each shard writes its own Parquet files; a final `merge` step (local or one more
 You cannot get a residual at a node you do not observe, and a sensor fed into the model as input has a trivial residual. Therefore:
 
 - **Pressure residual** at sensor `s`: `r_s = observed_s − LOO_prediction_s` (prediction with `s` masked).
-- **Flow residual** at `F1`, `F2`: predictor also outputs expected observed flows from pressures + context (add as extra heads; trained on normal data).
+- **Flow residual** at `F1`, `F2`: `r_f = observed_f − LOO_prediction_f` from `leave_one_out_flow` (same masking mechanism as pressure; v1.1.0).
 - Normalise: `z_s = r_s / σ_s`, `σ_s` = std of `r_s` on **validation normal** data. Stored in `thresholds.json`.
 
-### 9.3 Detector — RTCA-style dual threshold (T1) + classifier (T2)
+### 9.3 Detector — RTCA-style dual threshold (T1) + classifier (T3)
 
 Following the AquaSentinel pattern from the briefing document:
 - instant flag if `|z_s| > k1` (default 2.5), cumulative flag if mean `|z_s|` over window `W` (default 6 steps) `> k2` (default 3.0);
 - **ANOMALY** when ≥1 sensor has both flags for `T` consecutive steps (default 3); **WATCH** on instant-only;
-- **SENSOR_FAULT** when one sensor's `|z|` is extreme, other sensors' LOO residuals are consistent with each other, and the jump is physically implausible (step change > configurable bound in one step, or variance ≈ 0 for STUCK).
-- Tune `k1, k2, W, T` on validation to hit the false-alarm target on non-anomalous sims, **then freeze** before touching test.
-- T2: gradient-boosted classifier on residual features → `suspected_class`.
+- **SENSOR_FAULT** (T3, needs ds2): when one sensor's |z| is extreme, other sensors' LOO residuals are consistent with each other, and the jump is physically implausible.
+- Tune `k1, k2, W, T` on validation to hit the false-alarm target on non-anomalous sims, **then freeze** before touching test. `W`, `T` are counted in 300-s steps everywhere (§5.3). σ is fixed from val (no adaptive EMA — it can absorb a slow leak).
+- T3: gradient-boosted classifier on residual features → `suspected_class`.
 
-### 9.4 Localisation — signature matching (T1)
+### 9.4 Localisation — signature matching (T2c)
 
-- Offline: for each of the 14 candidate locations × 3 leak sizes × 4 times-of-day, simulate the leak and record the **sensor residual signature** (Δ observed vs no-leak twin, normalised). Save `signatures.parquet`.
+- Offline: for each of the 14 candidate locations × 3 leak sizes × 4 times-of-day, simulate the leak, run the resulting `SensorWindow`s **through the same predictor + residual pipeline as online**, and record the averaged `z` vector over the detection window as the signature (v1.1.0: one signal space for offline and online). Save `signatures.parquet` with the predictor version it was built with.
 - Online: average `z` vector over the detection window → cosine similarity with every signature → softmax over max-similarity per location → ranked `candidates`; aggregate by `zone_id` for `probable_zone`.
 - Because signatures are generated from physics (not learned from labelled training leaks), the hard-holdout locations remain rankable.
 
@@ -787,16 +796,17 @@ Following the AquaSentinel pattern from the briefing document:
 | Predictor MAE, hidden junctions, normal | < 1.0 m |
 | Detection recall, MEDIUM/LARGE/BURST | ≥ 95% |
 | Detection recall, SMALL | report (expect lower) |
-| False-alarm rate on non-anomalous sims | ≤ 5% of sims |
+| False-alarm rate on operational sims (NORMAL, HIGH/LOW_DEMAND, DEMAND_SHIFT) | ≤ 5% of sims, reported per type |
 | Median detection delay (medium leak) | ≤ 6 steps |
-| Localisation top-1 / top-3 (pipe) | report / ≥ 80% top-3 |
-| Zone accuracy | ≥ 85% |
-| Hard-holdout locations top-3 | report separately |
+| Localisation top-1 / top-3 (pipe) — T2c | report / ≥ 80% top-3 |
+| Zone accuracy — T2c | ≥ 85% |
+| Hard-holdout locations top-3 — T2c | report separately |
 
 ### 9.6 Agent grounding
 
-- Converse API loop, max 6 tool turns, temperature low (≤ 0.2), system prompt forbids numbers not returned by tools.
-- **Grounding check (orchestrator):** extract every number in the report text; each must match a value in the turn's tool results within ±0.5% or ±0.05 absolute, after unit normalisation. Failures → `grounding_check.passed=false`, list `unmatched_numbers`, and the UI shows a warning badge. One automatic retry with the unmatched list fed back; then fall back to `TemplateReporter`.
+- **T1:** `TemplateReporter` only (deterministic, always grounded, labelled "template explanation").
+- **T2d:** Converse API loop, max 6 tool turns, temperature low (≤ 0.2), 20-s wall-clock budget, system prompt forbids numbers not returned by tools.
+- **Grounding check (orchestrator):** extract every number in the report text; each must match a value in the turn's tool results within ±0.5% or ±0.05 absolute, after unit normalisation (L/s↔L/min, m³/s↔L/s, `%`). Exempt: element IDs present in the tool results, `HH:MM` labels present in the tool results, ranks/priorities 1–5. Failures → `grounding_check.passed=false`, list `unmatched_numbers`, and the UI shows a warning badge. One automatic retry with the unmatched list fed back; then fall back to `TemplateReporter`.
 - `TemplateReporter` builds the same `AgentReport` deterministically from the `Incident`. It is the fallback if Bedrock is unavailable and must be **labelled** "template explanation" in the UI.
 - The README sample sentence ("Pressure at Sensor 2 fell 18.2%…") must be **generated** from real values, never hard-coded.
 
@@ -806,7 +816,7 @@ Following the AquaSentinel pattern from the briefing document:
 
 ### 10.1 Region
 
-Single region for everything. Default **`us-east-1`** unless the chosen Bedrock Claude model is confirmed enabled in `ap-south-1` for this account (decision D1, verify on Day 1 in the Bedrock console → Model access). Never split S3/SageMaker/Bedrock across regions.
+Single region for everything. Default **`us-east-1`** unless the chosen Bedrock Claude model is confirmed enabled in `ap-south-1` for this account (decision D1, verified with `infra/scripts/14_bedrock_check.sh`). Never split S3/SageMaker/ECS across regions. Exception: a Bedrock *cross-region inference profile* may route a call to other regions of the same geography — this is required for newer Claude models (on-demand calls by bare model id are rejected).
 
 ### 10.2 S3 layout — `s3://aquaagent-<accountid>-<region>/`
 
@@ -828,11 +838,12 @@ Enable bucket versioning. Block public access.
 
 | Role | Trusted by | Permissions |
 |---|---|---|
-| `aqua-ecs-exec` | ECS tasks | pull ECR, write CloudWatch Logs |
+| `aqua-ecs-exec` | ECS tasks | pull ECR, write CloudWatch Logs, `ssm:GetParameters` on `/aquaagent/*` (+ `kms:Decrypt` via SSM) for injected secrets |
 | `aqua-sim-task` | ECS (generate mode) | `s3:PutObject/GetObject/ListBucket` on bucket |
-| `aqua-api-task` | ECS (serve) | `sagemaker:InvokeEndpoint` on our endpoint; `bedrock:InvokeModel`/`Converse` on the chosen model; `s3:GetObject` on `models/` |
+| `aqua-api-task` | ECS (serve; shared by the `api` and `sim` containers of the one task — accepted, the sim never calls AWS) | `sagemaker:InvokeEndpoint` on our endpoint (T2b); `bedrock:InvokeModel*` on the chosen **inference-profile ARN and the foundation-model ARNs in every region it routes to** (T2d); `s3:GetObject` on `models/` |
 | `aqua-sagemaker-exec` | SageMaker | S3 read `features/`, write `models/`, `experiments/`; ECR pull; logs |
-| Amplify service role | Amplify | default |
+| Amplify service role | Amplify | not needed for static hosting (not created) |
+| `aqua-codebuild` (optional) | CodeBuild | push our two ECR repos, read `codebuild/` source zip, logs — only for the no-docker fallback |
 
 No long-lived keys in code or images. Secrets (API key) in SSM Parameter Store → injected as ECS env.
 
@@ -848,9 +859,10 @@ No long-lived keys in code or images. Secrets (API key) in SSM Parameter Store �
 | `AQUA_SIM_URL` | api | `http://localhost:8000` |
 | `AQUA_PREDICTOR_ENDPOINT` | api | `aquaagent-predictor` |
 | `AQUA_PREDICTOR_VERSION` | api | `mlp_ds1_…` |
+| `AQUA_PREDICTOR_ARTIFACT` | api | local dir or `s3://…/model.tar.gz` of the predictor for the in-process client (T1 default; v1.1.0) |
 | `AQUA_THRESHOLDS_URI`, `AQUA_SIGNATURES_URI` | api | `s3://…` |
 | `AQUA_AGENT` | api | `bedrock` / `template` |
-| `AQUA_BEDROCK_MODEL_ID` | api | set from Bedrock console; **not hard-coded** |
+| `AQUA_BEDROCK_MODEL_ID` | api | model id **or inference-profile id**, discovered by `14_bedrock_check.sh`; **not hard-coded** |
 | `AQUA_API_KEY` | api | SSM |
 | `AQUA_CORS_ORIGINS` | api | Amplify domain |
 | `VITE_API_BASE_URL` | frontend | API Gateway URL |
@@ -858,7 +870,8 @@ No long-lived keys in code or images. Secrets (API key) in SSM Parameter Store �
 ### 10.5 Cost guardrails
 
 - AWS Budget alert at a low threshold on Day 1.
-- SageMaker endpoint: smallest instance that passes G6 latency (< 300 ms p95). **Delete the endpoint after judging**; keep `model.tar.gz`.
+- SageMaker endpoint (T2b): smallest instance that passes G6 latency (< 300 ms p95). **Delete the endpoint after judging**; keep `model.tar.gz`. Scalers live inside `model.tar.gz` (the copy in `features/` is the build source).
+- API Gateway stage throttling on (the API key is public in the browser).
 - ECS `desiredCount = 0` outside demo windows after the event.
 - Tag every resource `project=aquaagent`.
 
@@ -880,63 +893,63 @@ Unit test (G8): construct a session with a hidden leak, call every public endpoi
 
 ## 12. Acceptance Gates
 
-| Gate | Module | Pass criteria |
-|---|---|---|
-| **G1** | Sim engine | EPA network builds; snapshot + 24 h EPS run; PDD on; junction leak and pipe leak (split) both change pressures/flows; mass balance within tolerance; stepwise advance works (or documented replay fallback); network JSON exported; WNTR version pinned; container runs `serve`. |
-| **G2** | Data gen | 20-sim local smoke run reproducible bit-for-bit from seeds; leak-size calibration recorded; full `ds1` in S3 with manifest; ≥ 95% valid; split integrity test (no `simulation_id` in two splits); holdout locations absent from train/val. |
-| **G3** | AWS infra | `curl https://<apigw>/api/health` returns ok from the public internet; ECS task healthy; generate RunTask writes to S3; budget alert active. |
-| **G4** | Predictor | Beats nearest-sensor baseline on hidden-node MAE; hop-distance table produced; scalers fitted on train only; leakage test passes (shuffling hidden-node targets destroys performance; removing a forbidden column changes nothing because it was never there). |
-| **G5** | Anomaly + loc | Thresholds tuned on val only; test metrics table (§9.5) produced; false-alarm rate on operational-variation scenarios reported separately. |
-| **G6** | SageMaker | Training job reproducible from S3 inputs; endpoint returns §7.9 schema; p95 latency < 300 ms; `AQUA_MODE=local` produces identical outputs (±1e-5) from the same artifact. |
-| **G7** | Agent | 10 recorded incidents → 10 reports with `grounding_check.passed=true`; template fallback works with Bedrock disabled. |
-| **G8** | Orchestrator | All §7.14.1 endpoints conform to schema; firewall test (§11) passes; full challenge loop runs end-to-end locally and on AWS. |
-| **G9** | Frontend | Deployed on Amplify; no hydraulic math in frontend code (grep check); runs the full demo against the AWS API; usable at 1366×768 and on a phone in portrait. |
-| **G10** | Demo | 3 consecutive clean challenge runs on the deployed stack; recorded fallback video in `s3://…/demo/`; every number on slides traced to `experiments/`. |
+| Gate | Tier | Module | Pass criteria |
+|---|---|---|---|
+| **G1** | T1 | Sim engine | EPA network built from §6 tables, exported `.inp`/`.json` topology == §6.2 (test); 24 h EPS at 300 s; PDD on, healthy baseline ≥ 20 m; junction leak and pre-split pipe leak both change pressures/flows; mass balance ≤ 1e-4 m³/s every step; stepwise advance == full run (or documented replay fallback); WNTR version pinned; container runs `serve`. |
+| **G2** | T1 | Data gen | 20-sim local smoke run reproducible bit-for-bit from seeds; leak-size calibration recorded; full `ds1` (1,200) in `data/processed/ds1/` with manifest (T2a: also in S3); ≥ 95% valid; split integrity test; holdout locations absent from train/val; firewall data test. |
+| **G4** | T1 | Predictor | MLP beats nearest-sensor baseline on hidden-node MAE; hop-distance table produced; scalers fitted on train only; leakage test passes (shuffling hidden-node targets destroys performance; removing a forbidden column changes nothing); LOO residual on LARGE_LEAK val sims > 3σ. |
+| **G5** | T1 (T2c: localisation rows) | Detector (+ localisation) | Thresholds tuned on val only and frozen (hash recorded) before test; §9.5 detection rows produced on test; FAR on each operational scenario type reported separately. T2c adds the localisation rows. |
+| **G7** | T1 (T2d: Bedrock) | Explanation | T1: `TemplateReporter` produces a schema-valid, grounded `AgentReport` for 10 recorded incidents. T2d: the same 10 incidents → 10 Bedrock reports with `grounding_check.passed=true`; template fallback works with Bedrock disabled. |
+| **G8** | T1 | Orchestrator | All §7.14.1 endpoints conform to schema; firewall test (§11) passes; full challenge loop (start → DETECTED → report → reveal) runs end-to-end locally. T2a: also on AWS. |
+| **G9** | T1 | Frontend | No hydraulic math in frontend code (grep check); runs the full demo against the local API; usable at 1366×768 and on a phone in portrait. T2a: deployed on Amplify against the AWS API. |
+| **MVP** | T1 | all T1 | `docker compose up` on a clean machine → 3 consecutive clean challenge runs (detected, reveal correct, report shown). **No T2 work starts before this passes.** |
+| **G3** | T2a | AWS infra | `curl https://<apigw>/api/health` returns ok from the public internet; ECS task healthy; ds1 + model artifacts in S3; budget alert active. |
+| **G6** | T2b | SageMaker | Training job reproducible from S3 inputs; endpoint returns §7.9 schema; p95 latency < 300 ms; in-process predictor produces identical outputs (±1e-5) from the same artifact. |
+| **G10** | T1 (+T2 if deployed) | Demo | 3 consecutive clean challenge runs on the stack being demoed; recorded fallback video; every number on slides traced to `experiments/`. |
 
 ---
 
-## 13. Build Schedule — 8 → 11 Oct 2026
+## 13. Build Schedule — 8 → 11 Oct 2026 (v1.1.0: MVP first)
 
-Assumes hackathon ends evening of 11 Oct. Adjust the times, not the order.
+Assumes hackathon ends evening of 11 Oct. Adjust the times, not the order. **T1 is the plan; T2 is the bonus.**
 
-### Day 1 — Thu 8 Oct: Physics is real
+### Day 1 — Thu 8 Oct: Physics is real (first vertical slice: React → FastAPI → WNTR → SVG)
 | Block | Work | Gate |
 |---|---|---|
-| AM | Repo skeleton, `shared/contracts`, units module; **Bedrock model access + region check (D1)**; budget alert | — |
-| AM–PM | Sim engine: build EPA network, EPS, PDD, junction + pipe leaks, mass-balance check, stepwise advance | G1 (local) |
-| PM | Sim server (§7.14.2) + Dockerfile (`serve`/`generate`) ; frontend starts on **mocked** `NetworkView` | — |
-| Night | Scenario generator + 20-sim smoke run; leak-size calibration | G2 (local part) |
+| AM | Repo skeleton, contracts (done); Python 3.12 env; budget alert + Bedrock D1 check only if time (5 min each) | — |
+| AM–PM | Sim engine: build network from §6, EPS, PDD, junction + pre-split pipe leaks, mass balance, stepwise advance | G1 (local) |
+| PM | Sim server (§7.14.2) + Dockerfile; orchestrator skeleton (`/session/reset`, `/network/*`, `/sim/step`, taps/pipes/valve via the visibility filter); frontend renders the real topology and live flow | — |
+| Night | Scenario sampler + 20-sim smoke run + leak calibration | G2 (smoke) |
 
-### Day 2 — Fri 9 Oct: Data in the cloud, first model
+### Day 2 — Fri 9 Oct: Data and the first model
 | Block | Work | Gate |
 |---|---|---|
-| AM | ECR push, S3 bucket, ECS cluster, sharded `generate` RunTasks → `ds1` | G2 |
-| AM | ALB + API Gateway + ECS service with `sim` + stub `api` | G3 |
-| PM | Feature builder; nearest-sensor baseline + MLP **locally**; LOO masking; hop-distance report | G4 (local) |
-| PM | Frontend: real topology, live flow animation, taps/pipe menu wired to local API | — |
-| Night | Signature dictionary generation; detector on val | G5 (draft) |
+| AM | Full ds1 locally (parallel shards) + merge + split + firewall test | G2 |
+| AM–PM | Feature builder; baseline + MLP with 5-sensor LOO; leakage tests; hop table | G4 |
+| PM | Residuals + RTCA detector tuned on val, frozen; test metrics | G5 (T1 rows) |
+| PM | Frontend: tap/pipe/valve menus, speed, inspector, status bar | — |
 
-### Day 3 — Sat 10 Oct: SageMaker, detection, agent
+### Day 3 — Sat 10 Oct: Close the loop → MVP
 | Block | Work | Gate |
 |---|---|---|
-| AM | SageMaker training job (same script as local) → endpoint | G6 |
-| AM | Orchestrator: session, challenge, `SensorWindow` buffer, detector + localiser, reveal, firewall test | G8 (local) |
-| PM | Bedrock agent: tools, `submit_report`, grounding check, template fallback | G7 |
-| PM | Deploy api to ECS (aws mode); Amplify frontend live against API Gateway | G9 |
-| Night | GNN attempt **only if** G4–G8 green; else harden | T2 |
+| AM | Orchestrator: window buffer, in-process predictor, detector, `Incident`, challenge start/status/reveal, firewall test | G8 (local) |
+| AM | `TemplateReporter` + 10 recorded incidents | G7 (T1) |
+| PM | Frontend challenge panel + report + reveal; responsive pass | G9 (local) |
+| Evening | `docker compose up` on a clean checkout → 3 clean runs | **MVP** |
+| Night | T2a only if MVP passed: S3 upload, ECR, ECS, ALB, API Gateway, Amplify | G3 |
 
 ### Day 4 — Sun 11 Oct: Make it unbreakable
 | Block | Work | Gate |
 |---|---|---|
-| AM | End-to-end runs on AWS ×10; fix flakiness; freeze thresholds; final test-set metrics | G5 final |
-| AM | Record fallback demo video; slides with measured numbers only | G10 |
-| PM | Pitch rehearsal ×3; feature freeze 3 h before judging | — |
+| AM | Record fallback video of the working stack (local or AWS); slides with measured numbers only | G10 |
+| AM | T2b SageMaker training job + endpoint → T2c localisation → T2d Bedrock, strictly in that order, each only if the previous is green | G6 / G5 loc / G7 Bedrock |
+| PM | Feature freeze 3 h before judging; rehearsal ×3 | — |
 
 ### Cut lines (decide at these checkpoints, not later)
-- **End of Day 1:** if pipe-leak splitting is unstable → use junction leaks only for ds1; pipe leaks become T2.
-- **End of Day 2:** if `ds1` is not in S3 → generate locally and upload; ECS RunTask becomes a slide, not a blocker.
-- **Midday Day 3:** if the SageMaker endpoint is not serving → `AQUA_MODE=local` predictor inside the api container; keep the training job as the SageMaker story.
-- **Evening Day 3:** if Bedrock is not grounded reliably → ship `TemplateReporter` labelled as such; agent becomes "live attempt with fallback".
+- **End of Day 1:** if pre-split pipe leaks misbehave → junction leaks only for ds1 and the challenge.
+- **End of Day 2:** if the MLP does not beat the baseline → ship the baseline predictor; residual detection still works on top of it (report honestly).
+- **Evening Day 3:** if the MVP loop is not clean → no T2 work; Day 4 AM goes to fixing the MVP.
+- **Day 4 midday:** stop starting new T2 items; whatever is green ships, anything else becomes a "next steps" slide.
 
 ---
 
@@ -944,12 +957,14 @@ Assumes hackathon ends evening of 11 Oct. Adjust the times, not the order.
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| WNTRSimulator stepwise advance behaves unexpectedly after mid-run topology/leak changes | Med | High | Test in G1 hour 1; fallback = replay from t=0 with event log (fine for an 8-node net at modest speeds; cap 20× if slow) |
+| WNTRSimulator stepwise advance behaves unexpectedly after mid-run leak changes | Low (feasibility run: restart == full run, 19 ms/step) | High | Pre-split pipes (no mid-run topology change); G1 test stepwise == full run; fallback = replay from t=0 with event log |
 | PDD/leak convergence failures at bursts | Med | Med | Log + exclude; clamp burst area; record failure rate in manifest |
 | Predictor learns to reconstruct leaks → no residual | Med | **Critical** | §9.1 normal-only training; unit test: LOO residual on a large leak must exceed 3σ |
-| Detector fires on demand spikes | High | High | Operational scenarios in val; report FAR separately; T2 classifier |
-| Mixed-content / CORS between Amplify and API | High | High | API Gateway HTTPS front door from Day 2; CORS env |
-| Bedrock model not enabled in region | Med | High | D1 check on Day 1 AM |
+| Python 3.14 has no WNTR wheels | High (dev laptop is 3.14) | High | Python 3.12 via `uv` (`make setup`); containers use `python:3.12-slim` |
+| Scope creep into T2/T3 before the loop works | High | **Critical** | Gate MVP (§12) blocks all T2 work |
+| Detector fires on demand changes | High | High | Operational scenarios (HIGH/LOW_DEMAND, DEMAND_SHIFT) in train/val; FAR per type; T3 classifier |
+| Mixed-content / CORS between Amplify and API (T2a) | High | High | API Gateway HTTPS front door; FastAPI sole CORS owner; `AQUA_CORS_ORIGINS` |
+| Bedrock model not enabled / needs inference profile | Med | Med (T2d only) | `14_bedrock_check.sh`; inference-profile id + IAM for all routed regions; template fallback is T1 anyway |
 | Endpoint cold start / latency in live demo | Low | Med | Real-time endpoint (not serverless); warm with health call before demo |
 | Wi-Fi at venue fails | Med | **Critical** | Recorded fallback video; `docker compose` local mode on laptop |
 | Overclaiming in pitch | Med | High | §16 claims discipline; every number traced to `experiments/` |
@@ -960,16 +975,18 @@ Assumes hackathon ends evening of 11 Oct. Adjust the times, not the order.
 
 | ID | Decision | Default |
 |---|---|---|
-| D1 | AWS region | `us-east-1` unless Bedrock model confirmed in `ap-south-1` |
-| D2 | Bedrock model | a current Claude model available to the account; ID in `AQUA_BEDROCK_MODEL_ID` |
-| D3 | Tank initial level | 1.07 m (3.5 ft) |
-| D4 | Ship model | whichever of MLP / GNN wins on val hidden-node MAE |
+| D1 | AWS region | `us-east-1` unless Bedrock model confirmed in `ap-south-1` (T2) |
+| D2 | Bedrock model (T2d) | a current Claude model available to the account; model **or inference-profile** ID in `AQUA_BEDROCK_MODEL_ID` |
+| D3 | Tank initial level | 1.07 m (3.5 ft; the tutorial text says both 3.5 ft and 4 ft) |
+| D4 | Ship model | MLP (baseline if MLP fails G4); GNN is T3 |
 | D5 | Window W / consecutive T | 6 / 3 steps (tuned on val) |
-| D6 | Interactive timestep | 60 s |
-| D7 | ds1 size | 2,400 requested |
+| D6 | Interactive timestep | **300 s** (single cadence, v1.1.0) |
+| D7 | ds1 size | **1,200 requested, 8 scenario types** (v1.1.0) |
 | D8 | Auth | single `X-Api-Key` header |
 | D9 | Hard holdout locations | `pipe:5`, `junction:6` |
 | D10 | ECS sizing | 1 vCPU / 2 GB per task (raise if WNTR stepping is slow) |
+| D11 | Python | 3.12 everywhere (local via `uv`, containers `python:3.12-slim`) |
+| D12 | WNTR | `1.5.0` (feasibility-validated; pin confirmed in G1) |
 
 ---
 
@@ -994,6 +1011,7 @@ Always show alongside our numbers: dataset size, number of test sims, holdout de
 | Version | Date | Change |
 |---|---|---|
 | 1.0.0 | 2026-10-08 | Initial frozen backbone for hackathon build |
+| 1.1.0 | 2026-10-08 | Resolves BI-01…BI-21 (`docs/BACKBONE_ISSUES.md`). Scope re-tiered to the MVP detection loop (§2, gate MVP §12, schedule §13). Single 300-s cadence (§5.3, D6). Connectivity + zones + UI coordinates stated in §6.2 (no official `.inp` exists). Pre-split pipe leaks + verified stepping (§6.3). Observation-layer units, `_pct`/`_lpm` (§5.2). New ids (§5.1). `leave_one_out_flow` over 5 sensors (§7.9, §9.1–9.2). `Incident.localisation` nullable until T2c; `AgentReport.generated_by`. ds1 = 1,200 sims / 8 types, generated locally (§8). IAM: exec-role SSM, inference profiles, CodeBuild role (§10.3). Grounding exemptions (§9.6). Python 3.12, WNTR 1.5.0 (D11, D12). |
 
 ---
 
@@ -1002,7 +1020,8 @@ Always show alongside our numbers: dataset size, number of test sims, holdout de
 ```
 aquaagent/
 ├── BACKBONE.md
-├── docs/modules/01_SIMULATION_ENGINE.md … 10_DEMO_AND_PITCH.md
+├── INSTRUCTIONS.md · TILL_NOW.md
+├── docs/modules/01_SIMULATION_ENGINE.md … 10_DEMO_AND_PITCH.md · docs/research/ · docs/aws/ · docs/RUNBOOK.md
 ├── shared/
 │   ├── contracts/        # Pydantic models (python) + contracts.ts
 │   └── units.py / units.ts
@@ -1041,7 +1060,7 @@ aquaagent/
 
 ```markdown
 # <NN>_<NAME>.md
-Backbone version: backbone/1.0.0
+Backbone version: backbone/1.1.0
 
 ## Purpose
 ## Inputs  (cite Backbone §)
@@ -1058,4 +1077,4 @@ Backbone version: backbone/1.0.0
 **Snapshot** full hydraulic state at one instant · **EPS** extended-period simulation · **PDD** pressure-dependent demand · **LOO** leave-one-sensor-out prediction · **Residual** observed − expected · **Signature** sensor residual pattern produced by a known simulated fault · **Firewall** rules in §11 separating truth from what models see · **Challenge** hidden-fault demo mode.
 
 ---
-*End of BACKBONE.md — Physics generates reality. ML interprets sparse observations. The agent explains evidence and supports decisions.*
+*End of BACKBONE.md (backbone/1.1.0) — Physics generates reality. ML interprets sparse observations. The agent explains evidence and supports decisions.*

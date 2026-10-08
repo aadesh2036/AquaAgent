@@ -1,0 +1,6 @@
+{
+  "sensor_layout_id": "sensors_default_v1",
+  "pressure": [{"sensor_id":"S1","node_id":"2"},{"sensor_id":"S2","node_id":"4"},{"sensor_id":"S3","node_id":"6"}],
+  "flow":     [{"sensor_id":"F1","link_id":"3"},{"sensor_id":"F2","link_id":"6"}],
+  "context":  ["tank_level_m","pump_status","pump_flow_lps","reservoir_head_m","time_of_day_s"]
+}

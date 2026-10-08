@@ -1,0 +1,30 @@
+# CI: lint + unit tests + contract tests ONLY. No deploy (deploys are terminal-driven, docs/RUNBOOK.md).
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check .
+      - run: python -m shared.contracts.export && git diff --exit-code shared/contracts/generated/
+      - run: python -m pytest
+  typescript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "22" }
+      - run: node --test shared/tests/*.test.ts
+      - run: bash frontend/scripts/check-no-hydraulics.sh
+  infra:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: for f in infra/scripts/*.sh; do bash -n "$f"; done
+      - run: shellcheck -S error infra/scripts/*.sh

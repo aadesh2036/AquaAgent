@@ -1,0 +1,16 @@
+# CodeBuild fallback for image builds when `docker` is unavailable (e.g. CloudShell).
+# Used by infra/scripts/codebuild_image.sh. Env: AWS_REGION, ACCOUNT_ID, ECR_REPO_SIM, ECR_REPO_API, IMAGE_TAG.
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - REGISTRY="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+      - aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$REGISTRY"
+  build:
+    commands:
+      - docker build -f sim/Dockerfile -t "$REGISTRY/$ECR_REPO_SIM:$IMAGE_TAG" .
+      - docker build -f api/Dockerfile -t "$REGISTRY/$ECR_REPO_API:$IMAGE_TAG" .
+  post_build:
+    commands:
+      - docker push "$REGISTRY/$ECR_REPO_SIM:$IMAGE_TAG"
+      - docker push "$REGISTRY/$ECR_REPO_API:$IMAGE_TAG"

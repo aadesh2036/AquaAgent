@@ -1,0 +1,4 @@
+# Root dev tooling + shared contracts (make setup). Module requirements live in sim/ api/ ml/.
+pydantic>=2.7,<3
+pytest>=8
+ruff>=0.6

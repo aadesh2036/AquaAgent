@@ -1,0 +1,30 @@
+# Local mode (BACKBONE §3.3): sim:8000, api:8080, frontend:5173.
+# `make compose-up` — works only once modules 01, 08, 09 are implemented.
+services:
+  sim:
+    build: { context: ., dockerfile: sim/Dockerfile }
+    command: ["serve", "--port", "8000"]
+    ports: ["8000:8000"]
+    environment:
+      AQUA_MODE: local
+      AQUA_NETWORK_ID: net_epa_tutorial_v1
+  api:
+    build: { context: ., dockerfile: api/Dockerfile }
+    ports: ["8080:8080"]
+    depends_on: [sim]
+    env_file: [.env]
+    environment:
+      AQUA_MODE: local
+      AQUA_SIM_URL: http://sim:8000
+    volumes:
+      - ./data:/app/data:ro
+  frontend:
+    image: node:20-alpine
+    working_dir: /app/frontend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports: ["5173:5173"]
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080
+    volumes:
+      - ./frontend:/app/frontend
+      - ./shared:/app/shared:ro
