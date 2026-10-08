@@ -3,7 +3,7 @@
 services:
   sim:
     build: { context: ., dockerfile: sim/Dockerfile }
-    command: ["serve", "--port", "8000"]
+    command: ["serve", "--host", "0.0.0.0", "--port", "8000"]
     ports: ["8000:8000"]
     environment:
       AQUA_MODE: local

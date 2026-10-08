@@ -7,3 +7,9 @@ frontend/node_modules
 frontend/dist
 **/__pycache__
 CONTEXT
+node_modules
+**/node_modules
+.pytest_cache
+.ruff_cache
+*.pyc
+docs

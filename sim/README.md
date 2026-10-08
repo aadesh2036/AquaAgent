@@ -10,4 +10,23 @@ docker build -f sim/Dockerfile -t aquaagent-sim .      # context = repo root
 docker run -p 8000:8000 aquaagent-sim                   # serve
 docker run aquaagent-sim generate --config config/generation/ds1.yaml --shard 0 --num-shards 8 --out s3://…
 ```
-Stepwise vs replay fallback decision: _to be recorded by module 01_. WNTR version: _pinned by module 01 (G1)_.
+## Module 01 facts (G1)
+
+- **WNTR 1.5.0** (pinned), `WNTRSimulator` only, Hazen-Williams, PDD (required 20 m, minimum 0 m). Network built from the BACKBONE §6 tables (no official `.inp` exists); `config/networks/net_epa_tutorial_v1.{json,inp}` are exported by `python -m sim.engine.network`.
+- **Stepwise mode is the default** (one `WNTRSimulator` run per `advance`, 300-s steps, ~2-5 ms/step). `SimSession(replay_mode=True)` is the fallback: it rebuilds and replays the event log every call and gives identical results.
+- **Event semantics:** an event recorded at `sim_time_s == t` (must equal the session time) takes effect from the NEXT 300-s step; the snapshot at t is never changed. Invalid events return 422 and are not logged.
+- **Event params:** `TAP_SET` target T1-T3 `{"open": bool}`; `PIPE_FAULT` target pipe 1-8 `{"kind": "LEAK"|"BURST"|"CLOSE", "area_m2"?}` (defaults 1.5e-4 / 2e-3 m2, max 5e-3); `VALVE_SET` target V1 `{"open": bool}` (pipe 7 status); `PIPE_RESET` target pipe `{}`; `SPEED` logged only; `RESET` == reset.
+
+```bash
+make sim-smoke     # G1 smoke (24 h EPS, mass balance, leak, ms/step)
+make sim-serve     # uvicorn on :8000
+docker build -f sim/Dockerfile -t aquaagent-sim:dev . && docker run -p 8000:8000 aquaagent-sim:dev
+```
+
+Routes (BACKBONE §7.14.2; every response has `X-Aqua-Contract`): `GET /sim/health`, `POST /sim/session`, `POST /sim/session/{id}/event`, `POST /sim/session/{id}/advance` (1-20 steps), `GET /sim/session/{id}/snapshot`, `POST /sim/session/{id}/fork_what_if`, `POST /sim/session/{id}/reset`. Unknown session 404; bad input 422; WNTR failure 503.
+
+```bash
+SID=$(curl -s -XPOST localhost:8000/sim/session -H 'content-type: application/json' \
+  -d '{"network_id":"net_epa_tutorial_v1","seed":1}' | python -c 'import sys,json;print(json.load(sys.stdin)["session_id"])')
+curl -s -XPOST localhost:8000/sim/session/$SID/advance -H 'content-type: application/json' -d '{"steps":5}'
+```

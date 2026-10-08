@@ -59,14 +59,14 @@ None in T1. In T2a the image is pushed by `infra/scripts/05_build_push_images.sh
 
 ## 9. Acceptance gate — G1
 Copied from BACKBONE §12 (v1.1.0), plus module checks:
-- [ ] EPA network built from §6 tables; exported `.inp`/`.json` topology == §6.2 (test)
-- [ ] 24 h EPS at 300 s; PDD on; healthy baseline ≥ 20 m
-- [ ] junction leak and pre-split pipe leak both change pressures/flows
-- [ ] mass balance ≤ 1e-4 m³/s every step
-- [ ] stepwise advance == full run (or documented replay fallback)
-- [ ] WNTR version pinned (`wntr==1.5.0` confirmed)
-- [ ] container runs `serve`
-- [ ] (module) all §7.14.2 routes schema-valid; fork isolation green; 20 steps < 1 s
+- [x] EPA network built from §6 tables; exported `.inp`/`.json` topology == §6.2 (test) (test_engine_network.py, test_engine_export.py)
+- [x] 24 h EPS at 300 s; PDD on; healthy baseline ≥ 20 m (test_engine_network.py: 289 steps, 31.2–59.8 m)
+- [x] junction leak and pre-split pipe leak both change pressures/flows (test_engine_leaks.py)
+- [x] mass balance ≤ 1e-4 m³/s every step (test_engine_snapshot.py, test_engine_leaks.py)
+- [x] stepwise advance == full run (or documented replay fallback) (test_engine_session.py: stepwise == replay ≤ 1e-6 m; test_engine_leaks.py)
+- [x] WNTR version pinned (`wntr==1.5.0` confirmed) (test_server.py health; sim/requirements.txt)
+- [x] container runs `serve` (sim/Dockerfile; health check verified, see TILL_NOW)
+- [x] (module) all §7.14.2 routes schema-valid; fork isolation green; 20 steps < 1 s (test_server.py, test_engine_session.py)
 
 ## 10. Risks and fallbacks
 - Stepwise misbehaves with controls/overrides (Low; feasibility passed for leaks): replay fallback behind a flag.

@@ -12,7 +12,7 @@
 
 **Build focus (BACKBONE §2, v1.1.0):** T1 = the **local MVP detection loop**: simulation → dataset → MLP → residual detector → challenge → template explanation → SVG UI. Gate **MVP** must pass before any AWS / SageMaker / localisation / Bedrock work.
 
-**Next action:** start **module 01** (simulation engine) with the agent prompt in `docs/modules/01_SIMULATION_ENGINE.md` §12. Module 09 step 1 (static SVG network in mock mode) can run in parallel.
+**Next action:** module 01 is done (G1 passed). Start **module 02** (data generation); module 08 steps 1–2 can use the sim API (`sim/README.md`). Module 09 step 1 (static SVG network in mock mode) can run in parallel.
 
 **Git:** the human manages branches and commits. Nothing has been committed by agents.
 
@@ -21,7 +21,7 @@
 | # | Module | Gate | Tier | Status | Next step |
 |---|---|---|---|---|---|
 | — | shared/contracts + units + ids | all | T1 | **done** (`backbone/1.1.0`) | — |
-| 01 | [Simulation engine](docs/modules/01_SIMULATION_ENGINE.md) | G1 | **T1 core** | approach validated (`make feasibility`); code = stubs | step 1 |
+| 01 | [Simulation engine](docs/modules/01_SIMULATION_ENGINE.md) | G1 | **T1 core** | **done (G1 passed)** — 8 steps, last = step 8 (container + smoke + docs) | — |
 | 02 | [Data generation](docs/modules/02_DATA_GENERATION.md) | G2 | T1 | stubs | after 01 |
 | 04 | [ML predictor](docs/modules/04_ML_PREDICTOR.md) | G4 | T1 | stubs | after 02 |
 | 05 | [Detector (+ localisation T2c)](docs/modules/05_ANOMALY_LOCALISATION.md) | G5 | T1 / T2c | stubs | after 04 |
@@ -74,3 +74,10 @@
 |---|---|---|---|---|---|---|
 | 2026-10-08 | setup | repo skeleton + docs + contracts (backbone/1.0.0) | done | see §3 | lint + contracts green | — |
 | 2026-10-08 | setup | resolve BACKBONE issues → backbone/1.1.0; WNTR feasibility; MVP re-tier; Python 3.12 env | done | BACKBONE.md, docs/*, shared/contracts, Makefile, config/generation/ds1.yaml | `make feasibility`, `make lint`, `make contracts-test` green | handoff moved to `CONTEXT/` |
+| 2026-10-08 | 01 | 1 network build | done | sim/engine/network.py, sim/tests/test_engine_network.py | 10 tests; 289-step EPS, junction P 31.2–59.8 m; pre-split vs unsplit ΔP ≤ 1e-4 m | `split_pipe` keeps canonical id `p` as the UPSTREAM half; tap demand = 2nd demand entry category `tap`; WNTR stores PDD as "PDA" |
+| 2026-10-08 | 01 | 2 NetworkConfig export | done | sim/engine/network.py, config/networks/net_epa_tutorial_v1.{json,inp}, sim/tests/test_engine_export.py | JSON == constants; 8 nodes / 9 links; .inp round-trip max ΔP 1.06e-5 m | tolerance 1e-4 m because the .inp is written in US units with rounding (20 m → 28.43 psi) |
+| 2026-10-08 | 01 | 3 snapshot + mass balance | done | sim/engine/snapshot.py, mass_balance.py, sim/tests/test_engine_snapshot.py | 289 snapshots validate; mass balance < 1e-8 m3/s | tank `demand` > 0 = filling (== pipe 6 flow); reservoir demand < 0 |
+| 2026-10-08 | 01 | 4 leaks | done | sim/engine/leaks.py, sim/tests/test_engine_leaks.py | pipe-4 leak 1.5e-4 m2 lowers S2/S3 > 0.5 m; set_leak_now vs scheduled max ΔP 3.1e-3 m | one-step event lag; `_leak_status` has no public setter in WNTR 1.5 (private attr used) |
+| 2026-10-08 | 01 | 5–6 session + fork | done | sim/engine/session.py, sim/tests/test_engine_session.py | stepwise == replay ≤ 1e-6 m over 288 steps; CLOSE == WNTR control ≤ 1e-6 m; 20 steps ≈ 32 ms | pipe status via `link.initial_status` (restart re-reads it); events act from the NEXT step; rollback on failure by replay |
+| 2026-10-08 | 01 | 7 FastAPI server | done | sim/server/app.py, sim/cli.py, sim/tests/test_server.py, requirements-dev.txt | 42 sim tests passed; live curl health/create/advance OK | LRU sessions + per-session lock; 422/404/503 mapping |
+| 2026-10-08 | 01 | 8 container + smoke + docs | done (G1 passed) | sim/smoke.py, sim/Dockerfile, .dockerignore, docker-compose.yml, Makefile, sim/README.md, docs/modules/01 §9 | `make sim-smoke` OK (leak 3.30 L/s, 5 ms/step); image 784 MB; container health `{"status":"ok","wntr_version":"1.5.0"}` | podman ignores HEALTHCHECK in OCI format (works with `--format docker`); server needs ~6–8 s to start |

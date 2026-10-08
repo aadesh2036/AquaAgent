@@ -41,8 +41,7 @@ contracts-test: ## BACKBONE JSON examples round-trip through Pydantic; TS enum p
 
 # ---------------------------------------------------------------- modules (local)
 sim-smoke: ## G1 smoke: build EPA net, 24 h EPS, leaks, mass balance (module 01)
-	$(PY) -m sim.cli serve --help >/dev/null
-	$(call NOT_IMPL,01_SIMULATION_ENGINE.md)
+	$(PY) -m sim.smoke
 
 datagen-local: ## generate N sims locally (default N=20) → data/raw/$(DS) (module 02)
 	$(PY) -m sim.cli generate --config config/generation/$(DS).yaml --shard 0 --num-shards 1 --limit $(N) --out data/raw/$(DS)/shard=0/
