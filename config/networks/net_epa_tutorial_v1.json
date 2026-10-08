@@ -1,0 +1,231 @@
+{
+  "schema_version": "1.0",
+  "network_id": "net_epa_tutorial_v1",
+  "source": "epanet_tutorial",
+  "inp_path": "config/networks/net_epa_tutorial_v1.inp",
+  "nodes": [
+    {
+      "node_id": "1",
+      "node_type": "reservoir",
+      "elevation_m": 213.36,
+      "base_demand_m3s": null,
+      "x": 15.0,
+      "y": 35.0,
+      "ui_label": "Source",
+      "zone_id": "Z1"
+    },
+    {
+      "node_id": "2",
+      "node_type": "junction",
+      "elevation_m": 213.36,
+      "base_demand_m3s": 0.0,
+      "x": 90.0,
+      "y": 35.0,
+      "ui_label": "Pump discharge header",
+      "zone_id": "Z1"
+    },
+    {
+      "node_id": "3",
+      "node_type": "junction",
+      "elevation_m": 216.40800000000002,
+      "base_demand_m3s": 0.00946352946,
+      "x": 143.0,
+      "y": 35.0,
+      "ui_label": "Commercial district",
+      "zone_id": "Z1"
+    },
+    {
+      "node_id": "4",
+      "node_type": "junction",
+      "elevation_m": 213.36,
+      "base_demand_m3s": 0.00946352946,
+      "x": 143.0,
+      "y": 100.0,
+      "ui_label": "West residential",
+      "zone_id": "Z2"
+    },
+    {
+      "node_id": "5",
+      "node_type": "junction",
+      "elevation_m": 198.12,
+      "base_demand_m3s": 0.01261803928,
+      "x": 143.0,
+      "y": 165.0,
+      "ui_label": "Valley consumers",
+      "zone_id": "Z2"
+    },
+    {
+      "node_id": "6",
+      "node_type": "junction",
+      "elevation_m": 213.36,
+      "base_demand_m3s": 0.00946352946,
+      "x": 205.0,
+      "y": 100.0,
+      "ui_label": "East residential",
+      "zone_id": "Z3"
+    },
+    {
+      "node_id": "7",
+      "node_type": "junction",
+      "elevation_m": 213.36,
+      "base_demand_m3s": 0.0,
+      "x": 205.0,
+      "y": 35.0,
+      "ui_label": "Loop tie point",
+      "zone_id": "Z3"
+    },
+    {
+      "node_id": "8",
+      "node_type": "tank",
+      "elevation_m": 252.984,
+      "base_demand_m3s": null,
+      "x": 265.0,
+      "y": 35.0,
+      "ui_label": "Elevated storage",
+      "zone_id": "Z3"
+    }
+  ],
+  "links": [
+    {
+      "link_id": "1",
+      "link_type": "pipe",
+      "start_node": "2",
+      "end_node": "3",
+      "length_m": 914.4000000000001,
+      "diameter_m": 0.35559999999999997,
+      "roughness_hw": 100.0,
+      "initial_status": "OPEN",
+      "zone_id": "Z1"
+    },
+    {
+      "link_id": "2",
+      "link_type": "pipe",
+      "start_node": "3",
+      "end_node": "7",
+      "length_m": 1524.0,
+      "diameter_m": 0.30479999999999996,
+      "roughness_hw": 100.0,
+      "initial_status": "OPEN",
+      "zone_id": "Z1"
+    },
+    {
+      "link_id": "3",
+      "link_type": "pipe",
+      "start_node": "3",
+      "end_node": "4",
+      "length_m": 1524.0,
+      "diameter_m": 0.2032,
+      "roughness_hw": 100.0,
+      "initial_status": "OPEN",
+      "zone_id": "Z2"
+    },
+    {
+      "link_id": "4",
+      "link_type": "pipe",
+      "start_node": "4",
+      "end_node": "6",
+      "length_m": 1524.0,
+      "diameter_m": 0.2032,
+      "roughness_hw": 100.0,
+      "initial_status": "OPEN",
+      "zone_id": "Z2"
+    },
+    {
+      "link_id": "5",
+      "link_type": "pipe",
+      "start_node": "7",
+      "end_node": "6",
+      "length_m": 1524.0,
+      "diameter_m": 0.2032,
+      "roughness_hw": 100.0,
+      "initial_status": "OPEN",
+      "zone_id": "Z3"
+    },
+    {
+      "link_id": "6",
+      "link_type": "pipe",
+      "start_node": "7",
+      "end_node": "8",
+      "length_m": 2133.6,
+      "diameter_m": 0.254,
+      "roughness_hw": 100.0,
+      "initial_status": "OPEN",
+      "zone_id": "Z3"
+    },
+    {
+      "link_id": "7",
+      "link_type": "pipe",
+      "start_node": "4",
+      "end_node": "5",
+      "length_m": 1524.0,
+      "diameter_m": 0.15239999999999998,
+      "roughness_hw": 100.0,
+      "initial_status": "OPEN",
+      "zone_id": "Z2"
+    },
+    {
+      "link_id": "8",
+      "link_type": "pipe",
+      "start_node": "5",
+      "end_node": "6",
+      "length_m": 2133.6,
+      "diameter_m": 0.15239999999999998,
+      "roughness_hw": 100.0,
+      "initial_status": "OPEN",
+      "zone_id": "Z2"
+    },
+    {
+      "link_id": "9",
+      "link_type": "pump",
+      "start_node": "1",
+      "end_node": "2",
+      "length_m": null,
+      "diameter_m": null,
+      "roughness_hw": null,
+      "initial_status": "OPEN",
+      "zone_id": "Z1"
+    }
+  ],
+  "zones": [
+    {
+      "zone_id": "Z1",
+      "name": "Supply & Commercial"
+    },
+    {
+      "zone_id": "Z2",
+      "name": "West & Valley"
+    },
+    {
+      "zone_id": "Z3",
+      "name": "East & Storage"
+    }
+  ],
+  "hydraulics": {
+    "demand_model": "PDD",
+    "required_pressure_m": 20.0,
+    "minimum_pressure_m": 0.0,
+    "headloss": "H-W",
+    "tank_init_level_m": 1.07
+  },
+  "taps": [
+    {
+      "tap_id": "T1",
+      "node_id": "3"
+    },
+    {
+      "tap_id": "T2",
+      "node_id": "4"
+    },
+    {
+      "tap_id": "T3",
+      "node_id": "6"
+    }
+  ],
+  "valves": [
+    {
+      "valve_id": "V1",
+      "link_id": "7",
+      "impl": "pipe_status"
+    }
+  ]
+}

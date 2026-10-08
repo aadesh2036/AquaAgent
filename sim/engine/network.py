@@ -13,7 +13,19 @@ from pathlib import Path
 
 import wntr
 
-from shared.contracts.models import DemandProfile, NetworkConfig
+from shared.contracts.models import (
+    DemandProfile,
+    HydraulicsConfig,
+    LinkConfig,
+    LinkStatus,
+    LinkType,
+    NetworkConfig,
+    NodeConfig,
+    NodeType,
+    TapDef,
+    ValveDef,
+    Zone,
+)
 from shared.units import ft_to_m, gpm_to_m3s, in_to_m, lps_to_m3s
 
 # --- canonical specification (source units) ---------------------------------------------------
@@ -233,11 +245,92 @@ def build_network(
     return wn
 
 
-def export_network_config(wn, out_json: Path, out_inp: Path) -> NetworkConfig:
-    """Export `config/networks/net_epa_tutorial_v1.{json,inp}` — the topology source of truth (§6, G1)."""
-    raise NotImplementedError("NOT IMPLEMENTED — see docs/modules/01_SIMULATION_ENGINE.md")
+def network_config(network_id: str = NETWORK_ID) -> NetworkConfig:
+    """NetworkConfig (§7.1) built purely from the module constants (no WNTR)."""
+    if network_id != NETWORK_ID:
+        raise ValueError(f"unknown network_id {network_id!r}")
+
+    def node(nid: str, ntype: NodeType, elev_m: float, demand: float | None) -> NodeConfig:
+        x, y = COORDS[nid]
+        return NodeConfig(
+            node_id=nid,
+            node_type=ntype,
+            elevation_m=elev_m,
+            base_demand_m3s=demand,
+            x=x,
+            y=y,
+            ui_label=UI_LABELS[nid],
+            zone_id=NODE_ZONE[nid],
+        )
+
+    nodes = [node(RESERVOIR_ID, NodeType.RESERVOIR, ft_to_m(RESERVOIR_HEAD_FT), None)]
+    nodes += [node(j, NodeType.JUNCTION, ft_to_m(e), gpm_to_m3s(d)) for j, (e, d) in JUNCTIONS.items()]
+    nodes.append(node(TANK_ID, NodeType.TANK, ft_to_m(TANK_ELEVATION_FT), None))
+    nodes.sort(key=lambda n: int(n.node_id))
+
+    links = [
+        LinkConfig(
+            link_id=pid,
+            link_type=LinkType.PIPE,
+            start_node=s,
+            end_node=e,
+            length_m=ft_to_m(length_ft),
+            diameter_m=in_to_m(diam_in),
+            roughness_hw=HW_ROUGHNESS,
+            initial_status=LinkStatus.OPEN,
+            zone_id=LINK_ZONE[pid],
+        )
+        for pid, (s, e, length_ft, diam_in) in PIPES.items()
+    ]
+    links.append(
+        LinkConfig(
+            link_id=PUMP_ID,
+            link_type=LinkType.PUMP,
+            start_node=PUMP_START,
+            end_node=PUMP_END,
+            initial_status=LinkStatus.OPEN,
+            zone_id=LINK_ZONE[PUMP_ID],
+        )
+    )
+    return NetworkConfig(
+        network_id=network_id,
+        source="epanet_tutorial",
+        inp_path=f"config/networks/{network_id}.inp",
+        nodes=nodes,
+        links=links,
+        zones=[Zone(zone_id=z, name=n) for z, n in ZONES.items()],
+        hydraulics=HydraulicsConfig(
+            demand_model="PDD",
+            required_pressure_m=REQUIRED_PRESSURE_M,
+            minimum_pressure_m=MINIMUM_PRESSURE_M,
+            headloss="H-W",
+            tank_init_level_m=TANK_INIT_LEVEL_M,
+        ),
+        taps=[TapDef(tap_id=t, node_id=n) for t, n in TAPS.items()],
+        valves=[ValveDef(valve_id=v, link_id=p, impl="pipe_status") for v, p in VALVES.items()],
+    )
 
 
-def load_network_config(path: Path) -> NetworkConfig:
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_CONFIG_DIR = REPO_ROOT / "config" / "networks"
+
+
+def export_network_config(out_dir: Path = DEFAULT_CONFIG_DIR) -> NetworkConfig:
+    """Write `<network_id>.json` and `<network_id>.inp` (canonical UNSPLIT network) to `out_dir`."""
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    cfg = network_config()
+    (out_dir / f"{cfg.network_id}.json").write_text(cfg.model_dump_json(indent=2) + "\n")
+    wntr.network.write_inpfile(build_network(pipe_split_pos=None), str(out_dir / f"{cfg.network_id}.inp"))
+    return cfg
+
+
+def load_network_config(path: Path | None = None) -> NetworkConfig:
     """Load and validate the exported NetworkConfig (§7.1)."""
-    raise NotImplementedError("NOT IMPLEMENTED — see docs/modules/01_SIMULATION_ENGINE.md")
+    p = Path(path) if path is not None else DEFAULT_CONFIG_DIR / f"{NETWORK_ID}.json"
+    return NetworkConfig.model_validate_json(p.read_text())
+
+
+if __name__ == "__main__":
+    export_network_config()
+    print(f"wrote {DEFAULT_CONFIG_DIR}/{NETWORK_ID}.{{json,inp}}")

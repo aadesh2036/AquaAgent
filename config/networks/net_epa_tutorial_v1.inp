@@ -1,0 +1,150 @@
+[TITLE]
+
+[JUNCTIONS]
+;ID                      Elevation       Demand Pattern                 
+ 2                                700               0 diurnal                    ;
+ 3                                710             150 diurnal                    ;
+ 4                                700             150 diurnal                    ;
+ 5                                650             200 diurnal                    ;
+ 6                                700             150 diurnal                    ;
+ 7                                700               0 diurnal                    ;
+
+[RESERVOIRS]
+;ID                                   Head                  Pattern
+ 1                                700                            ;
+
+[TANKS]
+;ID                              Elevation           Init Level            Min Level            Max Level             Diameter           Min Volume Volume Curve         Overflow            
+ 8                                830    3.5104986877               0              20              60               0                                             ;
+
+[PIPES]
+;ID                   Node1                Node2                              Length             Diameter            Roughness           Minor Loss               Status
+ 1                    2                    3                               3000              14             100               0                 Open   ;
+ 2                    3                    7                               5000              12             100               0                 Open   ;
+ 3                    3                    4                               5000               8             100               0                 Open   ;
+ 4                    4                    6                               5000               8             100               0                 Open   ;
+ 5                    7                    6                               5000               8             100               0                 Open   ;
+ 6                    7                    8                               7000              10             100               0                 Open   ;
+ 7                    4                    5                               5000               6             100               0                 Open   ;
+ 8                    5                    6                               7000               6             100               0                 Open   ;
+
+[PUMPS]
+;ID                   Node1                Node2                Properties          
+ 9                    1                    2                    HEAD     1                      ;
+
+[VALVES]
+;ID                   Node1                Node2                            Diameter Type              Setting           Minor Loss
+
+[TAGS]
+;type      name       tag       
+
+[DEMANDS]
+;ID        Demand     Pattern   
+3          150.0      diurnal   
+3          0.0        1          ;tap
+4          150.0      diurnal   
+4          0.0        1          ;tap
+6          150.0      diurnal   
+6          0.0        1          ;tap
+
+[STATUS]
+;ID        Setting   
+
+[PATTERNS]
+;ID        Multipliers
+
+diurnal 0.404921 0.363886 0.375074 0.437515 0.587892 0.853617
+diurnal 1.180324 1.416157 1.416157 1.180324 0.853617 0.587892
+diurnal 0.437515 0.375074 0.404921 0.519169 0.755816 1.108163
+diurnal 1.453121 1.600000 1.453121 1.108163 0.755816 0.519169
+
+1 1.000000
+
+[CURVES]
+;ID         X-Value      Y-Value     
+;PUMP: 1
+ 1            600.000000   150.000000   ;
+
+
+[CONTROLS]
+
+[RULES]
+
+[ENERGY]
+GLOBAL PRICE           0.0000
+
+[EMITTERS]
+;ID        Flow coefficient
+
+[QUALITY]
+
+[SOURCES]
+;Node      Type       Quality    Pattern   
+
+[REACTIONS]
+;Type           Pipe/Tank               Coefficient
+
+ ORDER BULK 1
+ ORDER TANK 1
+ ORDER WALL 1
+ GLOBAL BULK 0.0000    
+ GLOBAL WALL 0.0000    
+
+[MIXING]
+;Tank ID             Model Fraction
+
+[TIMES]
+DURATION             24:00:00
+HYDRAULIC TIMESTEP   00:05:00
+QUALITY TIMESTEP     00:06:00
+PATTERN TIMESTEP     01:00:00
+PATTERN START        00:00:00
+REPORT TIMESTEP      00:05:00
+REPORT START         00:00:00
+START CLOCKTIME      00:00:00 AM
+RULE TIMESTEP        00:06:00
+STATISTIC            NONE      
+
+[REPORT]
+
+[OPTIONS]
+UNITS                GPM                 
+HEADLOSS             H-W                 
+SPECIFIC GRAVITY     1
+VISCOSITY            1
+TRIALS               200
+ACCURACY             0.001
+CHECKFREQ            2
+MAXCHECK             10
+UNBALANCED           STOP                
+PATTERN              1                   
+DEMAND MULTIPLIER    1
+DEMAND MODEL         PDA
+MINIMUM PRESSURE     0.00
+REQUIRED PRESSURE    28.43
+PRESSURE EXPONENT    0.5
+EMITTER EXPONENT     0.5
+QUALITY              NONE                
+DIFFUSIVITY          1
+TOLERANCE            0.01
+
+[COORDINATES]
+;Node      X-Coord    Y-Coord   
+1                  15.000000000         35.000000000
+2                  90.000000000         35.000000000
+3                 143.000000000         35.000000000
+4                 143.000000000        100.000000000
+5                 143.000000000        165.000000000
+6                 205.000000000        100.000000000
+7                 205.000000000         35.000000000
+8                 265.000000000         35.000000000
+
+[VERTICES]
+;Link      X-Coord    Y-Coord   
+
+[LABELS]
+
+[BACKDROP]
+UNITS    NONE
+
+[END]
