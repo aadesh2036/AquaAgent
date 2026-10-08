@@ -67,7 +67,7 @@
 ## 6. Open items (owner)
 - [ ] Day-1 optional 5-minute AWS items: budget alert (`01_budget_alert.sh`) and the Bedrock region check (`14_bedrock_check.sh`).
 - [ ] RUNBOOK "Values to confirm" V1–V9 (all T2).
-- [ ] Is AWS usage a judging requirement for this hackathon? If yes, T2a/T2b become must-do right after MVP. The schedule already reserves Day 3 night / Day 4 AM for them.
+- [x] AWS timing: **owner decision (2026-10-08): build all modules locally first; deployment (T2a/T2b/T2d) is done last to save AWS credits.** Do not run any `infra/scripts/*` until the owner says so.
 
 ## 7. Progress log
 | When | Module | Step | Status | Files | Evidence | Notes |
