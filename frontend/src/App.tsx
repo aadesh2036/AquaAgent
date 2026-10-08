@@ -3,8 +3,9 @@ import { Route, Routes } from "react-router-dom";
 import { BlueprintBackground } from "./components/BlueprintBackground";
 import { Landing } from "./pages/Landing";
 import { Simulate } from "./pages/Simulate";
+import { loadCity } from "./components/CityLink";
 
-const City = lazy(() => import("./pages/City").then((m) => ({ default: m.City })));
+const City = lazy(() => loadCity().then((m) => ({ default: m.City })));
 
 export function App(): JSX.Element {
   return (

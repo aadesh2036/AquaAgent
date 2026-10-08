@@ -65,3 +65,33 @@
 .aq-flow-feeder { stroke-dasharray: 6 10; animation: aq-flow-main 1.8s linear infinite; }
 @keyframes aq-sonar { 0% { transform: scale(.2); opacity: .9; } 100% { transform: scale(1); opacity: 0; } }
 .aq-sonar { transform-box: fill-box; transform-origin: center; animation: aq-sonar 2.4s ease-out infinite; }
+
+/* ---- Route transition into /city: water-spreading circular reveal (View Transitions API) ---- */
+@keyframes city-reveal {
+  from { clip-path: circle(0 at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
+  to   { clip-path: circle(150vmax at var(--reveal-x, 50%) var(--reveal-y, 50%)); }
+}
+@keyframes city-recede {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0.6; transform: scale(0.985); }
+}
+html[data-transition="city"]::view-transition-old(root) {
+  animation: city-recede 650ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+html[data-transition="city"]::view-transition-new(root) {
+  animation: city-reveal 650ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Fallback entrance (no View Transitions support): map drafts in */
+@keyframes city-enter {
+  from { opacity: 0; transform: scale(1.02); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.city-enter { animation: city-enter 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+html[data-transition="city"] .city-enter { animation: none; } /* the reveal already animates */
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-transition="city"]::view-transition-old(root),
+  html[data-transition="city"]::view-transition-new(root),
+  .city-enter { animation: none; }
+}

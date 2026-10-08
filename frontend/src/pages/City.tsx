@@ -130,7 +130,7 @@ export function City(): JSX.Element {
   const sel = useMemo(() => open, [open]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col city-enter">
       <Header tag="CONCEPT://CITY" right={<>
         <Link to="/simulate" className="cad-btn-primary px-3 py-1.5 font-mono-cad text-[11px] font-bold whitespace-nowrap">OPEN SIMULATOR</Link>
         <Link to="/" className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap max-sm:hidden">← OVERVIEW</Link></>} />

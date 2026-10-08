@@ -11,6 +11,7 @@ import { AgentReport } from "../components/AgentReport";
 import { MOCK_HAS_FIXTURES } from "../api/mock";
 import { API_BASE_URL, useSimStore, type Connection } from "../state/simulationStore";
 import { fmtLps, fmtM, fmtPct, layoutOf } from "../lib/display";
+import { CityLink } from "../components/CityLink";
 
 const MODES: [SimMode, string][] = [["explore", "EXPLORE"], ["break", "BREAK IT"], ["challenge", "TEST THE AI"]];
 
@@ -91,7 +92,7 @@ export function Simulate(): JSX.Element {
   return (
     <div className="min-h-screen pb-14">
       <Header tag="SIM://WNTR-1.5" center={<ModeTabs mode={mode} onMode={setMode} />}
-        right={<><ConnBadge c={connection} /><Link to="/city" className="font-mono-cad text-[10px] text-pale underline whitespace-nowrap max-sm:hidden">City view (demo)</Link><Link to="/" className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap">← OVERVIEW</Link></>} />
+        right={<><ConnBadge c={connection} /><CityLink className="font-mono-cad text-[10px] text-pale underline whitespace-nowrap max-sm:hidden">City view (demo)</CityLink><Link to="/" className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap">← OVERVIEW</Link></>} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-20">
         <div className="md:hidden mb-4 overflow-x-auto"><ModeTabs mode={mode} onMode={setMode} /></div>
