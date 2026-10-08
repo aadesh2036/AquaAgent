@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
 
 from api.app.settings import Settings
+from api.clients.sim_client import SimRejected
 from api.session.store import VALID_SPEEDS, SessionState
 from api.session.visibility import to_network_view
 from shared.contracts.models import (
@@ -63,6 +65,35 @@ def _ensure(request: Request) -> SessionState:
     return holder.state
 
 
+def _run(request: Request, fn: Callable[[SessionState], None]) -> NetworkView:
+    """Run `fn(state)` under the session lock and return the view.
+
+    If the sim answers 404 (restarted / LRU-evicted session), start a fresh sim session with the same
+    seed, reset the api state (speed kept), log a public system event and retry `fn` once.
+    """
+    holder = request.app.state.holder
+    with holder.lock:
+        state = _ensure(request)
+        try:
+            fn(state)
+        except SimRejected as exc:
+            if exc.status_code != 404:
+                raise
+            speed = state.speed
+            state = holder.state = _new_state(request, state.seed)
+            state.speed = speed
+            state.events.append(
+                sim_time_s=0,
+                source=EventSource.SYSTEM,
+                kind=EventKind.RESET,
+                target_id=None,
+                params={},
+                text="Simulation restarted — session reset",
+            )
+            fn(state)
+        return _view(request, state)
+
+
 def _view(request: Request, state: SessionState) -> NetworkView:
     app = request.app
     return to_network_view(
@@ -86,21 +117,23 @@ def network_topology(request: Request) -> NetworkTopology:
 
 @router.get("/network/state", response_model=NetworkView)
 def network_state(request: Request) -> NetworkView:
-    holder = request.app.state.holder
-    with holder.lock:
-        return _view(request, _ensure(request))
+
+    def go(state: SessionState) -> None:
+        state.snapshot = request.app.state.sim_client.snapshot(state.sim_session_id)
+
+    return _run(request, go)
 
 
 @router.post("/sim/step", response_model=NetworkView)
 def sim_step(request: Request, body: SimStepRequest) -> NetworkView:
-    holder = request.app.state.holder
-    with holder.lock:
-        state = _ensure(request)
+
+    def go(state: SessionState) -> None:
         snaps = request.app.state.sim_client.advance(state.sim_session_id, body.steps)
         state.snapshot = snaps[-1]
         if body.steps in VALID_SPEEDS:
             state.speed = body.steps
-        return _view(request, state)
+
+    return _run(request, go)
 
 
 def _emit(request: Request, state: SessionState, kind: EventKind, target: str, params: dict, text: str) -> None:
@@ -121,12 +154,13 @@ def tap(request: Request, body: TapRequest) -> NetworkView:
     app = request.app
     if body.tap_id not in {t.tap_id for t in app.state.topology.taps}:
         raise HTTPException(422, f"unknown tap {body.tap_id!r}")
-    with app.state.holder.lock:
-        state = _ensure(request)
-        text = f"Tap {body.tap_id} {'opened' if body.open else 'closed'}"
+    text = f"Tap {body.tap_id} {'opened' if body.open else 'closed'}"
+
+    def go(state: SessionState) -> None:
         _emit(request, state, EventKind.TAP_SET, body.tap_id, {"open": body.open}, text)
         state.taps[body.tap_id] = body.open
-        return _view(request, state)
+
+    return _run(request, go)
 
 
 @router.post("/pipe/fault", response_model=NetworkView)
@@ -136,8 +170,7 @@ def pipe_fault(request: Request, body: PipeFaultRequest) -> NetworkView:
     if body.link_id not in pipes:
         raise HTTPException(422, f"unknown pipe {body.link_id!r}")
     lid = body.link_id
-    with app.state.holder.lock:
-        state = _ensure(request)
+    def go(state: SessionState) -> None:
         if body.kind == PipeFaultKind.RESET:
             _emit(request, state, EventKind.PIPE_RESET, lid, {}, f"Pipe {lid} reset")
             state.visual_faults.pop(lid, None)
@@ -152,7 +185,10 @@ def pipe_fault(request: Request, body: PipeFaultRequest) -> NetworkView:
             elif body.kind == PipeFaultKind.BURST:
                 state.visual_faults[lid] = VisualFault.BURST
             # CLOSE changes only link status (comes from the physics)
-        return _view(request, state)
+
+    return _run(request, go)
+
+
 
 
 @router.post("/valve", response_model=NetworkView)
@@ -160,9 +196,10 @@ def valve(request: Request, body: ValveRequest) -> NetworkView:
     app = request.app
     if body.valve_id not in {v.valve_id for v in app.state.topology.valves}:
         raise HTTPException(422, f"unknown valve {body.valve_id!r}")
-    with app.state.holder.lock:
-        state = _ensure(request)
-        text = f"Valve {body.valve_id} {'opened' if body.open else 'closed'}"
+    text = f"Valve {body.valve_id} {'opened' if body.open else 'closed'}"
+
+    def go(state: SessionState) -> None:
         _emit(request, state, EventKind.VALVE_SET, body.valve_id, {"open": body.open}, text)
         state.valves[body.valve_id] = body.open
-        return _view(request, state)
+
+    return _run(request, go)

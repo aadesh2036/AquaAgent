@@ -169,3 +169,25 @@ def test_sim_down():
     assert r.status_code == 503
     assert r.json() == {"detail": "Simulation engine unreachable at http://127.0.0.1:9"}
     assert r.headers["X-Aqua-Contract"] == CONTRACT_VERSION
+
+
+@pytest.mark.parametrize("call", ["state", "step", "tap"])
+def test_stale_sim_session_recovers(call):
+    sim_app = create_sim_app()
+    sc = SimClient("http://sim", client=TestClient(sim_app, base_url="http://sim"))
+    c = TestClient(create_app(Settings(mode="local"), sc))
+    view(c.post("/api/session/reset", json={"seed": 3}))
+    view(c.post("/api/sim/step", json={"steps": 5}))
+    # simulate sim restart: swap in a fresh sim app behind the same client
+    sc._client = TestClient(create_sim_app(), base_url="http://sim")
+    if call == "state":
+        v = view(c.get("/api/network/state"))
+        assert v.sim_time_s == 0
+    elif call == "step":
+        v = view(c.post("/api/sim/step", json={"steps": 1}))
+        assert v.sim_time_s == 300 and v.speed == 1
+    else:
+        v = view(c.post("/api/tap", json={"tap_id": "T1", "open": True}))
+        assert v.taps["T1"].open
+    assert v.events[0].text == "Simulation restarted — session reset"
+    assert v.links["4"].visual_fault == "NONE"
