@@ -1,0 +1,110 @@
+<!--
+  Blueprint visual reference supplied by the owner (2026-10-08), CONDENSED: repeated slides/cards removed,
+  copy kept only as layout examples. The COPY IS NOT TO BE USED AS-IS (it contains unmeasured claims:
+  Pune, 100 Hz, acoustic, "<4 minutes", "$39B", "Claude 3.5", "±15 m"...). Use the visual system only.
+  Fonts: Sora (headings), Inter (body/UI), JetBrains Mono (CAD labels/data), Caveat (one handwritten accent).
+  Icons: Material Symbols Outlined. Original used Tailwind CDN classes + raw WebGL background shader.
+-->
+<style>
+  body { font-family: 'Inter', sans-serif; background-color: #0284c7; color: #fff; }
+  .font-heading { font-family: 'Sora', sans-serif; letter-spacing: -0.02em; }
+  .font-mono-cad { font-family: 'JetBrains Mono', monospace; }
+  .blueprint-hatch-subtle { background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.04) 0, rgba(255,255,255,.04) 1px, transparent 0, transparent 6px); }
+  .blueprint-grid-subtle { background-size: 24px 24px; background-image: linear-gradient(to right, rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.07) 1px, transparent 1px); }
+  .cad-panel { background-color: #0369a1; border: 1px solid rgba(255,255,255,.35); position: relative; }
+  .cad-panel-dark { background-color: #075985; border: 1px solid rgba(255,255,255,.35); }
+  .cad-well { background-color: #0369a1; border: 1px solid rgba(255,255,255,.25); }
+  .cad-btn-primary { background:#fff; color:#0284c7; border:1px solid #fff; transition: all .2s ease; }
+  .cad-btn-primary:hover { background:#e0f2fe; }
+  .cad-btn-secondary { background:#0369a1; color:#fff; border:1px solid rgba(255,255,255,.4); transition: all .2s ease; }
+  .cad-btn-secondary:hover { background:#075985; border-color:#fff; }
+  .cad-btn-active { background:#fff !important; color:#0284c7 !important; border:1px solid #fff !important; font-weight:700; }
+  /* "+" registration marks at two corners */
+  .crosshair-corner { position: relative; }
+  .crosshair-corner::before { content:'+'; position:absolute; top:-8px; left:-6px; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:bold; color:rgba(255,255,255,.7); }
+  .crosshair-corner::after  { content:'+'; position:absolute; bottom:-8px; right:-6px; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:bold; color:rgba(255,255,255,.7); }
+  /* L-shaped corner brackets */
+  .cad-corner-marks::before { content:''; position:absolute; top:0; left:0; width:6px; height:6px; border-top:2px solid #fff; border-left:2px solid #fff; }
+  .cad-corner-marks::after  { content:''; position:absolute; bottom:0; right:0; width:6px; height:6px; border-bottom:2px solid #fff; border-right:2px solid #fff; }
+  /* Timeline: horizontal slider, 5 slides, translateX(-(n-1)*20%), inactive slides opacity .35 scale .98 */
+  .timeline-slider { display:flex; width:500%; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  .timeline-slide-item { width:20%; flex-shrink:0; opacity:.35; transform:scale(.98); transition: opacity .4s, transform .4s; }
+  .timeline-slide-item.active-slide { opacity:1; transform:scale(1); }
+</style>
+
+<!-- Background: fixed full-page WebGL fragment shader (blueprint grid deformed by slow waves + dots at
+     intersections + subtle contour lines + pointer ripple + grain). Colours: mix(#037ac2,#1fa0eb) base,
+     chalk white lines (minor .08, major .16, dots .40). Must respect prefers-reduced-motion (render one
+     static frame) and fall back to the CSS .blueprint-grid-subtle when WebGL is unavailable. -->
+<!-- Shader fragment (verbatim from the reference): -->
+<script type="x-shader/x-fragment" id="ref-shader">
+precision highp float;
+uniform float u_time; uniform vec2 u_resolution; uniform vec2 u_mouse;
+void main() {
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+  vec2 p = uv * 2.0 - 1.0; p.x *= u_resolution.x / u_resolution.y;
+  vec2 mouse = u_mouse / u_resolution.xy; if (length(u_mouse) < 1.0) { mouse = vec2(0.5, 0.6); }
+  vec2 m = mouse * 2.0 - 1.0; m.x *= u_resolution.x / u_resolution.y;
+  float t = u_time * 0.45;
+  float mDist = length(p - m);
+  float mWave = sin(mDist * 14.0 - t * 3.5) * exp(-mDist * 2.5) * 0.22;
+  float mGlow = exp(-mDist * 2.8);
+  float w1 = sin(p.x * 2.2 + t * 0.8 + sin(p.y * 1.8 + t * 0.6)) * 0.25;
+  float w2 = cos(p.y * 2.5 - t * 0.7 + cos(p.x * 2.0 + t * 0.5)) * 0.22;
+  float w3 = sin((p.x + p.y) * 3.0 + t * 1.2 + mWave * 4.0) * 0.14;
+  float wave = w1 + w2 + w3 + mWave;
+  vec3 colDeepSky = vec3(0.01, 0.48, 0.76); vec3 colLightSky = vec3(0.12, 0.62, 0.92);
+  vec3 colBase = mix(colDeepSky, colLightSky, clamp(uv.y * 0.8 + wave * 0.15, 0.0, 1.0));
+  float contour = sin(wave * 28.0 + t * 0.5);
+  colBase = mix(colBase, vec3(0.40, 0.82, 0.98), smoothstep(0.96, 0.99, abs(contour)) * 0.25);
+  vec2 aspectVec = vec2(u_resolution.x / u_resolution.y, 1.0);
+  vec2 gridUV = (uv * 38.0 * aspectVec) + vec2(wave * 2.2);
+  vec2 majorGrid = abs(fract(gridUV * 0.1 - 0.5) - 0.5) / fwidth(gridUV * 0.1);
+  float majorLine = 1.0 - min(min(majorGrid.x, majorGrid.y), 1.0);
+  vec2 minorGrid = abs(fract(gridUV - 0.5) - 0.5) / fwidth(gridUV);
+  float minorLine = 1.0 - min(min(minorGrid.x, minorGrid.y), 1.0);
+  float dotCircle = smoothstep(0.18, 0.08, length(fract(gridUV) - 0.5));
+  colBase += vec3(0.20, 0.55, 0.85) * mGlow * 0.35;
+  vec3 chalkWhite = vec3(0.95, 0.98, 1.0);
+  colBase = mix(colBase, chalkWhite, minorLine * 0.08);
+  colBase = mix(colBase, chalkWhite, majorLine * 0.16);
+  colBase = mix(colBase, chalkWhite, dotCircle * 0.40);
+  float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+  colBase += (grain - 0.5) * 0.025;
+  gl_FragColor = vec4(colBase, 1.0);
+}
+</script>
+<!-- NOTE: fwidth needs the OES_standard_derivatives extension in WebGL1 (add `#extension GL_OES_standard_derivatives : enable`) or use WebGL2. -->
+
+<!-- Fixed corner annotations (decorative, lg screens only), e.g. top-left "DWG NO: …", top-right "GRID REF: …" in 9px mono at 50% white. -->
+
+<!-- HEADER: fixed, bg #0284c7/95 + backdrop blur, bottom border white/30.
+  Left: 24px square "AQ" mark (2px white border, mono bold, bg #0369a1) + "AquaAgent" (Sora 800) + small mono tag with left border.
+  Middle: mono nav buttons "[01] OVERVIEW" … with a 2px white sliding underline indicator (scroll-spy).
+  Right: white primary button "LAUNCH SIMULATOR" + material icon arrow_forward. -->
+
+<!-- HERO (centered, max-w 5xl):
+  badge: mono uppercase chip, bg #0369a1, border white/40, hatch, crosshair corners, small white square bullet.
+  h1 Sora bold ~3.5rem, two lines; second line lighter (#e0f2fe, weight 400) ending with ONE handwritten word in
+  Caveat with a hand-drawn SVG underline + arrow:
+    <svg viewBox="0 0 120 14"><path d="M 2 8 C 28 3, 75 4, 114 6" stroke="#fff" stroke-width="1.8"/><path d="M 102 3 L 115 6 L 105 10" stroke="#fff" stroke-width="1.5"/></svg>
+  lede Inter #e0f2fe max-w 2xl. CTAs: primary white + secondary outlined, mono bold, icons north_east / tune. -->
+
+<!-- TELEMETRY BAR: full-width band bg #0369a1 + hatch, border-y white/30; 4 wells (grid 2/4 cols):
+  each: left 2px white border, cad-corner-marks, 10px mono label "// LABEL" in #bae6fd, value 14px bold white,
+  9px mono footnote "|-- … --|" at 70% #e0f2fe. -->
+
+<!-- LIFECYCLE TIMELINE: section header with border-bottom; controls (prev/next square buttons, autoplay), a
+  "progress conduit" bar (white fill, square milestone buttons 01–05), then the horizontal slider. Each slide =
+  cad-panel crosshair-corner grid 12: left 4 cols text (chip "STAGE 01" white-on-blue, mono time tag, Sora h3,
+  Inter paragraph, mono tag chips) + right 8 cols drawing well (#075985, grid-subtle, mono caption top-left,
+  inline SVG schematic: hatched pipe rect, dashed flow line with arrowheads, pulsing concentric circles at the
+  leak point via <animate r/opacity>, sensor rect + dashed riser + label boxes). -->
+
+<!-- ARCHITECTURE DECK: tabs "[01] …" (cad-btn-secondary / active white), 5 cards in a row (md:grid-cols-5):
+  cad-panel grid-subtle crosshair-corner; header row "// LAYER 01" + white tag; 40px icon square; Sora title;
+  mono subtitle; Inter description; footer row mono. Below: a spotlight banner (border-2 white, hatch) with icon
+  box, layer tag, title, description, 3 metric wells. Auto-advance every 3.2 s with pause button. -->
+
+<!-- IMPACT: 3 metric pods (cad-panel crosshair-corner hatch; centre one border-2 white). FOOTER: band #0369a1 hatch,
+  mono row left "AQUAAGENT SYSTEMS // …", right "DWG … // POWERED BY …". -->

@@ -1,4 +1,17 @@
-// Layout: NetworkCanvas · Inspector · Controls · ChallengePanel · AgentReport (BACKBONE §3.1).
+import { Route, Routes } from "react-router-dom";
+import { BlueprintBackground } from "./components/BlueprintBackground";
+import { Landing } from "./pages/Landing";
+import { Simulate } from "./pages/Simulate";
+
 export function App(): JSX.Element {
-  throw new Error("NOT IMPLEMENTED — see docs/modules/09_FRONTEND.md");
+  return (
+    <>
+      <BlueprintBackground />
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/simulate" element={<Simulate />} />
+        <Route path="*" element={<Landing />} />
+      </Routes>
+    </>
+  );
 }

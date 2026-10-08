@@ -31,3 +31,6 @@ infra/logs/*
 .DS_Store
 .idea/
 .vscode/
+
+# UI screenshots (local review only)
+frontend/design/screens/

@@ -8,9 +8,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "baseUrl": ".",
-    "paths": { "@contracts": ["../shared/contracts/contracts.ts"], "@units": ["../shared/units.ts"] }
+    "paths": { "@contracts": ["../shared/contracts/contracts.ts"], "@units": ["../shared/units.ts"], "@netconfig": ["../config/networks/net_epa_tutorial_v1.json"] }
   },
-  "include": ["src", "../shared/contracts/contracts.ts", "../shared/units.ts"]
+  "include": ["src", "../shared/contracts/contracts.ts", "../shared/units.ts", "../config/networks/net_epa_tutorial_v1.json"]
 }

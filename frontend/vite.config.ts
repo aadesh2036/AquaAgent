@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@contracts": fileURLToPath(new URL("../shared/contracts/contracts.ts", import.meta.url)),
+      "@netconfig": fileURLToPath(new URL("../config/networks/net_epa_tutorial_v1.json", import.meta.url)),
       "@units": fileURLToPath(new URL("../shared/units.ts", import.meta.url)),
     },
   },
