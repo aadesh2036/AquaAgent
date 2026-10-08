@@ -30,6 +30,7 @@ Square corners everywhere (no radius except pills/dialog on /city). 1px white bo
 `crosshair-corner` (+ marks at two corners), `cad-corner-marks` (L brackets), `blueprint-hatch-subtle`, `blueprint-grid-subtle`, `cad-panel` / `cad-panel-dark` / `cad-well`, `cad-btn-primary|secondary|active|alarm`, `tag-chip`, `mono-label`. Captions read like drawing titles: `PLAN VIEW // net_epa_tutorial_v1 // SCALE N.T.S.`.
 
 ## Components
+- `components/CityLink.tsx` link into `/city`: preloads the lazy chunk on hover/focus, then a View Transitions circular reveal from the click point (`html[data-transition="city"]` rules in blueprint.css); fallback `.city-enter` fade; none under reduced motion. Use it for every link to `/city`.
 - `components/BlueprintBackground.tsx` raw-WebGL blueprint water background; static frame for reduced motion; CSS grid fallback; pauses in background tabs.
 - `components/Header.tsx` fixed header (brand mark, tag, center and right slots).
 - `components/NetworkCanvas.tsx` SVG plan view; per-node label offsets; flow dashes, tank fill, leak droplets, sensors, taps, V1.
@@ -38,7 +39,7 @@ Square corners everywhere (no radius except pills/dialog on /city). 1px white bo
 - `state/simulationStore.ts` zustand store (SimStore from `@contracts` plus connection status). `api/client.ts` HTTP client; `api/mock.ts` fixture-backed mock; `lib/display.ts` formatting and display mappings.
 
 ## Motion
-CSS keyframes in blueprint.css (`aq-flow`, `aq-drip`, `aq-spray`, `aq-pulse`, `aq-sonar`, `aq-flow-main`). `flowAnimationDuration(lps)` in `lib/display.ts` maps |flow| to 0.6-6 s for display only; zero flow or paused sim means no animation; direction -1 reverses. `prefers-reduced-motion` collapses all CSS animation and stops autoplay and the WebGL loop. Motion never encodes data that is not also shown as text.
+CSS keyframes in blueprint.css (`aq-flow`, `aq-drip`, `aq-spray`, `aq-pulse`, `aq-sonar`, `aq-flow-main`). `flowAnimationDuration(lps)` in `lib/display.ts` maps |flow| to 0.6-6 s for display only; zero flow or paused sim means no animation; direction -1 reverses. `prefers-reduced-motion` collapses all CSS animation and stops autoplay and the WebGL loop. Motion never encodes data that is not also shown as text. Route transitions: only the entry into `/city` animates (the one orchestrated moment); other route changes are instant.
 
 ## Accessibility floor
 Text contrast >= 4.5:1 (check the amber and paler tokens against their backing). Visible focus: `:focus-visible` 2 px white outline, offset 2 px. Interactive SVG elements are `role="button"`, `tabIndex=0`, with `aria-label`, and respond to Enter/Space. Decorative SVG/icons carry `aria-hidden="true"`. Layout works at 390 px with no horizontal page scroll; node labels hide below 480 px, sensor ids stay.
