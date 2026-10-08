@@ -1,25 +1,13 @@
-"""Challenge lifecycle routes (BACKBONE §7.14.1).
-
-Implementation: docs/modules/08_ORCHESTRATOR_API.md
-"""
+"""Challenge lifecycle routes (BACKBONE §7.14.1). Not implemented until module 08 step 5."""
 
 from __future__ import annotations
 
-from shared.contracts.models import (
-    ChallengeReveal,
-    ChallengeStartRequest,
-    ChallengeStartResponse,
-    ChallengeStatusResponse,
-)
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
+
+router = APIRouter()
 
 
-def challenge_start(body: ChallengeStartRequest) -> ChallengeStartResponse:
-    raise NotImplementedError("NOT IMPLEMENTED — see docs/modules/08_ORCHESTRATOR_API.md")
-
-
-def challenge_status() -> ChallengeStatusResponse:
-    raise NotImplementedError("NOT IMPLEMENTED — see docs/modules/08_ORCHESTRATOR_API.md")
-
-
-def challenge_reveal() -> ChallengeReveal:
-    raise NotImplementedError("NOT IMPLEMENTED — see docs/modules/08_ORCHESTRATOR_API.md")
+@router.api_route("/challenge/{path:path}", methods=["GET", "POST"], include_in_schema=False)
+def challenge_not_implemented(path: str) -> JSONResponse:
+    return JSONResponse({"detail": "NOT IMPLEMENTED — module 08 step 5 / module 07"}, status_code=501)

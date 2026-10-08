@@ -7,6 +7,11 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
+
+from shared.units import ft_to_m
+
+_REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 @dataclass(frozen=True)
@@ -30,3 +35,6 @@ class Settings:
     cors_origins: str = field(
         default_factory=lambda: os.environ.get("AQUA_CORS_ORIGINS", "http://localhost:5173")
     )
+    # Tank full level for NetworkView.tank.level_pct: 20 ft (BACKBONE §6.1).
+    tank_max_level_m: float = ft_to_m(20)
+    config_dir: Path = field(default_factory=lambda: Path(os.environ.get("AQUA_CONFIG_DIR", _REPO_ROOT / "config")))
