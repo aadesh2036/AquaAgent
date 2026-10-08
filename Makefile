@@ -61,12 +61,14 @@ tune: ## tune RTCA thresholds on val, then freeze (module 05)
 mvp: ## gate MVP: 3 challenge runs against the local stack (module 08)
 	$(PY) -m api.scripts.e2e_challenge --base http://localhost:8080 --runs 3
 
-compose-up: ## local stack: sim:8000 api:8080 frontend:5173
-	docker compose up --build -d
+COMPOSE := $(shell docker compose version >/dev/null 2>&1 && echo "docker compose" || echo "uvx podman-compose")
+
+compose-up: ## local stack: sim:8000 api:8080 frontend:5173 (docker compose, or podman-compose via uvx)
+	$(COMPOSE) up --build -d
 	@echo "frontend http://localhost:5173  api http://localhost:8080/api/health"
 
 compose-down: ## stop local stack
-	docker compose down
+	$(COMPOSE) down
 
 features: ## build GraphSample tensors + scalers from processed/ (module 04)
 	$(call NOT_IMPL,04_ML_PREDICTOR.md)

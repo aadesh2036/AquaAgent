@@ -8,11 +8,11 @@
 
 ## 1. Current state at a glance (2026-10-08)
 
-**Phase:** setup complete; **module 01 (simulation engine) done — gate G1 passed** on branch `simulation` (commits `536af6a`…`ba1926e`). The `aquaagent-sim` container builds and serves the §7.14.2 API locally. All other modules are still stubs.
+**Phase:** module 01 done (G1). Module 08 steps 1–2 (orchestrator skeleton) and module 09 phases 1–2 (blueprint landing + live simulator) done. **The local stack runs end to end** (sim container ↔ api container ↔ frontend, `make compose-up` → http://localhost:5173). Detection pipeline (02, 04, 05, 07, 08 steps 3–7) not started.
 
 **Build focus (BACKBONE §2, v1.1.0):** T1 = the **local MVP detection loop**: simulation → dataset → MLP → residual detector → challenge → template explanation → SVG UI. Gate **MVP** must pass before any AWS / SageMaker / localisation / Bedrock work.
 
-**Next action:** link the simulation to the frontend: module 08 steps 1–2 (orchestrator skeleton: session, network state, step, tap/pipe/valve via the visibility filter, calling the sim API) + module 09 steps 1–3 (live SVG network). Then module 02 (data generation). AWS deployment stays last (owner decision).
+**Next action:** module 02 (data generation: `sim generate/merge`, 1,200 sims locally). Then push the `aquaagent-sim` image + ds1 to AWS for datagen/S3 (owner plan: container first, frontend deploy later), then 04 → 05 → 07 → 08 steps 3–7.
 
 **Git:** branch `simulation`. Commits are made per step after the lead's review (owner request, 2026-10-08). No pushes.
 
@@ -22,12 +22,12 @@
 |---|---|---|---|---|---|
 | — | shared/contracts + units + ids | all | T1 | **done** (`backbone/1.1.0`) | — |
 | 01 | [Simulation engine](docs/modules/01_SIMULATION_ENGINE.md) | G1 | **T1 core** | **done (G1 passed)** — 8 steps, last = step 8 (container + smoke + docs) | — |
-| 02 | [Data generation](docs/modules/02_DATA_GENERATION.md) | G2 | T1 | stubs | after 08/09 link-up |
+| 02 | [Data generation](docs/modules/02_DATA_GENERATION.md) | G2 | T1 | stubs | **next** |
 | 04 | [ML predictor](docs/modules/04_ML_PREDICTOR.md) | G4 | T1 | stubs | after 02 |
 | 05 | [Detector (+ localisation T2c)](docs/modules/05_ANOMALY_LOCALISATION.md) | G5 | T1 / T2c | stubs | after 04 |
 | 07 | [Explanation: template (+ Bedrock T2d)](docs/modules/07_AQUAAGENT_BEDROCK.md) | G7 | T1 / T2d | stubs | step 1 anytime |
-| 08 | [Orchestrator API](docs/modules/08_ORCHESTRATOR_API.md) | G8 + **MVP** | T1 | stubs | **steps 1–2 next** (sim API ready) |
-| 09 | [Frontend](docs/modules/09_FRONTEND.md) | G9 | T1 | skeleton | step 1 anytime (mock) |
+| 08 | [Orchestrator API](docs/modules/08_ORCHESTRATOR_API.md) | G8 + **MVP** | T1 | **steps 1–2 done** (skeleton + stale-session recovery) | step 3 after module 04 |
+| 09 | [Frontend](docs/modules/09_FRONTEND.md) | G9 | T1 | **landing + live simulator done** (steps 1–4, 6 partly) | step 5 (challenge/report/reveal) after 08 step 5 |
 | 10 | [Demo and pitch](docs/modules/10_DEMO_AND_PITCH.md) | G10 | T1 | — | after MVP |
 | 03 | [AWS infra](docs/modules/03_AWS_INFRA.md) | G3 | T2a | scripts written, not executed | after MVP |
 | 06 | [SageMaker](docs/modules/06_SAGEMAKER.md) | G6 | T2b | stubs | after T2a |
@@ -83,3 +83,7 @@
 | 2026-10-08 | 01 | 8 container + smoke + docs | done (G1 passed) | sim/smoke.py, sim/Dockerfile, .dockerignore, docker-compose.yml, Makefile, sim/README.md, docs/modules/01 §9 | `make sim-smoke` OK (leak 3.30 L/s, 5 ms/step); image 784 MB; container health `{"status":"ok","wntr_version":"1.5.0"}` | podman ignores HEALTHCHECK in OCI format (works with `--format docker`); server needs ~6–8 s to start |
 | 2026-10-08 | 01 | review fix: smoke compares vs no-leak twin | done | sim/smoke.py | pipe-4 leak 1.5e-4 m² at 12 h → after 1 h ΔP vs twin S1 −0.62, S2 −0.92, S3 −0.92 m; leak 3.30 L/s | earlier before/after comparison mixed in the diurnal change (showed only −0.06 m) |
 | 2026-10-08 | 01 | commits | done | branch `simulation` | `536af6a` step 1 · `418bdf3` step 2 · `d62cee3` step 3 · `ebaa4fe` step 4 · `0f0dc49` steps 5–6 · `22c7900` step 7 · `ba1926e` step 8 | 42 sim tests, `make lint`, `make sim-smoke` green |
+| 2026-10-08 | 08 | steps 1–2 orchestrator skeleton | done | api/app, api/clients/sim_client.py, api/session/*, api/routes/*, api/tests/test_api_skeleton.py | 16 api tests; live: tap T2 → node 4 demand 3.83 → 8.83 L/s next step | `46c65ca`, `5e1cc85` (auto-recovery of a stale sim session); challenge/agent routes return 501 until step 5 / module 07 |
+| 2026-10-08 | 09 | phase 1 landing + simulator UI | done | frontend/src/** (pages, components, store, client, blueprint.css, WebGL background) | tsc + build + no-hydraulics pass | `97dc552`; copy rewritten to true/measured claims only (§16) |
+| 2026-10-08 | 09 | phase 2 live wiring + fixtures | done | frontend/src/api/fixtures, scripts/record_fixtures.mjs, scripts/check-no-truth-fields.sh | headless run vs live API: 5×, tap, pipe-4 leak droplets, V1 close, reset; 0 console errors | `e88209f`; mock replays 21 recorded frames; pipe-4 shows ≈0 flow at some ticks with a mid-pipe leak — real physics (upstream half per §7.4), not a bug |
+| 2026-10-08 | stack | containers end to end | done | docker-compose.yml, Makefile | sim + api containers + frontend: /api/health ok, step 20 → 01:40, S1/S2/S3 46.15/44.32/44.19 m | podman here: `make compose-up` falls back to `uvx podman-compose`; stop stray native servers first (ports 8000/8080) |
