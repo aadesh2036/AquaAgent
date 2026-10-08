@@ -26,11 +26,17 @@ SUBNETS="$(default_subnets_csv)"
 DEFAULT_SG="$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$(default_vpc_id)" Name=group-name,Values=default --query 'SecurityGroups[0].GroupId' --output text)"
 NETCFG="awsvpcConfiguration={subnets=[${SUBNETS}],securityGroups=[${DEFAULT_SG}],assignPublicIp=ENABLED}"
 
-run_task() {  # json-command-array  → prints task arn
-  aws ecs run-task --cluster "$ECS_CLUSTER" --launch-type FARGATE --task-definition "$TD_ARN" \
-    --network-configuration "$NETCFG" --tags "$TAG_CLI_LOWER" \
-    --overrides "{\"containerOverrides\":[{\"name\":\"sim\",\"command\":$1}]}" \
-    --query 'tasks[0].taskArn' --output text
+GIT_SHA="$(git -C "$REPO_ROOT" rev-parse --short HEAD)"
+run_task() {  # json-command-array  → prints task arn. Fargate Spot first (~70% cheaper), on-demand fallback.
+  local ov="{\"containerOverrides\":[{\"name\":\"sim\",\"command\":$1,\"environment\":[{\"name\":\"GIT_SHA\",\"value\":\"$GIT_SHA\"}]}]}"
+  local arn
+  for cp in FARGATE_SPOT FARGATE; do
+    arn="$(aws ecs run-task --cluster "$ECS_CLUSTER" --capacity-provider-strategy "capacityProvider=$cp,weight=1" \
+      --task-definition "$TD_ARN" --network-configuration "$NETCFG" --tags "$TAG_CLI_LOWER" \
+      --overrides "$ov" --query 'tasks[0].taskArn' --output text 2>/dev/null || true)"
+    [[ -n "$arn" && "$arn" != "None" ]] && { [[ $cp == FARGATE ]] && warn "Spot unavailable — used on-demand Fargate" >&2; printf '%s' "$arn"; return 0; }
+  done
+  die "run-task failed on both FARGATE_SPOT and FARGATE"
 }
 
 wait_and_check() {  # task arns...

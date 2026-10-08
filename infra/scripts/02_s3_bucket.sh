@@ -29,6 +29,9 @@ aws s3api put-public-access-block --bucket "$AQUA_BUCKET" --public-access-block-
 aws s3api put-bucket-versioning --bucket "$AQUA_BUCKET" --versioning-configuration Status=Enabled
 aws s3api put-bucket-encryption --bucket "$AQUA_BUCKET" --server-side-encryption-configuration \
   '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+# Cost hygiene: expire old object versions after 7 days, abort stale multipart uploads after 1 day.
+aws s3api put-bucket-lifecycle-configuration --bucket "$AQUA_BUCKET" --lifecycle-configuration \
+  '{"Rules":[{"ID":"aqua-noncurrent-7d","Status":"Enabled","Filter":{"Prefix":""},"NoncurrentVersionExpiration":{"NoncurrentDays":7},"AbortIncompleteMultipartUpload":{"DaysAfterInitiation":1}}]}'
 aws s3api put-bucket-tagging --bucket "$AQUA_BUCKET" \
   --tagging "TagSet=[{Key=${PROJECT_TAG_KEY},Value=${PROJECT_TAG_VALUE}}]"
 

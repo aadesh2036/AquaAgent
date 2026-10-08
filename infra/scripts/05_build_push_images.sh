@@ -12,21 +12,27 @@
 source "$(dirname "$0")/lib.sh"
 require_account
 
+ONLY=""; for a in "$@"; do case "$a" in --only=*) ONLY="${a#--only=}";; esac; done   # --only=sim builds just aquaagent-sim
 IMAGE_TAG="$(git -C "$REPO_ROOT" rev-parse --short HEAD)"
 [[ -n "$(git -C "$REPO_ROOT" status --porcelain)" ]] && warn "working tree is dirty — tag $IMAGE_TAG will not exactly match the code"
 REGISTRY="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 export IMAGE_TAG
 
-if [[ "${1:-}" == "--codebuild" ]] || ! docker info >/dev/null 2>&1; then
+if [[ " $* " == *" --codebuild "* ]] || ! docker info >/dev/null 2>&1; then
   warn "docker unavailable or --codebuild given → using CodeBuild fallback"
   bash "$(dirname "$0")/codebuild_image.sh"
 else
   aws ecr get-login-password | docker login --username AWS --password-stdin "$REGISTRY"
   ( cd "$REPO_ROOT"
-    docker build -f sim/Dockerfile -t "$REGISTRY/$ECR_REPO_SIM:$IMAGE_TAG" .
-    docker build -f api/Dockerfile -t "$REGISTRY/$ECR_REPO_API:$IMAGE_TAG" .
-    docker push "$REGISTRY/$ECR_REPO_SIM:$IMAGE_TAG"
-    docker push "$REGISTRY/$ECR_REPO_API:$IMAGE_TAG" )
+    if [[ "$ONLY" != "api" ]]; then
+      docker build --format docker -f sim/Dockerfile -t "$REGISTRY/$ECR_REPO_SIM:$IMAGE_TAG" . 2>/dev/null \
+        || docker build -f sim/Dockerfile -t "$REGISTRY/$ECR_REPO_SIM:$IMAGE_TAG" .
+      docker push "$REGISTRY/$ECR_REPO_SIM:$IMAGE_TAG"
+    fi
+    if [[ "$ONLY" != "sim" ]]; then
+      docker build -f api/Dockerfile -t "$REGISTRY/$ECR_REPO_API:$IMAGE_TAG" .
+      docker push "$REGISTRY/$ECR_REPO_API:$IMAGE_TAG"
+    fi )
 fi
 state_put image_tag "$IMAGE_TAG"
 ok "images pushed with tag $IMAGE_TAG"
