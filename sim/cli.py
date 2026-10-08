@@ -33,10 +33,24 @@ def main(argv: list[str] | None = None) -> int:
 
         uvicorn.run(app, host=args.host, port=args.port)
         return 0
-    print(
-        f"NOT IMPLEMENTED — `{args.cmd}`: see docs/modules/01_SIMULATION_ENGINE.md / 02_DATA_GENERATION.md",
-        file=sys.stderr,
-    )
+    if args.cmd == "generate":
+        from sim.generate.runner import VALID_FRACTION_MIN, run_shard
+
+        stats = run_shard(args.config, args.shard, args.num_shards, args.out, args.limit)
+        print(
+            f"shard {stats['shard']}: {stats['n_valid']}/{stats['n_requested']} valid "
+            f"({stats['valid_fraction']:.1%}), {stats['elapsed_s']:.1f}s, {stats['s_per_sim']:.2f}s/sim"
+        )
+        return 0 if stats["n_requested"] and stats["valid_fraction"] >= VALID_FRACTION_MIN else 1
+    if args.cmd == "merge":
+        from sim.generate.merge import merge
+
+        m = merge(args.config, args.raw, args.out)
+        print(
+            f"merged {m.n_valid}/{m.n_requested} valid sims; splits {m.counts_by_split}; "
+            f"{args.out.rstrip('/')}/manifest.json"
+        )
+        return 0
     return 2
 
 

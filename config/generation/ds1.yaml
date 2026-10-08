@@ -20,14 +20,19 @@ counts:            # §8.1 (backbone/1.1.0) — 8 types, sum 1200 (D7). ds2 type
   MEDIUM_LEAK: 200
   LARGE_LEAK: 150
   PIPE_BURST: 100
-leak_area_m2:      # PROVISIONAL — calibrate in G2 (module 02 §6 step 3)
+leak_area_m2:      # checked by calibration below (G2); unchanged unless a bucket median is out of band
   SMALL_LEAK: [2.0e-5, 8.0e-5]
   MEDIUM_LEAK: [8.0e-5, 2.5e-4]
   LARGE_LEAK: [2.5e-4, 6.0e-4]
   PIPE_BURST: [1.0e-3, 3.0e-3]
-calibration:       # filled by module 02 after calibration
-  done: false
-  realised_pct_of_system_demand: {}
+calibration:       # written by `python -m sim.generate.calibrate` (module 02, G2); ranges above are NOT auto-changed
+  done: true
+  method: "14 locations x geometric-midpoint area per bucket, fault at 12:00 to end, default diurnal profile, no noise, pipe split 0.5; realised = peak total leak flow / mean junction demand of the episode"
+  realised_pct_of_system_demand:
+    SMALL_LEAK: {area_m2_midpoint: 4e-05, target_pct: [0, 5], min_pct: 1.9, median_pct: 2.6, max_pct: 3.0, frac_in_band: 1.0, median_in_band: true}
+    MEDIUM_LEAK: {area_m2_midpoint: 0.0001414, target_pct: [5, 15], min_pct: 6.7, median_pct: 9.1, max_pct: 10.4, frac_in_band: 1.0, median_in_band: true}
+    LARGE_LEAK: {area_m2_midpoint: 0.0003873, target_pct: [15, 25], min_pct: 18.1, median_pct: 24.5, max_pct: 27.4, frac_in_band: 0.71, median_in_band: true}
+    PIPE_BURST: {area_m2_midpoint: 0.001732, target_pct: [25, null], min_pct: 78.5, median_pct: 99.9, max_pct: 111.0, frac_in_band: 1.0, median_in_band: true}
 fault_locations:
   junctions: ["2", "3", "4", "5", "6", "7"]
   pipes: ["1", "2", "3", "4", "5", "6", "7", "8"]
