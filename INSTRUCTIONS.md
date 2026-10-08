@@ -16,6 +16,7 @@
 | 4 | `TILL_NOW.md` | What is already done, what is blocked, which interim decisions apply | Always |
 | 5 | `docs/BACKBONE_ISSUES.md` | Why the 1.1.0 decisions were made (all resolved) | When a decision surprises you |
 | 6 | `docs/aws/0x_*.md`, `docs/research/WNTR_FEASIBILITY.md` | AWS context (T2) / measured simulation facts | Only when relevant |
+| 7 | `frontend/DESIGN.md` | Frontend design system: routes, tokens, components, motion/a11y floor, data + copy rules, checks | **Always for module 09 / any `frontend/` change** |
 
 Do **not** read other module MDs to "get context". A module MD plus BACKBONE is meant to be self-contained (BACKBONE §0.1). If you need something from another module, it must be in your MD's **§2 Inputs** or **§11 Handoff**. If it isn't there, stop and report it (see §6).
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export function Telemetry(): JSX.Element {
   const wells = [
@@ -148,6 +149,7 @@ export function Footer(): JSX.Element {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row md:justify-between gap-2 font-mono-cad text-[10px] text-pale">
         <span>AQUAAGENT // FIND THE WATER NOBODY CAN SEE</span>
         <span>SIMULATED NETWORK · SYNTHETIC DATA // WNTR + EPANET 2.2</span>
+        <Link to="/city" className="underline">CITY VIEW (CONCEPT DEMO)</Link>
       </div>
     </footer>
   );

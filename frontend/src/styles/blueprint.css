@@ -4,7 +4,7 @@
 
 @layer base {
   html { scroll-behavior: smooth; scroll-padding-top: 72px; }
-  body { font-family: 'Inter', sans-serif; background-color: #0284c7; color: #fff; margin: 0; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'Inter', sans-serif; background-color: #035a8c; color: #fff; margin: 0; -webkit-font-smoothing: antialiased; }
   :focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -20,13 +20,13 @@
   .cad-panel { background-color: #0369a1; border: 1px solid rgba(255,255,255,.35); position: relative; }
   .cad-panel-dark { background-color: #075985; border: 1px solid rgba(255,255,255,.35); }
   .cad-well { background-color: #0369a1; border: 1px solid rgba(255,255,255,.25); }
-  .cad-btn-primary { background:#fff; color:#0284c7; border:1px solid #fff; transition: all .2s ease; }
+  .cad-btn-primary { background:#fff; color:#035a8c; border:1px solid #fff; transition: all .2s ease; }
   .cad-btn-primary:hover { background:#e0f2fe; }
   .cad-btn-primary:disabled { opacity:.5; cursor:not-allowed; }
   .cad-btn-secondary { background:#0369a1; color:#fff; border:1px solid rgba(255,255,255,.4); transition: all .2s ease; }
   .cad-btn-secondary:hover { background:#075985; border-color:#fff; }
   .cad-btn-secondary:disabled { opacity:.5; cursor:not-allowed; }
-  .cad-btn-active { background:#fff !important; color:#0284c7 !important; border:1px solid #fff !important; font-weight:700; }
+  .cad-btn-active { background:#fff !important; color:#035a8c !important; border:1px solid #fff !important; font-weight:700; }
   .cad-btn-alarm { background:#075985; color:#fbbf24; border:1px solid #fbbf24; transition: all .2s ease; }
   .cad-btn-alarm:hover { background:#fbbf24; color:#075985; }
   .crosshair-corner { position: relative; }
@@ -59,3 +59,9 @@
 .aq-hit { cursor: pointer; }
 .aq-hit:focus-visible { outline: none; }
 .aq-hit:focus-visible + .aq-focus-ring, .aq-focus-ring-on { stroke: #fff; }
+
+@keyframes aq-flow-main { to { stroke-dashoffset: -30; } }
+.aq-flow-main { stroke-dasharray: 12 18; animation: aq-flow-main 1.4s linear infinite; }
+.aq-flow-feeder { stroke-dasharray: 6 10; animation: aq-flow-main 1.8s linear infinite; }
+@keyframes aq-sonar { 0% { transform: scale(.2); opacity: .9; } 100% { transform: scale(1); opacity: 0; } }
+.aq-sonar { transform-box: fill-box; transform-origin: center; animation: aq-sonar 2.4s ease-out infinite; }

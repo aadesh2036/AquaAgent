@@ -43,6 +43,7 @@ function ScrollNav(): JSX.Element {
           className={`px-3 py-4 font-mono-cad text-[11px] whitespace-nowrap ${active === n.id ? "text-white font-bold" : "text-pale"}`} aria-current={active === n.id ? "true" : undefined}>{n.label}</button>
       ))}
       <span className="absolute bottom-0 h-0.5 bg-white transition-all duration-300" style={{ left: bar.left, width: bar.width }} />
+      <Link to="/city" className="px-3 py-4 font-mono-cad text-[11px] whitespace-nowrap text-pale hover:text-white">[05] CITY VIEW (DEMO)</Link>
     </nav>
   );
 }

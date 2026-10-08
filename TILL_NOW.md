@@ -27,7 +27,7 @@
 | 05 | [Detector (+ localisation T2c)](docs/modules/05_ANOMALY_LOCALISATION.md) | G5 | T1 / T2c | stubs | after 04 |
 | 07 | [Explanation: template (+ Bedrock T2d)](docs/modules/07_AQUAAGENT_BEDROCK.md) | G7 | T1 / T2d | stubs | step 1 anytime |
 | 08 | [Orchestrator API](docs/modules/08_ORCHESTRATOR_API.md) | G8 + **MVP** | T1 | **steps 1–2 done** (skeleton + stale-session recovery) | step 3 after module 04 |
-| 09 | [Frontend](docs/modules/09_FRONTEND.md) | G9 | T1 | **landing + live simulator done** (steps 1–4, 6 partly) | step 5 (challenge/report/reveal) after 08 step 5 |
+| 09 | [Frontend](docs/modules/09_FRONTEND.md) | G9 | T1 | **landing + live simulator + /city concept demo done** (steps 1–4, 6 partly); design system in `frontend/DESIGN.md` | step 5 (challenge/report/reveal) after 08 step 5 |
 | 10 | [Demo and pitch](docs/modules/10_DEMO_AND_PITCH.md) | G10 | T1 | — | after MVP |
 | 03 | [AWS infra](docs/modules/03_AWS_INFRA.md) | G3 | T2a | scripts written, not executed | after MVP |
 | 06 | [SageMaker](docs/modules/06_SAGEMAKER.md) | G6 | T2b | stubs | after T2a |
@@ -87,3 +87,4 @@
 | 2026-10-08 | 09 | phase 1 landing + simulator UI | done | frontend/src/** (pages, components, store, client, blueprint.css, WebGL background) | tsc + build + no-hydraulics pass | `97dc552`; copy rewritten to true/measured claims only (§16) |
 | 2026-10-08 | 09 | phase 2 live wiring + fixtures | done | frontend/src/api/fixtures, scripts/record_fixtures.mjs, scripts/check-no-truth-fields.sh | headless run vs live API: 5×, tap, pipe-4 leak droplets, V1 close, reset; 0 console errors | `e88209f`; mock replays 21 recorded frames; pipe-4 shows ≈0 flow at some ticks with a mid-pipe leak — real physics (upstream half per §7.4), not a bug |
 | 2026-10-08 | stack | containers end to end | done | docker-compose.yml, Makefile | sim + api containers + frontend: /api/health ok, step 20 → 01:40, S1/S2/S3 46.15/44.32/44.19 m | podman here: `make compose-up` falls back to `uvx podman-compose`; stop stray native servers first (ports 8000/8080) |
+| 2026-10-08 | 09 | darker background, /city concept demo, DESIGN.md | done | frontend/src/components/BlueprintBackground.tsx, src/pages/City.tsx, frontend/DESIGN.md, INSTRUCTIONS.md (reading row 7) | lint + build pass; hero worst-case contrast white 5.6:1, #e0f2fe 4.9:1; City lazy chunk 15 kB | dots removed, ground #035a8c; /city is a labelled CONCEPT DEMO (illustrative values, no real org/person names, links to /simulate) |

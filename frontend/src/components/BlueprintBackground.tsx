@@ -18,22 +18,17 @@ void main() {
   float w2 = cos(p.y * 2.5 - t * 0.7 + cos(p.x * 2.0 + t * 0.5)) * 0.22;
   float w3 = sin((p.x + p.y) * 3.0 + t * 1.2 + mWave * 4.0) * 0.14;
   float wave = w1 + w2 + w3 + mWave;
-  vec3 colDeepSky = vec3(0.01, 0.48, 0.76); vec3 colLightSky = vec3(0.12, 0.62, 0.92);
+  vec3 colDeepSky = vec3(0.008, 0.26, 0.42); vec3 colLightSky = vec3(0.008, 0.34, 0.53);
   vec3 colBase = mix(colDeepSky, colLightSky, clamp(uv.y * 0.8 + wave * 0.15, 0.0, 1.0));
   float contour = sin(wave * 28.0 + t * 0.5);
-  colBase = mix(colBase, vec3(0.40, 0.82, 0.98), smoothstep(0.96, 0.99, abs(contour)) * 0.25);
+  colBase = mix(colBase, vec3(0.15, 0.45, 0.68), smoothstep(0.96, 0.99, abs(contour)) * 0.10);
   vec2 aspectVec = vec2(u_resolution.x / u_resolution.y, 1.0);
   vec2 gridUV = (uv * 38.0 * aspectVec) + vec2(wave * 2.2);
   vec2 majorGrid = abs(fract(gridUV * 0.1 - 0.5) - 0.5) / fwidth(gridUV * 0.1);
   float majorLine = 1.0 - min(min(majorGrid.x, majorGrid.y), 1.0);
-  vec2 minorGrid = abs(fract(gridUV - 0.5) - 0.5) / fwidth(gridUV);
-  float minorLine = 1.0 - min(min(minorGrid.x, minorGrid.y), 1.0);
-  float dotCircle = smoothstep(0.18, 0.08, length(fract(gridUV) - 0.5));
-  colBase += vec3(0.20, 0.55, 0.85) * mGlow * 0.35;
+  colBase += vec3(0.10, 0.30, 0.50) * mGlow * 0.10;
   vec3 chalkWhite = vec3(0.95, 0.98, 1.0);
-  colBase = mix(colBase, chalkWhite, minorLine * 0.08);
-  colBase = mix(colBase, chalkWhite, majorLine * 0.16);
-  colBase = mix(colBase, chalkWhite, dotCircle * 0.40);
+  colBase = mix(colBase, chalkWhite, majorLine * 0.06);
   float grain = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
   colBase += (grain - 0.5) * 0.025;
   gl_FragColor = vec4(colBase, 1.0);
@@ -116,7 +111,7 @@ export function BlueprintBackground(): JSX.Element {
   }, []);
 
   return (
-    <div aria-hidden="true" className={`fixed inset-0 -z-10 pointer-events-none ${fallback ? "blueprint-grid-subtle" : ""}`} style={{ backgroundColor: "#0284c7" }}>
+    <div aria-hidden="true" className={`fixed inset-0 -z-10 pointer-events-none ${fallback ? "blueprint-grid-subtle" : ""}`} style={{ backgroundColor: "#035a8c" }}>
       {!fallback && <canvas ref={ref} className="w-full h-full block" />}
     </div>
   );

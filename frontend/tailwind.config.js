@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        blueprint: "#0284c7",
+        blueprint: "#035a8c",
         panel: "#0369a1",
         well: "#075985",
         pale: "#e0f2fe",
