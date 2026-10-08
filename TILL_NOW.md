@@ -8,11 +8,11 @@
 
 ## 1. Current state at a glance (2026-10-08)
 
-**Phase:** module 01 done (G1). Module 08 steps 1–2 (orchestrator skeleton) and module 09 phases 1–2 (blueprint landing + live simulator) done. **The local stack runs end to end** (sim container ↔ api container ↔ frontend, `make compose-up` → http://localhost:5173). Detection pipeline (02, 04, 05, 07, 08 steps 3–7) not started.
+**Phase:** modules 01 (G1) and 02 (G2) done; orchestrator skeleton + blueprint frontend done. **AWS (ap-south-1) live:** sim image in ECR and **ds1 (1,200 sims, 0 failed) generated on Fargate Spot into S3** `s3://aquaagent-<acct>-ap-south-1/processed/ds1/`. Nothing runs while idle.
 
 **Build focus (BACKBONE §2, v1.1.0):** T1 = the **local MVP detection loop**: simulation → dataset → MLP → residual detector → challenge → template explanation → SVG UI. Gate **MVP** must pass before any AWS / SageMaker / localisation / Bedrock work.
 
-**Next action:** module 02 (data generation: `sim generate/merge`, 1,200 sims locally). Then push the `aquaagent-sim` image + ds1 to AWS for datagen/S3 (owner plan: container first, frontend deploy later), then 04 → 05 → 07 → 08 steps 3–7.
+**Next action:** module 04 (predictor: features from ds1 → baseline + MLP, leakage tests), then 05 (detector) → 07 template → 08 steps 3–7 (MVP). SageMaker training (06) uses `features/ds1/` in the same bucket. RL (T3) trains against the sim container as its environment, not a fixed dataset.
 
 **Git:** branch `simulation`. Commits are made per step after the lead's review (owner request, 2026-10-08). No pushes.
 
@@ -22,14 +22,14 @@
 |---|---|---|---|---|---|
 | — | shared/contracts + units + ids | all | T1 | **done** (`backbone/1.1.0`) | — |
 | 01 | [Simulation engine](docs/modules/01_SIMULATION_ENGINE.md) | G1 | **T1 core** | **done (G1 passed)** — 8 steps, last = step 8 (container + smoke + docs) | — |
-| 02 | [Data generation](docs/modules/02_DATA_GENERATION.md) | G2 | T1 | stubs | **next** |
-| 04 | [ML predictor](docs/modules/04_ML_PREDICTOR.md) | G4 | T1 | stubs | after 02 |
+| 02 | [Data generation](docs/modules/02_DATA_GENERATION.md) | G2 | T1 | **done (G2)** — ds1 in S3 | — |
+| 04 | [ML predictor](docs/modules/04_ML_PREDICTOR.md) | G4 | T1 | stubs | **next** |
 | 05 | [Detector (+ localisation T2c)](docs/modules/05_ANOMALY_LOCALISATION.md) | G5 | T1 / T2c | stubs | after 04 |
 | 07 | [Explanation: template (+ Bedrock T2d)](docs/modules/07_AQUAAGENT_BEDROCK.md) | G7 | T1 / T2d | stubs | step 1 anytime |
 | 08 | [Orchestrator API](docs/modules/08_ORCHESTRATOR_API.md) | G8 + **MVP** | T1 | **steps 1–2 done** (skeleton + stale-session recovery) | step 3 after module 04 |
 | 09 | [Frontend](docs/modules/09_FRONTEND.md) | G9 | T1 | **landing + live simulator + /city concept demo done** (steps 1–4, 6 partly); design system in `frontend/DESIGN.md` | step 5 (challenge/report/reveal) after 08 step 5 |
 | 10 | [Demo and pitch](docs/modules/10_DEMO_AND_PITCH.md) | G10 | T1 | — | after MVP |
-| 03 | [AWS infra](docs/modules/03_AWS_INFRA.md) | G3 | T2a | scripts written, not executed | after MVP |
+| 03 | [AWS infra](docs/modules/03_AWS_INFRA.md) | G3 | T2a | **partly run**: 00–04, 05 (sim only), 06, 07 | 08–11, 15 after MVP |
 | 06 | [SageMaker](docs/modules/06_SAGEMAKER.md) | G6 | T2b | stubs | after T2a |
 
 ## 3. What the setup produced (where to look)
@@ -89,3 +89,6 @@
 | 2026-10-08 | stack | containers end to end | done | docker-compose.yml, Makefile | sim + api containers + frontend: /api/health ok, step 20 → 01:40, S1/S2/S3 46.15/44.32/44.19 m | podman here: `make compose-up` falls back to `uvx podman-compose`; stop stray native servers first (ports 8000/8080) |
 | 2026-10-08 | 09 | darker background, /city concept demo, DESIGN.md | done | frontend/src/components/BlueprintBackground.tsx, src/pages/City.tsx, frontend/DESIGN.md, INSTRUCTIONS.md (reading row 7) | lint + build pass; hero worst-case contrast white 5.6:1, #e0f2fe 4.9:1; City lazy chunk 15 kB | dots removed, ground #035a8c; /city is a labelled CONCEPT DEMO (illustrative values, no real org/person names, links to /simulate) |
 | 2026-10-08 | 09 | smooth transition into /city | done | frontend/src/components/CityLink.tsx, src/styles/blueprint.css, src/pages/City.tsx, frontend/DESIGN.md | lint + build pass; headless: click → /city, transition attr cleared, 0 console errors | `53392e1`; View Transitions circular reveal from click point, chunk preloaded on hover, fade fallback, off under reduced motion |
+| 2026-10-08 | 02 | data generation (all steps) | done (G2) | sim/scenarios/*, sim/generate/*, sim/cli.py, config/generation/ds1.yaml, 7 test files | ~86 sim+api tests; 0.47 s/sim; repro: identical SHA-256; real-S3 smoke ok | `357f5fc`; holdout applies to LEAK/BURST faults; values rounded to fixed resolution (WNTR solver jitter 1e-13); LARGE leak median 24.5% sits at the 25% bucket edge (ranges unchanged) |
+| 2026-10-08 | 03 | AWS foundation in ap-south-1 | done | infra/scripts (02 lifecycle, 05 --only, 06 subnets/SLR/Spot, 07 Spot) | budget $10/mo; bucket versioned+private+lifecycle; 4 roles (sim-task: write-only data, no Bedrock/SageMaker/delete); ECR; ECS cluster FARGATE+FARGATE_SPOT | `585126f`; D1 = ap-south-1 (Bedrock via global inference profiles); default VPC had no subnets → recreated default subnets |
+| 2026-10-08 | 02/03 | ds1 on AWS | done | ECR aquaagent-sim:357f5fc (267 MB); task def aquaagent-datagen:1 | 4 shards + merge on FARGATE_SPOT ≈ 8.5 min; manifest n_valid 1200 / n_failed 0; splits 837/179/184; 90 MB in processed/ds1 | idle cost ≈ ECR $0.03/mo + S3 <$0.01/mo; no running tasks |
