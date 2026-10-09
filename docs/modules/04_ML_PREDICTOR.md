@@ -54,12 +54,13 @@ T1: none. T2a: `aws s3 sync data/features/ds1 s3://$AQUA_BUCKET/features/ds1/` a
   5. Residual sanity: on LARGE_LEAK val sims, max |z| (LOO residual / val-normal σ) after fault start > 3 for ≥ 90% of sims.
 
 ## 9. Acceptance gate — G4
-- [ ] MLP beats nearest-sensor baseline on hidden-node MAE (or the D4 fallback is documented)
-- [ ] hop-distance table produced
-- [ ] scalers fitted on train only
-- [ ] leakage tests pass (shuffle destroys performance; forbidden columns never read)
-- [ ] LOO residual on LARGE_LEAK val sims > 3σ
-- [ ] (module) §9.5 predictor MAE reported honestly; `train.py` runs unchanged with `SM_*` env vars
+Evidence: `data/experiments/{eval_val,eval_test}_202610090559/`, `data/experiments/mlp_ds1_202610090559/`, `pytest ml/tests` (2026-10-09).
+- [x] MLP beats nearest-sensor baseline on hidden-node MAE — test, contract layout, hidden junctions 3/5/7: MLP 0.165 m vs baseline 1.932 m (GNN 0.162 m). Ship model = MLP `mlp_ds1_202610090559` (D4; lower LOO σ than GNN, 3× faster)
+- [x] hop-distance table produced — `hop_error_{val,test}.csv` (+ by k), all C(6,k) placements
+- [x] scalers fitted on train only — `ml/features/scalers.py` (train split, normal rows)
+- [x] leakage tests pass — `ml/tests/test_leakage.py` (shuffle ≥ 3×, explicit allowed columns, masked inputs bit-identical, normal-only rows, disjoint splits)
+- [x] LOO residual on LARGE_LEAK val sims > 3σ — 22/22 sims (100%) for MLP and GNN
+- [x] (module) §9.5 predictor MAE reported honestly (incl. flat coverage/hop curves and k = 0 ablation, TILL_NOW 2026-10-09); `train.py` runs unchanged with `SM_*` env vars (staged run verified; no SageMaker job — quota 0, owner chose local training)
 
 ## 10. Risks and fallbacks
 - Learns to reconstruct leaks → normal-only filter + test 5.
@@ -87,4 +88,12 @@ Do not create git branches or push.
 ```
 
 ## 13. Proposed Backbone Changes
-_(empty)_
+
+### P-04-2 — Predictor served as its own container in the ECS serve task (BI-26, OPEN)
+See docs/BACKBONE_ISSUES.md BI-26. Code: `ml/serve/` (app, Dockerfile, smoke). Test deploy: `infra/scripts/16_serve_test_task.sh`.
+
+### P-04-1 — Virtual sensors + variable sensor placement for the predictor (BI-25, OPEN)
+- **What:** training samples mix (a) the contract layout S1–S3 + F1/F2 with 0–1 sensor hidden (the §9.1 masking, unchanged) and (b) random placements of k = 1..5 pressure sensors over junctions 2–7 (F1/F2 each present w.p. 0.5). For (b), readings at nodes outside the default layout are *virtual*: `pressure_m + N(0, pressure_sigma_m)` from the same seeded noise model as ds1 (§8.3). Two k = 3 placements (`3-5-7` = alt layout A, `2-5-7`) are never sampled in training and are reported as unseen placements.
+- **Why:** owner research question (2026-10-09): how reconstruction error grows as coverage drops and as targets move away from sensors, with a model that does not memorise one layout. ds1 has only one layout, in which every hidden junction is 1 hop from a sensor, so the question cannot be answered from `sensors.measured_value` alone.
+- **Contracts touched:** §11 table (Dataset → model inputs) needs one sanctioned exception; §7.7 feature order, §7.8 `SensorWindow`, §7.9 are unchanged. GNN (§9.1 rung 3, T3) is trained alongside the MLP at the owner's request.
+- **Safeguards:** features at uninstrumented nodes are exactly 0 (test `test_unobserved_values_never_reach_features`); default sensors use the recorded `measured_value` (test `test_default_sensor_inputs_equal_recorded_measured_value`); only normal train-split rows are trained on.

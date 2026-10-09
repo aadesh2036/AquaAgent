@@ -1,0 +1,6 @@
+# aquaagent-predictor image — inference only. torch comes from the CPU wheel index (see Dockerfile).
+numpy>=1.26,<3
+pydantic>=2.7,<3
+fastapi>=0.110
+uvicorn>=0.29
+boto3>=1.34      # s3:// AQUA_PREDICTOR_ARTIFACT download (task role)

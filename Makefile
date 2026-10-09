@@ -8,7 +8,7 @@ N     ?= 20
 DS    ?= ds1
 NOT_IMPL = @echo "NOT IMPLEMENTED — see docs/modules/$(1)" >&2; exit 2
 
-.PHONY: help setup setup-ml setup-api feasibility datagen-ds1 sim-serve api-serve tune mvp lint test contracts-test sim-smoke datagen-local compose-up compose-down features \
+.PHONY: help setup setup-ml setup-api feasibility datagen-ds1 sim-serve api-serve tune mvp lint test contracts-test sim-smoke datagen-local compose-up compose-down features eval-predictor \
         train-local aws-prereqs aws-bootstrap images datagen-aws sm-train sm-deploy bedrock-check \
         deploy-api deploy-frontend status teardown
 
@@ -70,8 +70,8 @@ compose-up: ## local stack: sim:8000 api:8080 frontend:5173 (docker compose, or 
 compose-down: ## stop local stack
 	$(COMPOSE) down
 
-features: ## build GraphSample tensors + scalers from processed/ (module 04)
-	$(call NOT_IMPL,04_ML_PREDICTOR.md)
+features: ## build predictor feature arrays + train-only scalers from data/processed/ds1 (module 04)
+	$(PY) -m ml.features.builder --processed data/processed/ds1 --out data/features/ds1
 
 setup-ml: ## add ML deps (torch CPU, sklearn) to .venv — module 04 onwards
 	@if command -v uv >/dev/null; then VIRTUAL_ENV=.venv uv pip install -q -r ml/requirements.txt; else $(PIP) install -q -r ml/requirements.txt; fi
@@ -82,8 +82,11 @@ setup-api: ## add API deps (fastapi, httpx, boto3) to .venv — module 08 onward
 feasibility: ## re-run the WNTR feasibility spike (docs/research/WNTR_FEASIBILITY.md)
 	$(PY) docs/research/wntr_feasibility_spike.py
 
-train-local: ## run ml/predictor/train.py locally with local defaults (module 04)
-	$(PY) -m ml.predictor.train --arch mlp
+train-local: ## run ml/predictor/train.py locally with local defaults (module 04) — ARCH=mlp|gnn
+	$(PY) -m ml.predictor.train --arch $(or $(ARCH),mlp) --git-sha $$(git rev-parse --short HEAD)
+
+eval-predictor: ## baseline vs artifacts sweep (coverage, hop, LOO) — usage: make eval-predictor SPLIT=val MODELS="data/models/predictor/<mv> ..."
+	$(PY) -m ml.predictor.evaluate --split $(or $(SPLIT),val) --models $(MODELS)
 
 # ---------------------------------------------------------------- AWS
 aws-prereqs: ## 00: PASS/FAIL table of terminal prerequisites
