@@ -1,4 +1,5 @@
-# aquaagent-predictor — §7.9 predictor service (BI-26). Build context = repo root:
+# aquaagent-predictor — the model image (BI-26/27): predictor (default, :8001) and detector+localiser
+# (entrypoint python -m ml.serve.detector_app, :8002) run from the SAME image. Build context = repo root:
 #   docker build -f ml/serve/Dockerfile -t aquaagent-predictor .
 # The model is NOT baked in: AQUA_PREDICTOR_ARTIFACT points at s3://…/model.tar.gz (ECS) or a mounted dir (local).
 FROM python:3.12-slim
@@ -12,6 +13,8 @@ COPY shared/ shared/
 COPY ml/__init__.py ml/__init__.py
 COPY ml/features/__init__.py ml/features/tensorize.py ml/features/
 COPY ml/predictor/__init__.py ml/predictor/masking.py ml/predictor/mlp.py ml/predictor/gnn.py ml/predictor/train.py ml/predictor/predict.py ml/predictor/
+COPY ml/anomaly/__init__.py ml/anomaly/setnet.py ml/anomaly/sensorset.py ml/anomaly/frames.py ml/anomaly/
+COPY ml/localisation/__init__.py ml/localisation/matcher.py ml/localisation/
 COPY ml/serve/ ml/serve/
 RUN useradd --create-home --uid 10001 aqua && chown -R aqua /app
 USER aqua

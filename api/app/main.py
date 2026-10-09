@@ -11,7 +11,8 @@ from fastapi.responses import JSONResponse
 
 from api.app.settings import Settings
 from api.clients.sim_client import SimClient, SimRejected, SimUnavailable
-from api.routes import agent, challenge, health
+from api.pipeline.monitor import AIMonitor
+from api.routes import agent, ai, challenge, health
 from api.routes import sim as sim_routes
 from api.session.store import SessionHolder
 from shared.contracts.models import CONTRACT_VERSION
@@ -26,6 +27,7 @@ def create_app(settings: Settings | None = None, sim_client: SimClient | None = 
     app.state.sim_client = sim_client or SimClient(settings.sim_url)  # lazy: no I/O until used
     app.state.holder = SessionHolder()
     app.state.topology, app.state.layout = sim_routes.load_topology(settings)
+    app.state.monitor = AIMonitor(settings, app.state.topology, app.state.layout)
 
     @app.exception_handler(SimUnavailable)
     async def _unavailable(request: Request, exc: SimUnavailable) -> JSONResponse:
@@ -44,6 +46,7 @@ def create_app(settings: Settings | None = None, sim_client: SimClient | None = 
         if (
             settings.mode == "aws"
             and request.method != "OPTIONS"
+            and request.url.path != "/api/health"  # ALB health check cannot send the key (§3.2)
             and (settings.api_key is None or request.headers.get("X-Api-Key") != settings.api_key)
         ):
             return JSONResponse({"detail": "invalid or missing API key"}, status_code=401)
@@ -64,7 +67,7 @@ def create_app(settings: Settings | None = None, sim_client: SimClient | None = 
         response.headers[HEADER] = CONTRACT_VERSION
         return response
 
-    for r in (health.router, sim_routes.router, challenge.router, agent.router):
+    for r in (health.router, sim_routes.router, challenge.router, agent.router, ai.router):
         app.include_router(r, prefix="/api")
     return app
 

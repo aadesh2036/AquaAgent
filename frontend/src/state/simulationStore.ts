@@ -3,6 +3,7 @@ import { create } from "zustand";
 import type { SimStore } from "@contracts";
 import { createHttpApi, DEFAULT_API_BASE_URL, type AquaApi } from "../api/client";
 import { createMockApi } from "../api/mock";
+import type { AiState } from "../api/ai";
 
 export type { SimStore };
 
@@ -22,11 +23,20 @@ export interface SimState extends SimStore {
   step: () => Promise<void>;
   setSpeed: (s: 1 | 5 | 20) => void;
   toggleRun: () => void;
+  setRunning: (on: boolean) => void;
   select: (sel: SimStore["selection"]) => void;
   applyTap: (tapId: string, open: boolean) => Promise<void>;
   applyPipeFault: (linkId: string, kind: "LEAK" | "BURST" | "CLOSE" | "RESET") => Promise<void>;
   applyValve: (valveId: string, open: boolean) => Promise<void>;
   useMockData: (on: boolean) => void;
+  /** AI monitor (BI-27): refreshed after every view-changing call. */
+  ai: AiState | null;
+  dismissed: string[];
+  showAiArea: boolean;
+  fetchAi: () => Promise<void>;
+  ackAi: () => Promise<void>;
+  dismissNotification: (id: string) => void;
+  setShowAiArea: (on: boolean) => void;
 }
 
 export const useSimStore = create<SimState>((set, get) => {
@@ -41,6 +51,7 @@ export const useSimStore = create<SimState>((set, get) => {
     try {
       const view = await fn(get().api);
       set({ view, error: null, connection: get().connection === "mock" ? "mock" : "live" });
+      await get().fetchAi();
     } catch (e) {
       set({ error: e instanceof Error ? e.message : "request failed", connection: get().connection === "mock" ? "mock" : "offline", running: false });
     } finally {
@@ -64,14 +75,28 @@ export const useSimStore = create<SimState>((set, get) => {
         const topology = await api.topology();
         const view = await api.state();
         set({ topology, view, connection: get().connection === "mock" ? "mock" : "live", error: null });
+        await get().fetchAi();
       } catch (e) {
         set({ error: e instanceof Error ? e.message : "request failed", connection: get().connection === "mock" ? "mock" : "offline", running: false });
       } finally {
         set({ inFlight: false });
       }
     },
+    ai: null, dismissed: [], showAiArea: true,
+    fetchAi: async () => {
+      try {
+        set({ ai: await get().api.aiState() });
+      } catch {
+        // AI is optional: the simulator keeps working if the monitor endpoint is missing
+      }
+    },
+    ackAi: async () => {
+      try { set({ ai: await get().api.aiAck() }); } catch { /* ignore */ }
+    },
+    dismissNotification: (id) => set((s) => ({ dismissed: [...s.dismissed, id] })),
+    setShowAiArea: (on) => set({ showAiArea: on }),
     reset: async () => {
-      set({ running: false, selection: null });
+      set({ running: false, selection: null, dismissed: [] });
       await viewCall((api) => api.sessionReset());
     },
     step: async () => {
@@ -81,6 +106,7 @@ export const useSimStore = create<SimState>((set, get) => {
     },
     setSpeed: (speed) => set({ speed }),
     toggleRun: () => set((s) => ({ running: !s.running })),
+    setRunning: (running) => set({ running }),
     select: (selection) => set({ selection }),
     applyTap: (id, open) => viewCall((api) => api.tap(id, open)),
     applyPipeFault: (id, kind) => viewCall((api) => api.pipeFault(id, kind)),

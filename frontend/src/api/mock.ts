@@ -4,6 +4,7 @@
 import netconfig from "@netconfig";
 import type { HealthResponse, NetworkTopology, NetworkView, PipeFaultKind } from "@contracts";
 import type { AquaApi } from "./client";
+import { AI_DISABLED } from "./ai";
 import { DEFAULT_SENSOR_LAYOUT } from "../lib/display";
 
 const fixtures = import.meta.glob("./fixtures/*.json", { eager: true, import: "default" }) as Record<string, unknown>;
@@ -88,5 +89,7 @@ export function createMockApi(): AquaApi {
     challengeStatus: unavailable("challenge"),
     diagnose: unavailable("report"),
     reveal: unavailable("reveal"),
+    aiState: async () => AI_DISABLED,
+    aiAck: async () => AI_DISABLED,
   };
 }

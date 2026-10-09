@@ -1,12 +1,15 @@
 // NetworkCanvas — native SVG plan view of the topology. Renders API values only; no hydraulic math (P1).
-import { useMemo } from "react";
-import type { KeyboardEvent } from "react";
+import { useMemo, useRef, useState } from "react";
+import type { KeyboardEvent, PointerEvent as RPointerEvent, WheelEvent as RWheelEvent } from "react";
 import type { LinkConfig, NetworkTopology, NetworkView, NodeConfig, SimStore } from "@contracts";
 import { flowAnimationDuration, fmtLps, fmtM, fmtPct, layoutOf } from "../lib/display";
+import type { AiHighlight } from "../api/ai";
 
 const W = "#fff";
 const AMBER = "#fbbf24";
 const WELL = "#075985";
+const AI = "#f0abfc"; // tailwind `ai`: AI-estimated area only, always labelled BY AI (frontend/DESIGN.md)
+const AI_INK = "#3b0764";
 const PAD = 30;
 
 type Sel = SimStore["selection"];
@@ -16,26 +19,79 @@ interface Props {
   running: boolean;
   selection: Sel;
   onSelect: (s: Sel) => void;
+  /** AI-estimated probable area (BI-27); drawn only when present and `showAi`. */
+  aiHighlight?: AiHighlight | null;
+  showAi?: boolean;
+  /** Fill the parent's height (one-screen layout); keeps aspect ratio. */
+  fit?: boolean;
 }
 
 const key = (e: KeyboardEvent, fn: () => void): void => {
   if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(); }
 };
 
-export function NetworkCanvas({ topology, view, running, selection, onSelect }: Props): JSX.Element {
+export function NetworkCanvas({ topology, view, running, selection, onSelect, aiHighlight, showAi = true, fit = false }: Props): JSX.Element {
   const layout = layoutOf(topology);
   const nodeById = useMemo(() => new Map(topology.nodes.map((n) => [n.node_id, n])), [topology]);
 
-  const { vb, widthOf } = useMemo(() => {
+  const { widthOf, minX, minY, w0, h0 } = useMemo(() => {
     const xs = topology.nodes.map((n) => n.x), ys = topology.nodes.map((n) => n.y);
     const minX = Math.min(...xs) - PAD, minY = Math.min(...ys) - PAD;
     const maxX = Math.max(...xs) + PAD, maxY = Math.max(...ys) + PAD + 12;
     const diams = [...new Set(topology.links.filter((l) => l.diameter_m != null).map((l) => l.diameter_m as number))].sort((a, b) => a - b);
     return {
+      minX, minY, w0: maxX - minX, h0: maxY - minY,
       vb: `${minX} ${minY} ${maxX - minX} ${maxY - minY}`,
       widthOf: (l: LinkConfig): number => (l.diameter_m == null ? 3 : 1.6 + diams.indexOf(l.diameter_m) * 0.7), // diameter rank → stroke width
     };
   }, [topology]);
+
+  // ---- zoom / pan (display only): the viewBox window over the drawing; scale 1 = fit
+  const [cam, setCam] = useState({ s: 1, cx: 0.5, cy: 0.5 });
+  const svgRef = useRef<SVGSVGElement>(null);
+  const drag = useRef<{ x: number; y: number; cx: number; cy: number; moved: boolean } | null>(null);
+  const MAX_S = 5;
+  const clampC = (c: number, s: number): number => Math.min(1 - 0.5 / s, Math.max(0.5 / s, c));
+  const zoomTo = (s: number, cx = cam.cx, cy = cam.cy): void => {
+    const ns = Math.min(MAX_S, Math.max(1, s));
+    setCam({ s: ns, cx: clampC(cx, ns), cy: clampC(cy, ns) });
+  };
+  const vw = w0 / cam.s, vh = h0 / cam.s;
+  const vb = `${minX + cam.cx * w0 - vw / 2} ${minY + cam.cy * h0 - vh / 2} ${vw} ${vh}`;
+  /** client px → fraction of the full drawing (accounts for the meet letterbox) */
+  const toFrac = (clientX: number, clientY: number): [number, number] => {
+    const r = svgRef.current?.getBoundingClientRect();
+    if (!r) return [cam.cx, cam.cy];
+    const k = Math.max(vw / r.width, vh / r.height);
+    const ox = (r.width - vw / k) / 2, oy = (r.height - vh / k) / 2;
+    const x = minX + cam.cx * w0 - vw / 2 + (clientX - r.left - ox) * k;
+    const y = minY + cam.cy * h0 - vh / 2 + (clientY - r.top - oy) * k;
+    return [(x - minX) / w0, (y - minY) / h0];
+  };
+  const onWheel = (e: RWheelEvent<SVGSVGElement>): void => {
+    const [fx, fy] = toFrac(e.clientX, e.clientY);
+    const ns = Math.min(MAX_S, Math.max(1, cam.s * (e.deltaY < 0 ? 1.2 : 1 / 1.2)));
+    // keep the point under the cursor fixed
+    zoomTo(ns, fx - (fx - cam.cx) * (cam.s / ns), fy - (fy - cam.cy) * (cam.s / ns));
+  };
+  const onPointerDown = (e: RPointerEvent<SVGSVGElement>): void => {
+    if (cam.s === 1) return;
+    drag.current = { x: e.clientX, y: e.clientY, cx: cam.cx, cy: cam.cy, moved: false };
+  };
+  const onPointerMove = (e: RPointerEvent<SVGSVGElement>): void => {
+    const d = drag.current;
+    const r = svgRef.current?.getBoundingClientRect();
+    if (!d || !r) return;
+    const k = Math.max(vw / r.width, vh / r.height);
+    if (Math.abs(e.clientX - d.x) + Math.abs(e.clientY - d.y) > 4) d.moved = true;
+    if (!d.moved) return;
+    setCam((c) => ({ ...c, cx: clampC(d.cx - ((e.clientX - d.x) * k) / w0, c.s), cy: clampC(d.cy - ((e.clientY - d.y) * k) / h0, c.s) }));
+  };
+  const suppressClick = useRef(false);
+  const endDrag = (): void => {
+    if (drag.current?.moved) { suppressClick.current = true; setTimeout(() => { suppressClick.current = false; }, 0); }
+    drag.current = null;
+  };
 
   const pt = (id: string): { x: number; y: number } => {
     const n = nodeById.get(id) as NodeConfig;
@@ -66,7 +122,19 @@ export function NetworkCanvas({ topology, view, running, selection, onSelect }: 
   const fillH = Number.isFinite(pct) ? (TH * Math.min(100, Math.max(0, pct))) / 100 : 0;
 
   return (
-    <svg viewBox={vb} className="w-full h-auto block" role="group" aria-label="Plan view of the water network">
+    <div className={`relative ${fit ? "lg:h-full" : ""}`}>
+    <div className="absolute right-1 top-1 z-10 flex flex-col gap-1" role="group" aria-label="Zoom">
+      <button className="cad-btn-secondary w-8 h-8 font-mono-cad text-sm font-bold bg-well" aria-label="Zoom in" onClick={() => zoomTo(cam.s * 1.4)}>+</button>
+      <button className="cad-btn-secondary w-8 h-8 font-mono-cad text-sm font-bold bg-well" aria-label="Zoom out" onClick={() => zoomTo(cam.s / 1.4)} disabled={cam.s <= 1}>−</button>
+      <button className="cad-btn-secondary w-8 h-8 bg-well flex items-center justify-center" aria-label="Fit drawing" onClick={() => zoomTo(1, 0.5, 0.5)} disabled={cam.s <= 1}>
+        <span aria-hidden="true" className="material-symbols-outlined" style={{ fontSize: 16 }}>fit_screen</span>
+      </button>
+      {cam.s > 1 && <span className="font-mono-cad text-[9px] text-paler text-center">{Math.round(cam.s * 100)}%</span>}
+    </div>
+    <svg ref={svgRef} viewBox={vb} className={`${fit ? "w-full h-auto lg:h-full block" : "w-full h-auto block"} ${cam.s > 1 ? "cursor-grab touch-none" : ""}`}
+      preserveAspectRatio="xMidYMid meet" overflow="hidden" style={{ overflow: "hidden" }} role="group" aria-label="Plan view of the water network — scroll to zoom, drag to pan"
+      onWheel={onWheel} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={endDrag} onPointerLeave={endDrag}
+      onClickCapture={(e) => { if (suppressClick.current) { e.stopPropagation(); suppressClick.current = false; } }}>
       <defs>
         <clipPath id="tankclip">{tank && <rect x={tank.x - TW / 2} y={tank.y - TH / 2} width={TW} height={TH} />}</clipPath>
       </defs>
@@ -106,6 +174,54 @@ export function NetworkCanvas({ topology, view, running, selection, onSelect }: 
           </g>
         );
       })}
+
+      {/* AI-estimated area (BY AI) — under sensors and nodes so the simulator's own visuals stay on top */}
+      {aiHighlight && showAi && (
+        <g aria-label={`AI-estimated probable area: zone ${aiHighlight.probable_zone ?? "unknown"}`} role="img">
+          <title>{`BY AI — probable zone ${aiHighlight.probable_zone}; most likely ${aiHighlight.candidates.map((c) => `${c.location_kind} ${c.location_id}`).join(", ")}`}</title>
+          {topology.links.filter((l) => aiHighlight.zone_links.includes(l.link_id)).map((l) => (
+            <path key={`az${l.link_id}`} d={linkGeom(l).d} fill="none" stroke={AI} strokeOpacity="0.16" strokeWidth={widthOf(l) + 12} strokeLinecap="round" pointerEvents="none" />
+          ))}
+          {topology.nodes.filter((n) => aiHighlight.zone_nodes.includes(n.node_id)).map((n) => (
+            <circle key={`azn${n.node_id}`} cx={n.x} cy={n.y} r="13" fill={AI} fillOpacity="0.12" pointerEvents="none" />
+          ))}
+          {aiHighlight.candidates.map((c) => {
+            const op = c.rank === 1 ? 0.95 : c.rank === 2 ? 0.7 : 0.5;
+            const tag = (x: number, y: number): JSX.Element => (
+              <g transform={`translate(${x} ${y})`} pointerEvents="none">
+                <rect x="-11" y="-5" width="22" height="9" fill={AI} />
+                <text textAnchor="middle" y="2.2" fontFamily="JetBrains Mono" fontSize="5.4" fontWeight="700" fill={AI_INK}>AI #{c.rank}</text>
+              </g>
+            );
+            if (c.location_kind === "pipe") {
+              const l = topology.links.find((q) => q.link_id === c.location_id);
+              if (!l) return null;
+              const g = linkGeom(l);
+              const a = pt(l.start_node), b = pt(l.end_node);
+              const horizontal = Math.abs(b.x - a.x) > Math.abs(b.y - a.y); // chip below horizontal pipes, clear of node labels
+              return (
+                <g key={`ac${c.rank}`}>
+                  <path d={g.d} fill="none" stroke={AI} strokeOpacity={op} strokeWidth={widthOf(l) + 4} strokeDasharray="5 3" strokeLinecap="round" pointerEvents="none" />
+                  {horizontal ? tag(g.mx, g.my + 11) : tag(g.mx, g.my - 9)}
+                </g>
+              );
+            }
+            const n = nodeById.get(c.location_id);
+            if (!n) return null;
+            return (
+              <g key={`ac${c.rank}`}>
+                <circle cx={n.x} cy={n.y} r="11" fill="none" stroke={AI} strokeOpacity={op} strokeWidth="2" strokeDasharray="3 2" pointerEvents="none" />
+                {tag(n.x, n.y - 17)}
+              </g>
+            );
+          })}
+          <g transform={`translate(${minX + 4} ${minY + 4})`} pointerEvents="none">
+            <rect width="24" height="10" fill={AI} />
+            <text x="12" y="7" textAnchor="middle" fontFamily="JetBrains Mono" fontSize="5.6" fontWeight="700" fill={AI_INK}>BY AI</text>
+            <text x="28" y="7" fontFamily="JetBrains Mono" fontSize="5.4" fill={W}>AI-estimated area · zone {aiHighlight.probable_zone}</text>
+          </g>
+        </g>
+      )}
 
       {/* flow-sensor tags */}
       {topology.links.map((l) => {
@@ -225,5 +341,6 @@ export function NetworkCanvas({ topology, view, running, selection, onSelect }: 
         );
       })}
     </svg>
+    </div>
   );
 }

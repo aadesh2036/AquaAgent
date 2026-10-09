@@ -2,14 +2,15 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Header } from "../components/Header";
 import { HowItWorks } from "../components/landing/HowItWorks";
-import { ArchitectureDeck, Footer, HonestLimits, Telemetry } from "../components/landing/Sections";
+import { ArchitectureDeck, Footer, HonestLimits, Models, Telemetry } from "../components/landing/Sections";
 import { CityLink } from "../components/CityLink";
 
 const NAV = [
   { id: "overview", label: "[01] OVERVIEW" },
   { id: "how", label: "[02] HOW IT WORKS" },
   { id: "architecture", label: "[03] ARCHITECTURE" },
-  { id: "limits", label: "[04] HONEST LIMITS" },
+  { id: "models", label: "[04] MODELS" },
+  { id: "limits", label: "[05] HONEST LIMITS" },
 ];
 
 function ScrollNav(): JSX.Element {
@@ -44,7 +45,7 @@ function ScrollNav(): JSX.Element {
           className={`px-3 py-4 font-mono-cad text-[11px] whitespace-nowrap ${active === n.id ? "text-white font-bold" : "text-pale"}`} aria-current={active === n.id ? "true" : undefined}>{n.label}</button>
       ))}
       <span className="absolute bottom-0 h-0.5 bg-white transition-all duration-300" style={{ left: bar.left, width: bar.width }} />
-      <CityLink className="px-3 py-4 font-mono-cad text-[11px] whitespace-nowrap text-pale hover:text-white">[05] CITY VIEW (DEMO)</CityLink>
+      <CityLink className="px-3 py-4 font-mono-cad text-[11px] whitespace-nowrap text-pale hover:text-white">[06] CITY VIEW (DEMO)</CityLink>
     </nav>
   );
 }
@@ -82,6 +83,7 @@ export function Landing(): JSX.Element {
         <Telemetry />
         <HowItWorks />
         <ArchitectureDeck />
+        <Models />
         <HonestLimits />
       </main>
       <Footer />

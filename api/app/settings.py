@@ -37,4 +37,6 @@ class Settings:
     )
     # Tank full level for NetworkView.tank.level_pct: 20 ft (BACKBONE §6.1).
     tank_max_level_m: float = ft_to_m(20)
-    config_dir: Path = field(default_factory=lambda: Path(os.environ.get("AQUA_CONFIG_DIR", _REPO_ROOT / "config")))
+    config_dir: Path = field(
+        default_factory=lambda: Path(os.environ.get("AQUA_CONFIG_DIR", _REPO_ROOT / "config"))
+    )

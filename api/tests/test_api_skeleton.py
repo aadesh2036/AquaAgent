@@ -143,17 +143,22 @@ def test_no_leak_of_hidden(env):
 
 def test_not_implemented_routes(env):
     c, _ = env
-    for r in (c.post("/api/challenge/start", json={}), c.get("/api/challenge/status"), c.post("/api/agent/diagnose", json={})):
+    for r in (
+        c.post("/api/challenge/start", json={}),
+        c.get("/api/challenge/status"),
+        c.post("/api/agent/diagnose", json={}),
+    ):
         assert r.status_code == 501
         assert r.json() == {"detail": "NOT IMPLEMENTED — module 08 step 5 / module 07"}
 
 
 def test_aws_key():
     c, _ = _make(Settings(mode="aws", api_key="secret"))
-    assert c.get("/api/health").status_code == 401
-    assert c.get("/api/health").headers["X-Aqua-Contract"] == CONTRACT_VERSION
-    assert c.get("/api/health", headers={"X-Api-Key": "bad"}).status_code == 401
-    assert c.get("/api/health", headers={"X-Api-Key": "secret"}).status_code == 200
+    assert c.get("/api/network/topology").status_code == 401
+    assert c.get("/api/network/topology").headers["X-Aqua-Contract"] == CONTRACT_VERSION
+    assert c.get("/api/network/topology", headers={"X-Api-Key": "bad"}).status_code == 401
+    assert c.get("/api/network/topology", headers={"X-Api-Key": "secret"}).status_code == 200
+    assert c.get("/api/health").status_code == 200  # ALB health check sends no key (§3.2)
     r = c.options(
         "/api/health",
         headers={"Origin": "http://localhost:5173", "Access-Control-Request-Method": "GET"},
@@ -191,3 +196,10 @@ def test_stale_sim_session_recovers(call):
         assert v.taps["T1"].open
     assert v.events[0].text == "Simulation restarted — session reset"
     assert v.links["4"].visual_fault == "NONE"
+
+
+def test_aws_mode_health_is_open_but_routes_need_key():
+    c, _ = _make(Settings(mode="aws", api_key="k"))
+    assert c.get("/api/health").status_code == 200  # ALB health check sends no key
+    assert c.get("/api/network/state").status_code == 401
+    assert c.get("/api/network/state", headers={"X-Api-Key": "k"}).status_code == 200

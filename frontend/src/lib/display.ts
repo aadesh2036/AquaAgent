@@ -34,3 +34,12 @@ export const fmtLpm = (v: number | undefined | null): string =>
   v === undefined || v === null || !Number.isFinite(v) ? "— L/min" : fmt(lpsToLpm(v), "L/min", 0);
 export const fmtMs = (v: number | undefined | null): string => fmt(v, "m/s", 2);
 export const fmtPct = (v: number | undefined | null): string => fmt(v, "%", 0);
+
+/** Display-only difference "a − b" with sign, for comparing two values the API already returned. */
+export const fmtDelta = (a: number | undefined | null, b: number | undefined | null, unit: string, digits = 2): string => {
+  if (a === undefined || a === null || b === undefined || b === null || !Number.isFinite(a) || !Number.isFinite(b)) return "—";
+  const d = a - b;
+  return `${d >= 0 ? "+" : "−"}${Math.abs(d).toFixed(digits)} ${unit}`;
+};
+export const fmtNum = (v: number | undefined | null, digits = 2): string =>
+  v === undefined || v === null || !Number.isFinite(v) ? "—" : v.toFixed(digits);

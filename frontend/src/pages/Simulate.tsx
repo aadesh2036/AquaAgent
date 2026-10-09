@@ -12,6 +12,8 @@ import { MOCK_HAS_FIXTURES } from "../api/mock";
 import { API_BASE_URL, useSimStore, type Connection } from "../state/simulationStore";
 import { fmtLps, fmtM, fmtPct, layoutOf } from "../lib/display";
 import { CityLink } from "../components/CityLink";
+import { AiMonitor } from "../components/AiMonitor";
+import { AiToast } from "../components/AiToast";
 
 const MODES: [SimMode, string][] = [["explore", "EXPLORE"], ["break", "BREAK IT"], ["challenge", "TEST THE AI"]];
 
@@ -73,7 +75,7 @@ function Events(): JSX.Element {
 }
 
 export function Simulate(): JSX.Element {
-  const { topology, view, running, selection, connection, error, contractMismatch, report, loadTopology, select, useMockData } = useSimStore();
+  const { topology, view, running, selection, connection, error, contractMismatch, report, loadTopology, select, useMockData, ai, showAiArea } = useSimStore();
   const [mode, setMode] = useState<SimMode>("explore");
 
   useEffect(() => { void loadTopology(); }, [loadTopology]);
@@ -90,11 +92,12 @@ export function Simulate(): JSX.Element {
   const offline = connection === "offline" && !topology;
 
   return (
-    <div className="min-h-screen pb-14">
+    <div className="min-h-screen pb-12 lg:pb-0 lg:h-screen lg:overflow-hidden flex flex-col">
       <Header tag="SIM://WNTR-1.5" center={<ModeTabs mode={mode} onMode={setMode} />}
         right={<><ConnBadge c={connection} /><CityLink className="font-mono-cad text-[10px] text-pale underline whitespace-nowrap max-sm:hidden">City view (demo)</CityLink><Link to="/" className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap">← OVERVIEW</Link></>} />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-20">
+      {/* lg+: one screen — header 56px + status bar 36px fixed; columns scroll internally */}
+      <main className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 pt-[68px] lg:pb-12 flex-1 min-h-0 flex flex-col">
         <div className="md:hidden mb-4 overflow-x-auto"><ModeTabs mode={mode} onMode={setMode} /></div>
 
         {contractMismatch && (
@@ -115,8 +118,10 @@ export function Simulate(): JSX.Element {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
-          <div className="cad-panel-dark blueprint-grid-subtle crosshair-corner relative p-3 sm:p-4">
+        <AiToast />
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-4 flex-1 min-h-0">
+          <div className="flex flex-col gap-4 min-h-0">
+          <div className="cad-panel-dark blueprint-grid-subtle crosshair-corner relative p-3 sm:p-4 flex flex-col lg:flex-1 lg:min-h-[260px]">
             <div className="mono-label text-paler mb-2">PLAN VIEW // net_epa_tutorial_v1 // SCALE N.T.S.</div>
             {offline ? (
               <div className="py-16 px-4 text-center flex flex-col items-center gap-4 max-w-xl mx-auto">
@@ -128,13 +133,15 @@ export function Simulate(): JSX.Element {
                 </div>
               </div>
             ) : topology && view ? (
-              <div><NetworkCanvas topology={topology} view={view} running={running} selection={selection} onSelect={select} /></div>
+              <div className="lg:flex-1 lg:min-h-0"><NetworkCanvas topology={topology} view={view} running={running} selection={selection} onSelect={select} aiHighlight={ai?.highlight} showAi={showAiArea} fit /></div>
             ) : (
               <div className="py-24 text-center font-mono-cad text-xs text-paler aq-pulse">LOADING NETWORK…</div>
             )}
           </div>
+          <AiMonitor />
+          </div>
 
-          <aside className="flex flex-col gap-4">
+          <aside className="flex flex-col gap-3 min-h-0 lg:overflow-y-auto lg:pr-1">
             <Controls />
             {mode === "challenge" ? <ChallengePanel onBreak={() => setMode("break")} /> : <Inspector mode={mode} onMode={setMode} />}
             <AgentReport report={report} />

@@ -52,10 +52,11 @@ T1: none. T2a: upload `data/models/anomaly/` (and T2c `localisation/`) to `s3://
 - **Firewall:** `update()`/`rank()` take only `ResidualFrame`s; labels (`scenarios`) are read only in `metrics.py`.
 
 ## 9. Acceptance gate — G5
-- [ ] thresholds tuned on val only and frozen (hash recorded) before test
-- [ ] §9.5 detection rows produced on test (recall MEDIUM/LARGE/BURST, SMALL reported, FAR per operational type, median delay)
-- [ ] FAR on operational-variation scenarios reported separately
-- [ ] (T2c) localisation rows: top-1/top-3, zone accuracy, holdout top-3
+Evidence: `data/experiments/thr_ds1_202610091559/` (also in S3), `pytest ml/tests` (2026-10-09).
+- [x] thresholds tuned on val only and frozen (hash recorded) before test — `thr_ds1_202610091559`, `sha256:728aae35036a238bf6837c4fcbe9ebe2d6fe29c2ee09bc2367aa4546cab71cba`; `tune.py` never opens test (test)
+- [x] §9.5 detection rows produced on test — recall MEDIUM 0.20 / LARGE 0.41 / BURST 0.94 (MLB 0.44), SMALL 0.00, median delay MEDIUM 15 steps — **targets NOT met** (see P-05-1)
+- [x] FAR on operational-variation scenarios reported separately — NORMAL 0/48, LOW_DEMAND 0/12, HIGH_DEMAND 2/15, DEMAND_SHIFT 2/15
+- [ ] (T2c) localisation rows
 
 ## 10. Risks and fallbacks
 - FAR too high on HIGH/LOW_DEMAND: raise k2/T. This is a predictor problem if z on operational sims is biased, so check per-type z means and feed back to 04.
@@ -81,4 +82,15 @@ and stop. Do not create git branches or push.
 ```
 
 ## 13. Proposed Backbone Changes
-_(empty)_
+
+### P-05-2 — Generalised (topology-agnostic) detector replaces fixed-layout RTCA as the ship detector (owner, 2026-10-09)
+- **Owner decision:** only generalised models (no architecture tied to one sensor layout / network). Ship pair = **GNN predictor `gnn_ds1_202610090559` + SensorSetNet detector `thr_ds1_202610091624`** (`ml/anomaly/{setnet,sensorset}.py`).
+- **Model:** shared dilated temporal CNN over each sensor's last 24 LOO-residual z-scores (+ sensor TYPE pressure/flow, + SCADA context) → attention + max pooling over the sensor SET → P(anomaly); alarm = P > τ for T steps (latched). Works with any number of sensors; attention → `driving_sensors`. Supervised on train-split labels (§9.3 "classifier" moved from T3 to T1); predictor stays normal-only.
+- **Selection on val** (`data/experiments/detsel_gnn/selection_val.csv`, same objective as §5): R1 RTCA on GNN residuals MLB 0.43 · R2 boosted trees, fixed layout (reference only) 0.60 · **R3 SensorSetNet 0.54** (gap = 4/67 sims) · R3b + raw readings 0.34 (rejected). R3 keeps working with a sensor removed (no retraining).
+- **Test (once, frozen, sha256:221b1583…):** MLB 0.50 (MEDIUM 0.30, LARGE 0.45, BURST 0.94), SMALL 0.12; FAR NORMAL 0/48, LOW 0/12, HIGH 3/15, DEMAND_SHIFT 1/15 (all operational 4.4 %); holdout-location MLB 0.52 (n 66 of 92). vs RTCA-on-MLP: MLB 0.44, SMALL 0.00.
+- **Contract impact:** §9.3 (detector = learned set model, RTCA kept as fallback), §7.10 `AnomalyResult.thresholds_version` reused as detector version; artifact `models/anomaly/<thr>/{model.pt, detector.json}` instead of `thresholds.json`.
+
+### P-05-1 — Detector tuning deviations + finding (superseded by P-05-2 for shipping; finding still holds)
+- **σ conditioned on demand:** 5 quantile bins of SCADA `pump_flow_lps` (val-normal), stored as `sigma_table` in thresholds.json. Still a fixed σ (no adaptation). Reason: residual spread ~2.5× larger in the top demand quintile.
+- **Grid extended** beyond §5 (k1 to 6, k2 to 8, W to 12, T to 6) and **detecting-sensor set tuned on val** ({all 5, S1+F1+F2, F1+F2} → S1+F1+F2). With the §5 grid and all 5 sensors no point was feasible (best: 73 % FAR on DEMAND_SHIFT).
+- **Finding:** LOO residuals from a predictor conditioned on SCADA context (pump flow, tank level, F1/F2) carry little leak signal on this network — the context already contains the leak's extra consumption, so the predictor partly "explains it away"; DEMAND_SHIFT at nodes 4/6 is hydraulically leak-like at S2/S3. A net-consumption step channel (pump flow − F2) was tested and added nothing (diurnal ramps dominate). §9.5 detection targets are not reachable with this predictor/sensor set; candidate next steps: predictor without consumption-revealing context for the residual model, longer history than the 1-h window, or more/other sensors.

@@ -17,7 +17,6 @@ def health(request: Request) -> HealthResponse:
         sim = "ok"
     except SimUnavailable:
         sim = "down"
-    # predictor arrives with module 08 step 3; agent is the template reporter in T1.
-    return HealthResponse(
-        status="ok", sim=sim, predictor=HealthStatus.DEGRADED, agent=HealthStatus.TEMPLATE
-    )
+    # predictor = the AI monitor (GNN predictor + detector) loaded; agent is the template reporter in T1.
+    predictor = HealthStatus.OK if request.app.state.monitor.enabled else HealthStatus.DEGRADED
+    return HealthResponse(status="ok", sim=sim, predictor=predictor, agent=HealthStatus.TEMPLATE)

@@ -1,5 +1,6 @@
 // Typed client for BACKBONE §7.14.1. Adds X-Api-Key; asserts X-Aqua-Contract == CONTRACT_VERSION.
 import { CONTRACT_VERSION } from "@contracts";
+import type { AiState } from "./ai";
 import type {
   AgentReport, ChallengeReveal, ChallengeStartResponse, ChallengeStatusResponse, Difficulty,
   HealthResponse, NetworkTopology, NetworkView, PipeFaultKind,
@@ -18,6 +19,8 @@ export interface AquaApi {
   challengeStatus(): Promise<ChallengeStatusResponse>;
   diagnose(incidentId: string): Promise<AgentReport>;
   reveal(): Promise<ChallengeReveal>;
+  aiState(): Promise<AiState>;
+  aiAck(): Promise<AiState>;
 }
 
 export const DEFAULT_API_BASE_URL = "http://localhost:8080";
@@ -68,5 +71,7 @@ export function createHttpApi(baseUrl: string, apiKey?: string, opts: HttpApiOpt
     challengeStatus: notYet("The hidden-leak challenge"),
     diagnose: notYet("The evidence report"),
     reveal: notYet("The reveal"),
+    aiState: () => call<AiState>("GET", "/ai/state"),
+    aiAck: () => call<AiState>("POST", "/ai/ack"),
   };
 }

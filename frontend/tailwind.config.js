@@ -10,6 +10,8 @@ export default {
         pale: "#e0f2fe",
         paler: "#bae6fd",
         alarm: "#fbbf24",
+        ai: "#f0abfc",
+        "ai-ink": "#3b0764",
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],

@@ -5,7 +5,7 @@
   "desiredCount": 1,
   "launchType": "FARGATE",
   "platformVersion": "LATEST",
-  "healthCheckGracePeriodSeconds": 90,
+  "healthCheckGracePeriodSeconds": 300,
   "deploymentConfiguration": {"maximumPercent": 200, "minimumHealthyPercent": 0},
   "networkConfiguration": {
     "awsvpcConfiguration": {

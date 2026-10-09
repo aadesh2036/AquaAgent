@@ -17,7 +17,8 @@ Visual language: an engineering blueprint. Chalk-white linework on deep blue, mo
 | pale | #e0f2fe | secondary text |
 | paler | #bae6fd | mono labels on panels only (not on the bare background; 4.2:1 worst case there) |
 | alarm | #fbbf24 | the ONLY accent |
-Single amber rule: amber is used only for leaks, bursts, low/critical pressure, anomaly states and the concept-demo stamp. Never decoration. `/city` uses red (#f87171) for exactly one "critical (example)" marker.
+| ai | #f0abfc | **AI-estimated content only** (BY AI chips, AI-estimated area on the plan view); dark ink `ai-ink` #3b0764 on it (8.5:1). Marks 4.3:1 on `well` |
+Single amber rule: amber is used only for leaks, bursts, low/critical pressure, anomaly states and the concept-demo stamp. Never decoration. **AI rule (owner, 2026-10-09):** the `ai` fuchsia marks only what the AI estimated, is always paired with a "BY AI" label and dashed strokes (never colour alone; its luminance is close to amber), and never replaces the simulator's own amber leak/burst visuals, which stay on top. `/city` uses red (#f87171) for exactly one "critical (example)" marker.
 The WebGL background is kept dark: worst-case stacked brightness (wave + contour + cursor glow + grid line + grain) gives white 5.6:1 and #e0f2fe 4.9:1.
 
 ## Typography
@@ -36,6 +37,7 @@ Square corners everywhere (no radius except pills/dialog on /city). 1px white bo
 - `components/NetworkCanvas.tsx` SVG plan view; per-node label offsets; flow dashes, tank fill, leak droplets, sensors, taps, V1.
 - `components/Controls.tsx` run/pause, speed, reset. `Inspector.tsx` selection details and actions. `ChallengePanel.tsx` TEST THE AI (disabled until the detector exists). `AgentReport.tsx` evidence report (renders only when a report exists).
 - `components/landing/HowItWorks.tsx` slider with progress conduit; `landing/Drawings.tsx` the five schematics; `landing/Sections.tsx` telemetry band, architecture deck, honest limits, footer.
+- `components/AiMonitor.tsx` AI monitor panel (status, anomaly-probability sparkline, SIMULATED vs AI table for every node/flow sensor, BY AI probable area + candidates, acknowledge). `components/AiToast.tsx` sticky AI alert banner above the plan view (never floats over the controls). `Inspector.tsx` shows a SIMULATED vs AI side-by-side for the selected node / flow-sensor pipe. `NetworkCanvas.tsx` draws the BY AI area (zone wash, dashed candidate pipes/junctions, `AI #n` chips, legend) under the node glyphs.
 - `state/simulationStore.ts` zustand store (SimStore from `@contracts` plus connection status). `api/client.ts` HTTP client; `api/mock.ts` fixture-backed mock; `lib/display.ts` formatting and display mappings.
 
 ## Motion
@@ -46,6 +48,8 @@ Text contrast >= 4.5:1 (check the amber and paler tokens against their backing).
 
 ## Data rules
 Render API values only. No hydraulic arithmetic (only `@units` formatting and display mappings). Types come from `@contracts`, units from `@units`; never redeclare. Two guard scripts run inside `npm run lint`: `scripts/check-no-hydraulics.sh` and `scripts/check-no-truth-fields.sh` (fails on `.hidden`, `"hidden":`, `LK_`; the English word "hidden" in copy is fine). Mock mode (`VITE_MOCK_API=true` or the offline "use mock data" button) serves `src/api/fixtures/*.json`. Re-record against the live stack: `node scripts/record_fixtures.mjs [baseUrl]` (writes topology.json, view.json, views_sequence.json). Missing values render as an em dash, never a plausible number. Env: `VITE_API_BASE_URL` (default http://localhost:8080), `VITE_API_KEY`, `VITE_MOCK_API`.
+
+AI data (BI-27): `GET /api/ai/state` after every view-changing call; types in `src/api/ai.ts` (not yet in `@contracts`). The AI values are estimates from sensors + SCADA only; the SIMULATED column is the physics truth the explore mode already shows. The only arithmetic is the display difference `fmtDelta`.
 
 ## Copy rules
 BACKBONE section 16: only true or measured statements; numbers trace to our own runs. Say "probable leak zone" and "most likely pipe", never accuracy claims. The simulator is synthetic: say so. V1 is pipe 7's status, not an EPANET valve object. Unbuilt things are labelled LIVE / BUILDING / NEXT. Anything illustrative is tagged "illustrative" and `/city` is always labelled CONCEPT DEMO. Do not name real organisations or people.

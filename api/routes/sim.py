@@ -34,7 +34,9 @@ router = APIRouter()
 
 def load_topology(settings: Settings) -> tuple[NetworkTopology, SensorLayout]:
     cfg = settings.config_dir
-    net = NetworkConfig.model_validate(json.loads(Path(cfg, "networks", f"{settings.network_id}.json").read_text()))
+    net = NetworkConfig.model_validate(
+        json.loads(Path(cfg, "networks", f"{settings.network_id}.json").read_text())
+    )
     layout = SensorLayout.model_validate(
         json.loads(Path(cfg, "sensors", f"{settings.sensor_layout_id}.json").read_text())
     )
@@ -55,7 +57,10 @@ def _new_state(request: Request, seed: int) -> SessionState:
     app = request.app
     sim = app.state.sim_client
     sid = sim.create_session(app.state.settings.network_id, seed)
-    return SessionState(sim_session_id=sid, seed=seed, snapshot=sim.snapshot(sid))
+    snap = sim.snapshot(sid)
+    app.state.monitor.reset(seed)
+    app.state.monitor.observe([snap])
+    return SessionState(sim_session_id=sid, seed=seed, snapshot=snap)
 
 
 def _ensure(request: Request) -> SessionState:
@@ -96,9 +101,10 @@ def _run(request: Request, fn: Callable[[SessionState], None]) -> NetworkView:
 
 def _view(request: Request, state: SessionState) -> NetworkView:
     app = request.app
-    return to_network_view(
+    view = to_network_view(
         state.snapshot, state, app.state.topology, app.state.layout, app.state.settings.tank_max_level_m
     )
+    return view.model_copy(update={"network_status": app.state.monitor.network_status})
 
 
 @router.post("/session/reset", response_model=NetworkView)
@@ -130,13 +136,16 @@ def sim_step(request: Request, body: SimStepRequest) -> NetworkView:
     def go(state: SessionState) -> None:
         snaps = request.app.state.sim_client.advance(state.sim_session_id, body.steps)
         state.snapshot = snaps[-1]
+        request.app.state.monitor.observe(snaps)  # AI listens to every 300-s step (SensorWindow only)
         if body.steps in VALID_SPEEDS:
             state.speed = body.steps
 
     return _run(request, go)
 
 
-def _emit(request: Request, state: SessionState, kind: EventKind, target: str, params: dict, text: str) -> None:
+def _emit(
+    request: Request, state: SessionState, kind: EventKind, target: str, params: dict, text: str
+) -> None:
     """Log the event (UI text included) and send it to the sim at the current session time."""
     ev = state.events.append(
         sim_time_s=state.sim_time_s,
@@ -170,10 +179,12 @@ def pipe_fault(request: Request, body: PipeFaultRequest) -> NetworkView:
     if body.link_id not in pipes:
         raise HTTPException(422, f"unknown pipe {body.link_id!r}")
     lid = body.link_id
+
     def go(state: SessionState) -> None:
         if body.kind == PipeFaultKind.RESET:
             _emit(request, state, EventKind.PIPE_RESET, lid, {}, f"Pipe {lid} reset")
             state.visual_faults.pop(lid, None)
+            app.state.monitor.operator_repair()  # public user action → AI re-arms (BI-27)
             for v in app.state.topology.valves:  # a valve is a pipe status; reset reopens it
                 if v.link_id == lid:
                     state.valves[v.valve_id] = True
@@ -187,8 +198,6 @@ def pipe_fault(request: Request, body: PipeFaultRequest) -> NetworkView:
             # CLOSE changes only link status (comes from the physics)
 
     return _run(request, go)
-
-
 
 
 @router.post("/valve", response_model=NetworkView)
