@@ -6,15 +6,29 @@
 
 ---
 
-## 1. Current state at a glance (2026-10-08)
+## 1. Current state at a glance (2026-10-10) — READ THIS FIRST IN A NEW CHAT
 
-**Phase:** modules 01 (G1) and 02 (G2) done; orchestrator skeleton + blueprint frontend done. **AWS (ap-south-1) live:** sim image in ECR and **ds1 (1,200 sims, 0 failed) generated on Fargate Spot into S3** `s3://aquaagent-<acct>-ap-south-1/processed/ds1/`. Nothing runs while idle.
+**Phase:** modules 01, 02, 04, 05 done; 08/09 have a working **live AI loop** (not yet the challenge/reveal flow); 03 deployed (T2a); Bedrock access granted; SageMaker parked.
 
-**Build focus (BACKBONE §2, v1.1.0):** T1 = the **local MVP detection loop**: simulation → dataset → MLP → residual detector → challenge → template explanation → SVG UI. Gate **MVP** must pass before any AWS / SageMaker / localisation / Bedrock work.
+**Live (currently PAUSED to save cost):** https://main.d8ijjiwovhm62.amplifyapp.com → API Gateway `https://bzrz581qfk.execute-api.ap-south-1.amazonaws.com` → ALB → ECS service `aquaagent-api` (task def `aquaagent-serve:2`, 2 vCPU / 4 GB, 4 containers: sim :8000, **predictor** :8001, **detector** :8002, api :8080). Service is scaled to **0** (ALB still bills ≈ $0.60/day). Resume: `infra/scripts/09_ecs_service.sh --scale 1` (≈ 2–3 min). Full teardown: `infra/scripts/99_teardown.sh`.
 
-**Next action:** module 04 (predictor: features from ds1 → baseline + MLP, leakage tests), then 05 (detector) → 07 template → 08 steps 3–7 (MVP). SageMaker training (06) uses `features/ds1/` in the same bucket. RL (T3) trains against the sim container as its environment, not a fixed dataset.
+**Shipped models (owner decision: generalised models only):**
+| Role | Version (S3 `models/…`) | Test result (ds1, 184 sims) |
+|---|---|---|
+| Predictor: edge-aware GATv2 GNN, 160k params | `predictor/gnn_ds1_202610090559` | hidden-junction MAE 0.162 m (baseline 1.93 m) |
+| Detector: SensorSetNet (temporal CNN over a sensor SET), 11k params | `anomaly/thr_ds1_202610091624` (τ 0.99, T 6) | recall burst 0.94 / large 0.45 / medium 0.30, small 0.12; FAR 4.4 % (4/90) |
+| Localiser: physics signatures from the network map | `localisation/sig_ds1_202610091648` | top-3 pipe 0.85, zone 0.81; never-trained locations top-3 0.86 (onset known) |
+Also kept: MLP `predictor/mlp_ds1_202610090559`, RTCA fallback `anomaly/thr_ds1_202610091559`.
 
-**Git:** branch `Predictor_Model` (predictor work). Earlier: `simulation`. Commits are made per step after the lead's review (owner request, 2026-10-08). No pushes.
+**Bedrock (T2d):** account restriction lifted 2026-10-10, Anthropic use-case form submitted, **Converse works** with `global.anthropic.claude-haiku-4-5-20251001-v1:0` (ap-south-1, state `infra/.state/bedrock_model_id`). SSM `AQUA_AGENT` is still `template`; module 07 (TemplateReporter + Bedrock agent + grounding check) is **not built yet**.
+
+**SageMaker (T2b):** parked — training is local. Two quota cases still open (179152592000919 Spot ×5, 179156678400359 on-demand ×1) waiting for the owner's reply text; launcher `ml/sagemaker/launch_training.py` ready (dry-run OK).
+
+**Next actions (in order):** (1) module 07: `TemplateReporter` + Bedrock agent with grounding check (T1/T2d), wire `/api/agent/diagnose`; (2) module 08 steps 5+: challenge start/status/reveal using the AI monitor; (3) frontend challenge panel + report + reveal; (4) gate MVP (3 clean challenge runs); (5) commit (owner asks), rebuild images at a commit SHA, resume + redeploy; (6) demo video + slides (numbers from this file only).
+
+**Git:** all work committed on `main` (`2128366` model and frontend deployment, owner; `da7d0a3` this TILL_NOW). Other branches: `Predictor_Model` (up to `167b251`), `Anomaly_Detector`, `simulation`. Not pushed. Deployed images are tagged `dev-202610091735` (built before the commit) — rebuild at a commit SHA on the next deploy.
+
+**Local dev:** `set -a; . ./.env; set +a` then sim `python -m sim.cli serve --port 8000`, api `uvicorn api.app.main:app --port 8080` (in-process models from `.env` paths), frontend `npm run dev` in `frontend/`. Optional endpoint mode: `python -m ml.serve.app --port 8001`, `python -m ml.serve.detector_app --port 8002`, api with `AQUA_PREDICTOR_URL`/`AQUA_DETECTOR_URL`.
 
 ## 2. Module status
 
@@ -23,13 +37,13 @@
 | — | shared/contracts + units + ids | all | T1 | **done** (`backbone/1.1.0`) | — |
 | 01 | [Simulation engine](docs/modules/01_SIMULATION_ENGINE.md) | G1 | **T1 core** | **done (G1 passed)** — 8 steps, last = step 8 (container + smoke + docs) | — |
 | 02 | [Data generation](docs/modules/02_DATA_GENERATION.md) | G2 | T1 | **done (G2)** — ds1 in S3 | — |
-| 04 | [ML predictor](docs/modules/04_ML_PREDICTOR.md) | G4 | T1 | **done (G4 ticked with evidence)** — ship model `mlp_ds1_202610090559` (MLP; GNN kept as research artifact); `model.tar.gz` in S3; BI-25, BI-26 OPEN | 05 detector uses `predict()` LOO residuals + σ from `metrics_val.json` |
+| 04 | [ML predictor](docs/modules/04_ML_PREDICTOR.md) | G4 | T1 | **done (G4)** — ship model now **GNN `gnn_ds1_202610090559`** (owner: generalised only); MLP kept; served by `ml/serve/app.py`; BI-25/26 OPEN | — |
 | 05 | [Detector (+ localisation T2c)](docs/modules/05_ANOMALY_LOCALISATION.md) | G5 | T1 / T2c | **ship detector = generalised SensorSetNet `thr_ds1_202610091624` (S3)** on GNN residuals; RTCA `thr_ds1_202610091559` kept as fallback; §9.5 targets NOT met (P-05-1/2) | 08 wires predictor + `SensorSetDetector` |
-| 07 | [Explanation: template (+ Bedrock T2d)](docs/modules/07_AQUAAGENT_BEDROCK.md) | G7 | T1 / T2d | stubs | step 1 anytime |
-| 08 | [Orchestrator API](docs/modules/08_ORCHESTRATOR_API.md) | G8 + **MVP** | T1 | **steps 1–2 done** (skeleton + stale-session recovery) | step 3 after module 04 |
-| 09 | [Frontend](docs/modules/09_FRONTEND.md) | G9 | T1 | **landing + live simulator + /city concept demo done** (steps 1–4, 6 partly); design system in `frontend/DESIGN.md` | step 5 (challenge/report/reveal) after 08 step 5 |
+| 07 | [Explanation: template (+ Bedrock T2d)](docs/modules/07_AQUAAGENT_BEDROCK.md) | G7 | T1 / T2d | stubs — **Bedrock access ready** (Haiku 4.5 global profile, Converse OK 2026-10-10) | **next**: TemplateReporter → Bedrock agent + grounding check |
+| 08 | [Orchestrator API](docs/modules/08_ORCHESTRATOR_API.md) | G8 + **MVP** | T1 | steps 1–2 done + **AI monitor live** (SensorWindow buffer, predictor/detector clients, `/api/ai/state`, `/api/ai/ack`, alarm recovery; BI-27) | challenge start/status/reveal + `/agent/diagnose` |
+| 09 | [Frontend](docs/modules/09_FRONTEND.md) | G9 | T1 | landing (+ Models section), simulator one-screen layout, zoom/pan, **AI monitor / Simulated-vs-AI / BY AI area / alerts**; deployed on Amplify | challenge panel + report + reveal |
 | 10 | [Demo and pitch](docs/modules/10_DEMO_AND_PITCH.md) | G10 | T1 | — | after MVP |
-| 03 | [AWS infra](docs/modules/03_AWS_INFRA.md) | G3 | T2a | **partly run**: 00–04, 05 (sim only), 06, 07 | 08–11, 15 after MVP |
+| 03 | [AWS infra](docs/modules/03_AWS_INFRA.md) | G3 | T2a | **deployed 2026-10-09** (ALB, API Gateway, ECS 4-container service, Amplify manual deploy via `17_amplify_manual.sh`); service **paused (0)** | resume/redeploy after commit |
 | 06 | [SageMaker](docs/modules/06_SAGEMAKER.md) | G6 | T2b | **parked (owner, 2026-10-09):** training stays local (small scale); launcher ready (dry-run OK); Spot quota case still open (no cost) | only if training needs to scale up |
 
 ## 3. What the setup produced (where to look)
@@ -66,12 +80,14 @@
 
 ## 6. Open items (owner)
 - [x] **Moved to PRODUCTION 2026-10-09** (ALB + API Gateway + ECS service, 4 containers). Was: Move the predictor to PRODUCTION when the API orchestrator / gateway (module 08 + T2a) is deployed (owner, 2026-10-09). Today it is validated only as a one-off ECS **test** task (`infra/scripts/16_serve_test_task.sh`, no ALB, operator-IP-only SG). Production path: `05_build_push_images.sh` (all 3 images at a commit SHA) → `08_network_alb.sh` → `11_ssm_params.sh` (set `AQUA_PREDICTOR_VERSION=mlp_ds1_202610090559`) → `09_ecs_service.sh` using `infra/ecs/task-definition.json.tpl` (already has the `predictor` container + `AQUA_PREDICTOR_URL=http://localhost:8001` for the api, 1 vCPU / 3 GB). Then the api `PredictorClient` calls `POST /predictor/predict`. Budget: ALB ≈ $17/mo idle → park/teardown outside demo windows.
-- [ ] Accept/reject BI-25 (virtual sensors for the placement experiment) and BI-26 (predictor as its own container, new env `AQUA_PREDICTOR_URL`) and fold into BACKBONE.
+- [ ] Accept/reject BI-25 (virtual sensors), BI-26 (predictor container, `AQUA_PREDICTOR_URL`), BI-27 (AI monitor routes, detector container `AQUA_DETECTOR_URL`, `ai` colour token) and P-05-2 (generalised detector) and fold into BACKBONE.
 - [ ] SageMaker: on-demand ml.m5.xlarge training quota = 1 requested 2026-10-09 (new request, PENDING); account allows only 2 open quota requests. Earlier: Spot quota request (case 179152592000919): AWS asked for use case + 6-month forecast; Support API not available on Basic plan → owner replies in the Support Center console (text drafted 2026-10-09).
 - [x] P-05-1 → **owner decision 2026-10-09: generalised models only** → P-05-2 (GNN predictor + SensorSetNet). Remaining gap: test MLB recall 0.50 vs ≥ 0.95 target — observability limit of 3 pressure + 2 flow sensors on ds1.
-- [ ] Switch the deployed predictor to the generalised one: `AQUA_PREDICTOR_VERSION=gnn_ds1_202610090559` (16_serve_test_task.sh `--version`, SSM at production).
+- [x] Deployed predictor is the generalised GNN `gnn_ds1_202610090559` (SSM `AQUA_PREDICTOR_VERSION`).
 - [x] **Deploy the AI-enabled stack** — DONE 2026-10-09 (see progress log). Was: (owner: after local looks good): api image now needs **torch (CPU)** (detector + in-process predictor; or set `AQUA_PREDICTOR_URL=http://localhost:8001` to use the predictor container); task env `AQUA_THRESHOLDS_URI=s3://…/models/anomaly/thr_ds1_202610091624/`, `AQUA_SIGNATURES_URI=s3://…/models/localisation/sig_ds1_202610091648/`; api task role already reads `models/*`. Frontend: Amplify (`15_amplify_app.sh`) with `VITE_API_BASE_URL`.
-- [ ] Day-1 optional 5-minute AWS items: budget alert (`01_budget_alert.sh`) and the Bedrock region check (`14_bedrock_check.sh`).
+- [x] Budget alert ($10/mo) active; Bedrock check passed 2026-10-10 (`14_bedrock_check.sh`, Haiku 4.5 global profile).
+- [ ] Turn on Bedrock in the deployed api after module 07: `AQUA_BEDROCK_MODEL_ID=$(cat infra/.state/bedrock_model_id) AQUA_AGENT=bedrock infra/scripts/11_ssm_params.sh` + task role already has `bedrock:InvokeModel*` (verify ARNs for the global profile) + redeploy.
+- [ ] Reply to the two open SageMaker quota cases (text drafted in chat 2026-10-09) or close them.
 - [ ] RUNBOOK "Values to confirm" V1–V9 (all T2).
 - [x] AWS timing: **owner decision (2026-10-08): build all modules locally first; deployment (T2a/T2b/T2d) is done last to save AWS credits.** Do not run any `infra/scripts/*` until the owner says so.
 
@@ -114,3 +130,5 @@
 | 2026-10-09 | 08/09 | AI live in the simulator (BI-27) | done (local) | api/pipeline/{window_buffer,monitor}.py, api/clients/predictor_client.py, api/routes/{ai,sim,health}.py, api/app/main.py, api/tests/test_ai_monitor.py, frontend/src/{api/ai.ts, components/AiMonitor.tsx, components/AiToast.tsx, components/Inspector.tsx, components/NetworkCanvas.tsx, pages/Simulate.tsx, state/simulationStore.ts, lib/display.ts}, frontend/tailwind.config.js, frontend/DESIGN.md, .env.example | `pytest api/tests ml/tests` 55 passed; `npm run lint` + `npm run build` pass; live local stack: normal to 10:00 → NORMAL; BURST pipe 5 at 10:00 → WATCH 10:10, **ANOMALY 11:10–11:15, BY AI #1 = pipe 5, zone Z3** (pipe 5 is a holdout location); 0.13 s per 20-step tick incl. AI; headless UI run 0 console errors, no overflow at 390 px; screenshots frontend/design/screens/ai_*.png | sticky alert banner (a floating toast covered the controls — fixed); `/api/ai/state` contains no LK_/leak/hidden fields (test) |
 | 2026-10-09 | 08/09 | AI UX + alarm recovery fixes (owner feedback) | done (local) | ml/anomaly/sensorset.py (`clear_after_steps`), api/pipeline/monitor.py (`operator_repair`, recovery notification), api/routes/sim.py, frontend/src/{pages/Simulate.tsx, components/AiMonitor.tsx, components/AiToast.tsx, components/NetworkCanvas.tsx, components/landing/*.tsx, pages/Landing.tsx} | **bug:** ANOMALY latched forever and stopped scoring → detector now keeps scoring and clears after 6 calm steps (30 min); pipe RESET re-arms the AI (fresh history; re-alarms if the problem persists); "AI ALL CLEAR" banner. Simulator fits one screen at 1683×845 and 1366×768 (doc height == window), phone scrolls; AI monitor now a 3-part panel under the map. Landing: new "[04] Models" section (GNN predictor, sensor-set detector, network-signature localiser with test numbers + n), architecture layers 03/04 LIVE, limits updated. `pytest api ml` 57 passed, `npm run lint`/`build` pass, 0 console errors | numbers on the landing page trace to TILL_NOW rows above (test split) |
 | 2026-10-09 | 03/06/08/09 | AWS deploy: models as ECS endpoints + API + Amplify (T2a) | done | ml/serve/detector_app.py, api/clients/detector_client.py, ml/anomaly/frames.py, api/app/main.py (health open to ALB), infra/ecs/{task-definition,serve-test-task-definition,service}.json.tpl, infra/scripts/{05,17_amplify_manual}.sh, infra/env.sh(.example), frontend NetworkCanvas zoom/pan | **live:** https://main.d8ijjiwovhm62.amplifyapp.com → API Gateway https://bzrz581qfk.execute-api.ap-south-1.amazonaws.com (throttle 25/s, burst 50) → ALB → ECS service `aquaagent-api` (task def aquaagent-serve:2, FARGATE, 2 vCPU/4 GB): sim :8000, predictor :8001 (GNN gnn_ds1_202610090559 from S3), detector :8002 (SensorSetNet thr_ds1_202610091624 + signatures sig_ds1_202610091648 from S3), api :8080 (no torch; calls both over localhost); images dev-202610091735; target healthy; public run: burst pipe 5 at 10:00 → ANOMALY 11:15, BY AI #1 pipe 5; repair → NORMAL; 0.47 s per 20-step tick; CORS = Amplify origin only; headless browser on Amplify: 0 console errors, one-screen at 1683×845 / 1366×768 | Amplify manual zip deploys (no Git). Bedrock: all inference quotas 0 on this account (ValidationException "Operation not allowed" for Claude and Nova); quota-request slots full (2 SageMaker open) → owner files a console "Service limit increase" case; Anthropic use-case form not yet submitted. COST while up ≈ Fargate 2 vCPU/4 GB + ALB ≈ $3/day — park: `infra/scripts/09_ecs_service.sh --scale 0` (ALB still bills) or `99_teardown.sh` |
+| 2026-10-10 | 03/07 | Bedrock access | done | infra/.state/bedrock_model_id | account restriction lifted (Haiku 4.5 global quotas now 10,000 RPM / 5M TPM); Anthropic use-case form submitted by owner; Converse `global.anthropic.claude-haiku-4-5-20251001-v1:0` → "OK" (13:29) | module 07 not built yet; SSM AQUA_AGENT still template |
+| 2026-10-09 | 03 | pause | done | — | ECS service `aquaagent-api` scaled to 0 (0 running tasks); ALB + API Gateway + Amplify kept | resume `09_ecs_service.sh --scale 1` |
