@@ -8,6 +8,7 @@ requires-python = ">=3.10"
 pythonpath = ["."]
 testpaths = ["shared/tests", "sim/tests", "ml/tests", "api/tests"]
 addopts = "-q"
+markers = ["bedrock: live Amazon Bedrock call (needs AWS credentials + AQUA_BEDROCK_MODEL_ID)"]
 
 [tool.ruff]
 line-length = 110

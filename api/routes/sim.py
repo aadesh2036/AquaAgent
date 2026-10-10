@@ -58,7 +58,7 @@ def _new_state(request: Request, seed: int) -> SessionState:
     sim = app.state.sim_client
     sid = sim.create_session(app.state.settings.network_id, seed)
     snap = sim.snapshot(sid)
-    app.state.monitor.reset(seed)
+    app.state.monitor.reset(seed, session_id=sid)
     app.state.monitor.observe([snap])
     return SessionState(sim_session_id=sid, seed=seed, snapshot=snap)
 

@@ -146,10 +146,15 @@ def test_not_implemented_routes(env):
     for r in (
         c.post("/api/challenge/start", json={}),
         c.get("/api/challenge/status"),
-        c.post("/api/agent/diagnose", json={}),
     ):
         assert r.status_code == 501
         assert r.json() == {"detail": "NOT IMPLEMENTED — module 08 step 5 / module 07"}
+
+
+def test_diagnose_without_incident_is_404(env):
+    c, _ = env
+    assert c.post("/api/agent/diagnose", json={}).status_code == 404
+    assert c.get("/api/agent/info").json()["mode"] == "template"
 
 
 def test_aws_key():

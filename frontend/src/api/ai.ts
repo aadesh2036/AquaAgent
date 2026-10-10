@@ -1,5 +1,6 @@
 // GET /api/ai/state, POST /api/ai/ack — AI monitor extension (BI-27, OPEN; not yet in @contracts).
 // Everything here is derived server-side from the SensorWindow pipeline (BACKBONE §11): no ground truth.
+import type { AgentReport } from "@contracts";
 
 export type AiStatus = "NORMAL" | "WATCH" | "ANOMALY";
 
@@ -30,6 +31,8 @@ export interface AiNotification {
   driving_sensors: string[];
   text: string;
   probable_zone: string | null;
+  /** Incident frozen at alarm time; explained by POST /api/agent/diagnose (module 07). */
+  incident_id?: string | null;
 }
 
 export interface AiCandidate {
@@ -53,6 +56,7 @@ export interface AiHighlight {
   zone_links: string[];
   candidates: AiCandidate[];
   detected_at_s: number;
+  incident_id?: string | null;
 }
 
 export interface AiState {
@@ -72,7 +76,13 @@ export interface AiState {
   score_history: [number, number, AiStatus][];
   notifications: AiNotification[];
   highlight: AiHighlight | null;
+  incidents?: string[];
 }
+
+/** POST /api/agent/diagnose response: AgentReport + how it was produced (model, latency, tokens). */
+export type ExplainReport = AgentReport & {
+  run?: { generated_by: string; model_id?: string; latency_s?: number; inputTokens?: number; outputTokens?: number; calls?: number; grounding_retries?: number; fallback_reason?: string };
+};
 
 export const AI_DISABLED: AiState = {
   enabled: false, error: "AI monitor is not available in mock mode", label: "BY AI",

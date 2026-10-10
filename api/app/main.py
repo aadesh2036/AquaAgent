@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from api.app.settings import Settings
+from api.clients.agent_runner import AgentRunner
 from api.clients.sim_client import SimClient, SimRejected, SimUnavailable
 from api.pipeline.monitor import AIMonitor
 from api.routes import agent, ai, challenge, health
@@ -28,6 +29,7 @@ def create_app(settings: Settings | None = None, sim_client: SimClient | None = 
     app.state.holder = SessionHolder()
     app.state.topology, app.state.layout = sim_routes.load_topology(settings)
     app.state.monitor = AIMonitor(settings, app.state.topology, app.state.layout)
+    app.state.agent = AgentRunner(settings)
 
     @app.exception_handler(SimUnavailable)
     async def _unavailable(request: Request, exc: SimUnavailable) -> JSONResponse:

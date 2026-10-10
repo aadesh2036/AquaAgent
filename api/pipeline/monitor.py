@@ -11,11 +11,13 @@ AQUA_PREDICTOR_ARTIFACT | AQUA_PREDICTOR_URL, AQUA_THRESHOLDS_URI + AQUA_SIGNATU
 from __future__ import annotations
 
 import logging
-from collections import deque
+from collections import OrderedDict, deque
 
 import numpy as np
 
+from api.agent.tools import IncidentContext
 from api.clients.predictor_client import PredictorClient
+from api.pipeline.incident import build_incident
 from api.pipeline.window_buffer import SensorWindowBuffer
 from shared import units
 from shared.contracts.models import (
@@ -31,6 +33,7 @@ log = logging.getLogger("aquaagent.api.monitor")
 SENSORS = ("S1", "S2", "S3", "F1", "F2")
 HISTORY = 96  # 8 h of score history for the sparkline
 AI_LABEL = "BY AI"
+MAX_INCIDENTS = 20
 
 
 class AIMonitor:
@@ -60,7 +63,10 @@ class AIMonitor:
         self.reset(0, network_id=topology.network_id)
 
     # ------------------------------------------------------------------ lifecycle
-    def reset(self, seed: int, network_id: str | None = None) -> None:
+    def reset(self, seed: int, network_id: str | None = None, session_id: str = "sess_local") -> None:
+        self.session_id = session_id
+        self.incidents: OrderedDict[str, IncidentContext] = OrderedDict()  # frozen at alarm time (module 07)
+        self.reports: dict[str, dict] = {}
         self.buffer = SensorWindowBuffer(
             self.layout, network_id or self.topology.network_id, seed=seed + 7919
         )
@@ -116,6 +122,8 @@ class AIMonitor:
         z_mean = np.mean(np.array(self.z_hist)[-n_steps:], axis=0)
         loc = self.matcher.rank(z_mean, top_k=3) if self.matcher else None
         self.highlight = self._highlight(loc, r)
+        incident_id = self._record_incident(loc)
+        self.highlight["incident_id"] = incident_id
         where = (
             f"probable zone {loc.probable_zone.zone_id}; most likely "
             + ", ".join(f"{c.location_kind} {c.location_id}" for c in loc.candidates)
@@ -132,8 +140,28 @@ class AIMonitor:
                 "driving_sensors": r.driving_sensors,
                 "text": f"AI detected an anomaly at {units.clock_label(self.last_time_s)} — {where}.",
                 "probable_zone": loc.probable_zone.zone_id if loc else None,
+                "incident_id": incident_id,
             }
         )
+
+    def _record_incident(self, loc) -> str | None:
+        """Freeze the Incident + the evidence the explainer's tools may read (SensorWindow, prediction)."""
+        try:
+            inc = build_incident(
+                self.session_id, self.buffer.window(), self.response, self.result, loc,
+                {
+                    "predictor": getattr(self.predictor, "model_version", None) or "unknown",
+                    "thresholds": self.detector.version if self.detector else "unknown",
+                    "signatures": self.matcher.version if self.matcher else "none",
+                },
+            )
+        except Exception:
+            log.exception("could not build incident")
+            return None
+        self.incidents[inc.incident_id] = IncidentContext(inc, self.buffer.window(), self.response, self.topology)
+        while len(self.incidents) > MAX_INCIDENTS:
+            self.incidents.popitem(last=False)
+        return inc.incident_id
 
     def _on_recovered(self, why: str) -> None:
         self.highlight = None
@@ -147,6 +175,7 @@ class AIMonitor:
                 "driving_sensors": [],
                 "text": f"AI cleared the alarm at {units.clock_label(self.last_time_s or 0)} — {why}.",
                 "probable_zone": None,
+                "incident_id": None,
             }
         )
 
@@ -236,6 +265,7 @@ class AIMonitor:
             "score_history": list(self.score_hist),
             "notifications": self.notifications[-10:],
             "highlight": self.highlight,
+            "incidents": list(self.incidents)[-5:],
         }
         if self.response is None:
             return out

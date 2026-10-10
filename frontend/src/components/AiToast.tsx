@@ -4,7 +4,7 @@ import { useSimStore } from "../state/simulationStore";
 import { AiChip } from "./AiMonitor";
 
 export function AiToast(): JSX.Element | null {
-  const { ai, dismissed, dismissNotification, setShowAiArea, setRunning } = useSimStore();
+  const { ai, dismissed, dismissNotification, setShowAiArea, setRunning, explain, explaining } = useSimStore();
   const n = [...(ai?.notifications ?? [])].reverse().find((x) => !dismissed.includes(x.id));
   if (!n) return null;
   const alarm = n.status === "ANOMALY";
@@ -24,6 +24,10 @@ export function AiToast(): JSX.Element | null {
         {alarm && (
           <button className="cad-btn-primary px-3 py-1.5 font-mono-cad text-[10px] font-bold"
             onClick={() => { setShowAiArea(true); setRunning(false); dismissNotification(n.id); }}>PAUSE + SHOW AREA</button>
+        )}
+        {alarm && n.incident_id && (
+          <button className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[10px] font-bold" disabled={!!explaining}
+            onClick={() => { setShowAiArea(true); setRunning(false); dismissNotification(n.id); void explain(n.incident_id!); }}>EXPLAIN WHY</button>
         )}
         <button className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[10px]" onClick={() => dismissNotification(n.id)}>DISMISS</button>
       </div>

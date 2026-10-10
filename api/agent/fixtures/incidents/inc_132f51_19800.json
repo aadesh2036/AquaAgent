@@ -1,0 +1,101 @@
+{
+ "incident_id": "inc_132f51_19800",
+ "session_id": "sess_132f51",
+ "created_sim_time_s": 19800,
+ "network_id": "net_epa_tutorial_v1",
+ "sensor_layout_id": "sensors_default_v1",
+ "anomaly": {
+  "status": "ANOMALY",
+  "anomaly_score": 1.0,
+  "first_flag_time_s": 18300,
+  "confirmed_time_s": 19800,
+  "detection_delay_steps": 5,
+  "suspected_class": null,
+  "class_probs": null,
+  "driving_sensors": [
+   "F2"
+  ],
+  "residual_history_ref": "detector buffer last 24 frames",
+  "thresholds_version": "thr_ds1_202610091624"
+ },
+ "localisation": {
+  "method": "signature_cosine_v1",
+  "candidates": [
+   {
+    "rank": 1,
+    "location_kind": "pipe",
+    "location_id": "6",
+    "zone_id": "Z3",
+    "score": 0.3,
+    "similarity": 1.0
+   },
+   {
+    "rank": 2,
+    "location_kind": "junction",
+    "location_id": "2",
+    "zone_id": "Z1",
+    "score": 0.18,
+    "similarity": 0.97
+   },
+   {
+    "rank": 3,
+    "location_kind": "pipe",
+    "location_id": "1",
+    "zone_id": "Z1",
+    "score": 0.15,
+    "similarity": 0.96
+   }
+  ],
+  "probable_zone": {
+   "zone_id": "Z2",
+   "score": 0.37
+  },
+  "signatures_version": "sig_ds1_202610091648"
+ },
+ "evidence": {
+  "sensor_deltas": [
+   {
+    "sensor_id": "S1",
+    "baseline_m": 42.09,
+    "observed_m": 42.08,
+    "pct_change": -0.01
+   },
+   {
+    "sensor_id": "S2",
+    "baseline_m": 38.12,
+    "observed_m": 38.22,
+    "pct_change": 0.26
+   },
+   {
+    "sensor_id": "S3",
+    "baseline_m": 38.21,
+    "observed_m": 38.31,
+    "pct_change": 0.24
+   }
+  ],
+  "flow_deltas": [
+   {
+    "sensor_id": "F2",
+    "baseline_lps": -10.53,
+    "observed_lps": 7.32,
+    "pct_change": 169.44
+   },
+   {
+    "sensor_id": "F1",
+    "baseline_lps": 14.56,
+    "observed_lps": 14.34,
+    "pct_change": -1.5
+   }
+  ],
+  "context_summary": {
+   "time_of_day": "05:30",
+   "tank_level_m": 2.32,
+   "pump_status": "ON"
+  }
+ },
+ "model_versions": {
+  "predictor": "gnn_ds1_202610090559",
+  "thresholds": "thr_ds1_202610091624",
+  "signatures": "sig_ds1_202610091648"
+ }
+}

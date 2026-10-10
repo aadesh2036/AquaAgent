@@ -50,9 +50,9 @@ MANUAL STEP: Bedrock console → Model access, only if the Converse call reports
 - **Firewall:** template/tool outputs never contain `LK_`, `hidden`, `truth`, or the challenge leak area (covered end-to-end by 08's firewall test).
 
 ## 9. Acceptance gate — G7
-- [ ] (T1) 10 recorded incidents → 10 template reports, schema-valid, `grounding_check.passed=true`, labelled template
-- [ ] (T2d) the same 10 → 10 Bedrock reports with `passed=true`; template fallback works with Bedrock disabled
-- [ ] (module) no hard-coded model ID (grep)
+- [x] (T1) 7 recorded incidents (bursts/leaks on 7 pipes) → 7 reports — orig. target 10 → 10 template reports, schema-valid, `grounding_check.passed=true`, labelled template
+- [x] (T2d) the same 10 → 10 Bedrock reports with `passed=true`; template fallback works with Bedrock disabled
+- [x] (module) no hard-coded model ID (grep)
 
 ## 10. Risks and fallbacks
 - T2d model access / inference profile issues: script 14; template stays the shipped explanation.
@@ -77,4 +77,14 @@ If a contract is wrong, write it under §13 and stop. Do not create git branches
 ```
 
 ## 13. Proposed Backbone Changes
-_(empty)_
+_(none blocking)_ Implementation notes (2026-10-10):
+- `AgentRunner(settings).diagnose(ctx: IncidentContext)` — the context carries the Incident plus the SensorWindow and
+  predictor response frozen at alarm time (tools need them; still firewall-safe).
+- Model: Amazon Nova Lite (`apac.amazon.nova-lite-v1:0`) — cheapest model that grounded 7/7 in one call; Anthropic
+  models currently blocked by `INVALID_PAYMENT_INSTRUMENT` (Marketplace). Switch with SSM `AQUA_BEDROCK_MODEL_ID`
+  + `14_bedrock_check.sh` + `03_iam_roles.sh` + `09_ecs_service.sh`.
+- Grounding pool also contains observed−baseline differences, unit conversions (relative tolerance only) and HH:MM
+  labels of `*_time_s` fields; the first user turn carries the Incident + `labels` (clock labels, confidence policy).
+- `confidence` is set by the orchestrator policy (`confidence_of`), not by the model.
+- Extra routes: `GET /api/agent/info`; `POST /api/agent/diagnose` accepts `{incident_id?, refresh?}` and adds `run`
+  (model, latency, tokens) to the AgentReport JSON.

@@ -1,6 +1,6 @@
 // Typed client for BACKBONE §7.14.1. Adds X-Api-Key; asserts X-Aqua-Contract == CONTRACT_VERSION.
 import { CONTRACT_VERSION } from "@contracts";
-import type { AiState } from "./ai";
+import type { AiState, ExplainReport } from "./ai";
 import type {
   AgentReport, ChallengeReveal, ChallengeStartResponse, ChallengeStatusResponse, Difficulty,
   HealthResponse, NetworkTopology, NetworkView, PipeFaultKind,
@@ -17,7 +17,7 @@ export interface AquaApi {
   valve(valveId: string, open: boolean): Promise<NetworkView>;
   challengeStart(difficulty?: Difficulty): Promise<ChallengeStartResponse>;
   challengeStatus(): Promise<ChallengeStatusResponse>;
-  diagnose(incidentId: string): Promise<AgentReport>;
+  diagnose(incidentId: string, refresh?: boolean): Promise<ExplainReport>;
   reveal(): Promise<ChallengeReveal>;
   aiState(): Promise<AiState>;
   aiAck(): Promise<AiState>;
@@ -69,7 +69,7 @@ export function createHttpApi(baseUrl: string, apiKey?: string, opts: HttpApiOpt
     valve: (valve_id, open) => call<NetworkView>("POST", "/valve", { valve_id, open }),
     challengeStart: notYet("The hidden-leak challenge"),
     challengeStatus: notYet("The hidden-leak challenge"),
-    diagnose: notYet("The evidence report"),
+    diagnose: (incident_id, refresh) => call<ExplainReport>("POST", "/agent/diagnose", { incident_id, refresh: !!refresh }),
     reveal: notYet("The reveal"),
     aiState: () => call<AiState>("GET", "/ai/state"),
     aiAck: () => call<AiState>("POST", "/ai/ack"),

@@ -17,6 +17,7 @@ def health(request: Request) -> HealthResponse:
         sim = "ok"
     except SimUnavailable:
         sim = "down"
-    # predictor = the AI monitor (GNN predictor + detector) loaded; agent is the template reporter in T1.
+    # predictor = the AI monitor (GNN predictor + detector) loaded; agent = Bedrock (ok) or template-only (module 07).
     predictor = HealthStatus.OK if request.app.state.monitor.enabled else HealthStatus.DEGRADED
-    return HealthResponse(status="ok", sim=sim, predictor=predictor, agent=HealthStatus.TEMPLATE)
+    agent = HealthStatus.OK if request.app.state.agent.bedrock_enabled else HealthStatus.TEMPLATE
+    return HealthResponse(status="ok", sim=sim, predictor=predictor, agent=agent)

@@ -33,7 +33,7 @@ function Sparkline({ ai }: { ai: AiState }): JSX.Element {
 }
 
 export function AiMonitor(): JSX.Element {
-  const { ai, view, topology, ackAi, showAiArea, setShowAiArea, select } = useSimStore();
+  const { ai, view, topology, ackAi, showAiArea, setShowAiArea, select, explain, explaining } = useSimStore();
   if (!ai) return <section className="cad-panel p-4"><div className="mono-label text-paler">// AI MONITOR</div><p className="text-sm text-pale mt-2">Connecting to the AI monitor…</p></section>;
   if (!ai.enabled) {
     return (
@@ -86,6 +86,10 @@ export function AiMonitor(): JSX.Element {
               <p className="text-[10px] text-paler leading-snug">Sensor pattern matched against leaks simulated on the network map. A probable area, not an exact location.</p>
               <div className="flex gap-2 mt-1">
                 <button className="cad-btn-secondary px-2 py-1 font-mono-cad text-[10px]" aria-pressed={showAiArea} onClick={() => setShowAiArea(!showAiArea)}>{showAiArea ? "HIDE AREA" : "SHOW AREA"}</button>
+                {ai.highlight?.incident_id && (
+                  <button className="cad-btn-secondary px-2 py-1 font-mono-cad text-[10px] font-bold" disabled={!!explaining}
+                    onClick={() => void explain(ai.highlight!.incident_id!)}>{explaining ? "EXPLAINING…" : "EXPLAIN WHY"}</button>
+                )}
                 <button className="cad-btn-primary px-2 py-1 font-mono-cad text-[10px] font-bold" onClick={() => void ackAi()}>ACKNOWLEDGE</button>
               </div>
             </div>

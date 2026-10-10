@@ -53,6 +53,14 @@ def test_ai_listens_detects_and_highlights(client) -> None:
     body = json.dumps(ai)
     assert "LK_" not in body and "leak_m3s" not in body and "hidden" not in body  # §11 firewall
 
+    # explainable AI (module 07): the alarm froze an Incident; the explanation is grounded and firewall-clean
+    iid = hl["incident_id"]
+    assert iid and ai["notifications"][-1]["incident_id"] == iid and ai["incidents"][-1] == iid
+    rep = client.post("/api/agent/diagnose", json={"incident_id": iid}).json()
+    assert rep["incident_id"] == iid and rep["generated_by"] == "template" and rep["grounding_check"]["passed"]
+    assert client.post("/api/agent/diagnose", json={}).json() == rep  # latest incident, cached
+    assert "LK_" not in json.dumps(rep) and "hidden" not in json.dumps(rep)
+
     # operator repairs the pipe → AI re-arms, alarm and highlight clear, recovery is logged
     client.post("/api/pipe/fault", json={"link_id": "5", "kind": "RESET"})
     after = client.get("/api/ai/state").json()

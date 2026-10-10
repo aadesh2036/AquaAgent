@@ -3,7 +3,7 @@ import { create } from "zustand";
 import type { SimStore } from "@contracts";
 import { createHttpApi, DEFAULT_API_BASE_URL, type AquaApi } from "../api/client";
 import { createMockApi } from "../api/mock";
-import type { AiState } from "../api/ai";
+import type { AiState, ExplainReport } from "../api/ai";
 
 export type { SimStore };
 
@@ -37,6 +37,12 @@ export interface SimState extends SimStore {
   ackAi: () => Promise<void>;
   dismissNotification: (id: string) => void;
   setShowAiArea: (on: boolean) => void;
+  /** Explainable AI (module 07): report for one AI incident. */
+  report: ExplainReport | null;
+  explaining: string | null;
+  explainError: string | null;
+  explain: (incidentId: string, refresh?: boolean) => Promise<void>;
+  closeReport: () => void;
 }
 
 export const useSimStore = create<SimState>((set, get) => {
@@ -95,8 +101,21 @@ export const useSimStore = create<SimState>((set, get) => {
     },
     dismissNotification: (id) => set((s) => ({ dismissed: [...s.dismissed, id] })),
     setShowAiArea: (on) => set({ showAiArea: on }),
+    explaining: null, explainError: null,
+    explain: async (incidentId, refresh) => {
+      if (get().explaining) return;
+      set({ explaining: incidentId, explainError: null });
+      try {
+        set({ report: await get().api.diagnose(incidentId, refresh) });
+      } catch (e) {
+        set({ explainError: e instanceof Error ? e.message : "explanation failed" });
+      } finally {
+        set({ explaining: null });
+      }
+    },
+    closeReport: () => set({ report: null, explainError: null }),
     reset: async () => {
-      set({ running: false, selection: null, dismissed: [] });
+      set({ running: false, selection: null, dismissed: [], report: null, explainError: null });
       await viewCall((api) => api.sessionReset());
     },
     step: async () => {

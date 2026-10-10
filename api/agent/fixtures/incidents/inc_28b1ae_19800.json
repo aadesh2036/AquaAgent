@@ -1,0 +1,102 @@
+{
+ "incident_id": "inc_28b1ae_19800",
+ "session_id": "sess_28b1ae",
+ "created_sim_time_s": 19800,
+ "network_id": "net_epa_tutorial_v1",
+ "sensor_layout_id": "sensors_default_v1",
+ "anomaly": {
+  "status": "ANOMALY",
+  "anomaly_score": 1.0,
+  "first_flag_time_s": 18300,
+  "confirmed_time_s": 19800,
+  "detection_delay_steps": 5,
+  "suspected_class": null,
+  "class_probs": null,
+  "driving_sensors": [
+   "F1",
+   "S2"
+  ],
+  "residual_history_ref": "detector buffer last 24 frames",
+  "thresholds_version": "thr_ds1_202610091624"
+ },
+ "localisation": {
+  "method": "signature_cosine_v1",
+  "candidates": [
+   {
+    "rank": 1,
+    "location_kind": "pipe",
+    "location_id": "3",
+    "zone_id": "Z2",
+    "score": 0.98,
+    "similarity": 1.0
+   },
+   {
+    "rank": 2,
+    "location_kind": "pipe",
+    "location_id": "1",
+    "zone_id": "Z1",
+    "score": 0.01,
+    "similarity": 0.75
+   },
+   {
+    "rank": 3,
+    "location_kind": "junction",
+    "location_id": "3",
+    "zone_id": "Z1",
+    "score": 0.0,
+    "similarity": 0.73
+   }
+  ],
+  "probable_zone": {
+   "zone_id": "Z2",
+   "score": 0.99
+  },
+  "signatures_version": "sig_ds1_202610091648"
+ },
+ "evidence": {
+  "sensor_deltas": [
+   {
+    "sensor_id": "S2",
+    "baseline_m": 26.28,
+    "observed_m": 29.14,
+    "pct_change": 10.87
+   },
+   {
+    "sensor_id": "S1",
+    "baseline_m": 39.0,
+    "observed_m": 39.01,
+    "pct_change": 0.03
+   },
+   {
+    "sensor_id": "S3",
+    "baseline_m": 28.17,
+    "observed_m": 30.67,
+    "pct_change": 8.87
+   }
+  ],
+  "flow_deltas": [
+   {
+    "sensor_id": "F1",
+    "baseline_lps": 26.01,
+    "observed_lps": 38.05,
+    "pct_change": 46.3
+   },
+   {
+    "sensor_id": "F2",
+    "baseline_lps": -25.03,
+    "observed_lps": -24.77,
+    "pct_change": 1.04
+   }
+  ],
+  "context_summary": {
+   "time_of_day": "05:30",
+   "tank_level_m": 2.31,
+   "pump_status": "ON"
+  }
+ },
+ "model_versions": {
+  "predictor": "gnn_ds1_202610090559",
+  "thresholds": "thr_ds1_202610091624",
+  "signatures": "sig_ds1_202610091648"
+ }
+}
