@@ -88,7 +88,9 @@ class GNNPredictor(nn.Module):
     def _batched_edge_index(self, gs: GraphStatic, b: int, device) -> torch.Tensor:
         key = (b, id(gs))
         if key not in self._ei_cache:
-            off = (torch.arange(b) * gs.n_nodes).repeat_interleave(gs.edge_index.shape[1])
+            off = (torch.arange(b, device=gs.edge_index.device) * gs.n_nodes).repeat_interleave(
+                gs.edge_index.shape[1]
+            )
             self._ei_cache = {key: (gs.edge_index.repeat(1, b) + off).to(device)}
         return self._ei_cache[key]
 

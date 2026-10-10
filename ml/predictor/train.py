@@ -54,6 +54,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--model-version", default="")
     p.add_argument("--git-sha", default=os.environ.get("AQUA_GIT_SHA", "unknown"))
     p.add_argument("--threads", type=int, default=0)
+    p.add_argument("--device", default="auto", help="auto (cuda if available) | cpu | cuda")
     p.add_argument("--train", default=os.environ.get("SM_CHANNEL_TRAIN", "data/features/ds1"))
     p.add_argument("--val", default=os.environ.get("SM_CHANNEL_VAL", "data/features/ds1"))
     p.add_argument("--model-dir", default=os.environ.get("SM_MODEL_DIR", ""))
@@ -66,8 +67,8 @@ def load_split(path: str | Path, split: str) -> dict[str, np.ndarray]:
         return {k: z[k] for k in z.files}
 
 
-def to_tensors(a: dict[str, np.ndarray], rows: np.ndarray) -> dict[str, torch.Tensor]:
-    return {k: torch.from_numpy(np.ascontiguousarray(a[k][rows])) for k in ARRAY_KEYS}
+def to_tensors(a: dict[str, np.ndarray], rows: np.ndarray, device="cpu") -> dict[str, torch.Tensor]:
+    return {k: torch.from_numpy(np.ascontiguousarray(a[k][rows])).to(device) for k in ARRAY_KEYS}
 
 
 def take(t: dict[str, torch.Tensor], idx: torch.Tensor) -> dict[str, torch.Tensor]:
@@ -137,10 +138,16 @@ def main(argv: list[str] | None = None) -> int:
     model_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    device = torch.device(
+        "cuda"
+        if args.device == "auto" and torch.cuda.is_available()
+        else ("cpu" if args.device == "auto" else args.device)
+    )
     graph = json.loads((Path(args.train) / "graph.json").read_text())
     scalers = json.loads((Path(args.train) / "scalers.json").read_text())
-    gs = GraphStatic.from_json(graph, scalers)
-    holdout = parse_placements(args.holdout_placements, gs)
+    gs_cpu = GraphStatic.from_json(graph, scalers)
+    holdout = parse_placements(args.holdout_placements, gs_cpu)
+    gs = gs_cpu.to(device)
 
     tr_np, va_np = load_split(args.train, "train"), load_split(args.val, "val")
     rng = np.random.Generator(np.random.PCG64(args.seed))
@@ -149,10 +156,14 @@ def main(argv: list[str] | None = None) -> int:
         tr_rows = np.sort(rng.choice(tr_rows, args.max_train_rows, replace=False))
     va_rows = np.flatnonzero(va_np["train_ok"])
     assert not tr_np["post_fault"][tr_rows].any(), "post-fault row in training set (§9.1)"
-    train, val = to_tensors(tr_np, tr_rows), to_tensors(va_np, va_rows)
+    train, val = to_tensors(tr_np, tr_rows, device), to_tensors(va_np, va_rows, device)
+    tr_sims, va_sims = [str(x) for x in tr_np["sim_ids"]], [str(x) for x in va_np["sim_ids"]]
+    del tr_np, va_np
 
+    # masks are always sampled on CPU (seeded generator) so CPU and GPU runs see the same placements
     g_val = torch.Generator().manual_seed(args.seed + 1)
-    vp, vq = sample_masks(len(va_rows), gs, g_val, args.p_default, (args.k_min, args.k_max), holdout)
+    vp, vq = sample_masks(len(va_rows), gs_cpu, g_val, args.p_default, (args.k_min, args.k_max), holdout)
+    vp, vq = vp.to(device), vq.to(device)
 
     cfg = {
         "arch": args.arch,
@@ -161,7 +172,7 @@ def main(argv: list[str] | None = None) -> int:
         "heads": args.heads,
         "dropout": args.dropout,
     }
-    model = build_model(cfg, gs)
+    model = build_model(cfg, gs).to(device)
     n_params = sum(p.numel() for p in model.parameters())
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     steps_per_epoch = math.ceil(len(tr_rows) / args.batch_size)
@@ -171,6 +182,7 @@ def main(argv: list[str] | None = None) -> int:
     g = torch.Generator().manual_seed(args.seed)
     print(
         f"[train] {mv} arch={args.arch} params={n_params} train_rows={len(tr_rows)} val_rows={len(va_rows)}"
+        f" device={device}"
     )
 
     best, best_epoch, curves, stale = math.inf, -1, [], 0
@@ -180,8 +192,9 @@ def main(argv: list[str] | None = None) -> int:
         perm = torch.randperm(len(tr_rows), generator=g)
         tot = 0.0
         for i in range(steps_per_epoch):
-            idx = perm[i * args.batch_size : (i + 1) * args.batch_size]
-            pm, qm = sample_masks(len(idx), gs, g, args.p_default, (args.k_min, args.k_max), holdout)
+            idx = perm[i * args.batch_size : (i + 1) * args.batch_size].to(device)
+            pm, qm = sample_masks(len(idx), gs_cpu, g, args.p_default, (args.k_min, args.k_max), holdout)
+            pm, qm = pm.to(device), qm.to(device)
             loss, _, _ = masked_loss(model, take(train, idx), pm, qm, gs, args.flow_loss_weight)
             opt.zero_grad(set_to_none=True)
             loss.backward()
@@ -201,14 +214,14 @@ def main(argv: list[str] | None = None) -> int:
         print("[epoch] " + json.dumps(row), flush=True)
         if vm["hidden_junction_mae_m"] < best - 1e-5:
             best, best_epoch, stale = vm["hidden_junction_mae_m"], epoch, 0
-            torch.save(model.state_dict(), model_dir / "model.pt")
+            torch.save({k: v.cpu() for k, v in model.state_dict().items()}, model_dir / "model.pt")
         else:
             stale += 1
             if stale >= args.patience:
                 print(f"[train] early stop at epoch {epoch}")
                 break
 
-    model.load_state_dict(torch.load(model_dir / "model.pt", weights_only=True))
+    model.load_state_dict(torch.load(model_dir / "model.pt", map_location=device, weights_only=True))
     final = evaluate(model, val, vp, vq, gs)
     meta = {
         "model_version": mv,
@@ -231,8 +244,8 @@ def main(argv: list[str] | None = None) -> int:
             "loss": "masked MSE (hidden scored nodes) + w*MSE (masked flows)",
             "train_rows": int(len(tr_rows)),
             "val_rows": int(len(va_rows)),
-            "train_sim_ids": [str(s) for s in tr_np["sim_ids"]],
-            "val_sim_ids": [str(s) for s in va_np["sim_ids"]],
+            "train_sim_ids": tr_sims,
+            "val_sim_ids": va_sims,
             "best_epoch": best_epoch,
             "epochs_run": len(curves),
             "train_time_s": round(time.time() - t0, 1),

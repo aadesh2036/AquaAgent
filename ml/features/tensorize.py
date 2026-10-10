@@ -10,7 +10,7 @@ instrumented in the sampled placement contributes exactly 0 regardless of what t
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, fields, replace
 
 import numpy as np
 import torch
@@ -89,6 +89,17 @@ class GraphStatic:
             scalers=scalers,
         )
 
+    def to(self, device) -> GraphStatic:
+        """Copy with every tensor on ``device`` (GPU training / residual caching); CPU is the default."""
+        return replace(
+            self,
+            **{
+                f.name: getattr(self, f.name).to(device)
+                for f in fields(self)
+                if torch.is_tensor(getattr(self, f.name))
+            },
+        )
+
     # --- target scaling: models predict standardised hydraulic HEAD; pressure = head − elevation
     def pressure_to_head_z(self, p: torch.Tensor) -> torch.Tensor:
         return _z(p + self.elevation_m, self.scalers["head_m"])
@@ -153,8 +164,8 @@ def tensorize(
         _z(torch.nan_to_num(batch["q_obs"], nan=0.0), sc["flow_lps"]),
         torch.zeros_like(batch["q_obs"]),
     )
-    flow = torch.zeros(bsz, e2)
-    fmask = torch.zeros(bsz, e2)
+    flow = torch.zeros(bsz, e2, device=p_mask.device)
+    fmask = torch.zeros(bsz, e2, device=p_mask.device)
     # sign convention: forward edge carries +q (link start→end), reverse edge −q
     flow[:, gs.flow_edge_fwd] = qz
     flow[:, gs.flow_edge_rev] = -qz

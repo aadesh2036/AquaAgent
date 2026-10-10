@@ -9,6 +9,8 @@
 # Undo:          aws s3 rm "s3://$AQUA_BUCKET/raw/ds1/" --recursive  (data); task defs deregistered by 99
 # Network:       default VPC, default security group (egress only), public IP for ECR/S3 access
 # Usage:         ./07_run_datagen.sh [NUM_SHARDS]   (default $DATAGEN_NUM_SHARDS)
+#                AQUA_DATASET_VERSION=ds3 selects config/generation/ds3.yaml (must be baked into the sim image);
+#                MERGE_CPU=4096 MERGE_MEMORY=16384 sizes the merge task (it holds one whole table in memory)
 # CUT LINE (BACKBONE §13, end of Day 2): if this fails, run `make datagen-local` and upload with
 #                aws s3 sync data/raw/ds1 s3://$AQUA_BUCKET/raw/ds1 — ECS RunTask becomes a slide.
 # =============================================================================
@@ -27,8 +29,9 @@ DEFAULT_SG="$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$(d
 NETCFG="awsvpcConfiguration={subnets=[${SUBNETS}],securityGroups=[${DEFAULT_SG}],assignPublicIp=ENABLED}"
 
 GIT_SHA="$(git -C "$REPO_ROOT" rev-parse --short HEAD)"
-run_task() {  # json-command-array  → prints task arn. Fargate Spot first (~70% cheaper), on-demand fallback.
-  local ov="{\"containerOverrides\":[{\"name\":\"sim\",\"command\":$1,\"environment\":[{\"name\":\"GIT_SHA\",\"value\":\"$GIT_SHA\"}]}]}"
+run_task() {  # json-command-array [cpu memory] → prints task arn. Fargate Spot first (~70% cheaper), on-demand fallback.
+  local size=""; [[ -n "${2:-}" ]] && size=",\"cpu\":\"$2\",\"memory\":\"$3\""
+  local ov="{\"containerOverrides\":[{\"name\":\"sim\",\"command\":$1,\"environment\":[{\"name\":\"GIT_SHA\",\"value\":\"$GIT_SHA\"}]}]$size}"
   local arn
   for cp in FARGATE_SPOT FARGATE; do
     arn="$(aws ecs run-task --cluster "$ECS_CLUSTER" --capacity-provider-strategy "capacityProvider=$cp,weight=1" \
@@ -62,7 +65,7 @@ wait_and_check "${ARNS[@]}"
 ok "all $N generate shards finished"
 
 MERGE_CMD="[\"merge\",\"--config\",\"config/generation/${DS}.yaml\",\"--raw\",\"s3://${AQUA_BUCKET}/raw/${DS}/\",\"--out\",\"s3://${AQUA_BUCKET}/processed/${DS}/\"]"
-MERGE_ARN="$(run_task "$MERGE_CMD")"
+MERGE_ARN="$(run_task "$MERGE_CMD" "${MERGE_CPU:-}" "${MERGE_MEMORY:-}")"
 wait_and_check "$MERGE_ARN"
 
 aws s3 ls "s3://$AQUA_BUCKET/raw/$DS/" --recursive --summarize | tail -n 2

@@ -37,13 +37,13 @@ const LAYERS: Layer[] = [
     wells: [["ROLE", "Session owner"], ["FIREWALL", "Truth stripped"], ["STATUS", "LIVE"]] },
   { n: "03", tag: "PREDICTOR", title: "Graph neural network", sub: "edge-aware GATv2", icon: "neurology", status: "LIVE",
     body: "Reconstructs the pressure at every node from five sensors and SCADA context. It reads the pipe graph, not node IDs, so it is not tied to one sensor layout.",
-    wells: [["MODEL", "GNN · 160k"], ["TRAINED ON", "Normal days"], ["STATUS", "LIVE"]] },
+    wells: [["MODEL", "GNN · 897k"], ["TRAINED ON", "SageMaker GPU"], ["STATUS", "LIVE"]] },
   { n: "04", tag: "DETECTOR", title: "Detector + localiser", sub: "sensor-set net · network signatures", icon: "radar", status: "LIVE",
     body: "Listens to every 5-minute step for gaps between readings and the GNN's expectation, then matches the pattern against leaks simulated on the network map.",
     wells: [["OUTPUT", "3 states + area"], ["TUNED ON", "Validation only"], ["STATUS", "LIVE"]] },
-  { n: "05", tag: "EXPLAINER", title: "Evidence report", sub: "grounded text", icon: "description", status: "NEXT",
-    body: "A deterministic report from measured values today; an Amazon Bedrock agent with a grounding check next.",
-    wells: [["TODAY", "Deterministic"], ["NEXT", "Bedrock agent"], ["STATUS", "NEXT"]] },
+  { n: "05", tag: "EXPLAINER", title: "Evidence report", sub: "Amazon Bedrock · grounded", icon: "description", status: "LIVE",
+    body: "On every AI alarm, an Amazon Bedrock agent (Nova Lite) writes the report from the measured values; every number is checked against the evidence, with a deterministic fallback.",
+    wells: [["MODEL", "Nova Lite"], ["CHECK", "Every number"], ["STATUS", "LIVE"]] },
 ];
 
 export function ArchitectureDeck(): JSX.Element {
@@ -120,19 +120,19 @@ export function ArchitectureDeck(): JSX.Element {
 const MODELS: { tag: string; icon: string; name: string; what: string; how: string[]; result: [string, string][]; note: string }[] = [
   { tag: "PREDICTOR", icon: "hub", name: "Edge-aware graph attention network",
     what: "Estimates the pressure at every node — including the ones with no sensor — from 3 pressure sensors, 2 flow sensors and SCADA context.",
-    how: ["GATv2 layers over the pipe graph (4 layers × 4 heads, residual, 160k parameters)", "Pipe length, diameter, roughness as edge features; no node IDs", "Trained on 181,851 normal 5-minute steps, random sensor placements"],
-    result: [["Hidden-node error", "0.16 m MAE"], ["Nearest-sensor baseline", "1.93 m MAE"]],
-    note: "Test split: 184 held-out simulations, normal states." },
+    how: ["GATv2 layers over the pipe graph (6 layers × 4 heads, residual, 897k parameters)", "Pipe length, diameter, roughness as edge features; no node IDs", "Trained on Amazon SageMaker (GPU) on 1,820,911 normal 5-minute steps from 12,000 simulations, random sensor placements"],
+    result: [["Hidden-node error", "0.11 m MAE"], ["Nearest-sensor baseline", "1.95 m MAE"]],
+    note: "Test split: 1,809 held-out simulations, normal states." },
   { tag: "DETECTOR", icon: "sensors", name: "Sensor-set temporal network",
     what: "Watches the last 2 hours of each sensor's residual (reading minus the GNN's leave-one-out estimate) and raises WATCH / ANOMALY.",
-    how: ["Shared dilated temporal CNN per sensor + attention pooling over the sensor set (11k parameters)", "Knows sensor type, not identity — works if a sensor drops out", "Threshold chosen on validation data, frozen before test"],
-    result: [["Caught: burst / large / medium", "94% / 45% / 30%"], ["False alarms on normal-operation sims", "4.4%"]],
-    note: "Test split: 68 medium/large/burst faults, 90 operational sims. Small leaks mostly go unseen." },
+    how: ["Shared dilated temporal CNN per sensor + attention pooling over the sensor set (43k parameters, trained on SageMaker)", "Knows sensor type, not identity — works if a sensor drops out", "Threshold chosen on validation data, frozen before test"],
+    result: [["Caught: burst / large / medium", "80% / 45% / 31%"], ["False alarms on normal-operation sims", "0.2%"]],
+    note: "Test split: 684 medium/large/burst faults, 900 operational sims. Small leaks mostly go unseen." },
   { tag: "LOCALISER", icon: "my_location", name: "Network-map signatures",
     what: "When the detector fires, simulates what a leak at every pipe and junction would look like on the known network, and finds the closest match.",
-    how: ["168 physics signatures (14 locations × 3 sizes × 4 times of day)", "Same sensors, predictor and residuals as live", "No labelled leaks needed — any network with a map works"],
-    result: [["Right pipe in top 3", "85%"], ["At locations never seen in training", "86%"]],
-    note: "Test split, 68 medium/large/burst faults, measured with the true leak start; live estimates use the detector's start." },
+    how: ["336 physics signatures (14 locations × 3 sizes × 8 times of day)", "Same sensors, predictor and residuals as live", "No labelled leaks needed — any network with a map works"],
+    result: [["Right pipe in top 3", "84%"], ["At locations never seen in training", "84%"]],
+    note: "Test split, 684 medium/large/burst faults, measured with the true leak start; live estimates use the detector's start." },
 ];
 
 export function Models(): JSX.Element {
@@ -178,8 +178,8 @@ export function Models(): JSX.Element {
 export function HonestLimits(): JSX.Element {
   const pods = [
     ["WHAT WE SHOW", "In our simulated network, five sensors plus a learned model of normal behaviour can flag hidden leaks — measured on held-out simulations.", "verified"],
-    ["WHAT WE DON'T CLAIM", "This is not a real city. With five sensors it catches nearly every burst but misses about half of medium-to-large leaks and most small ones, and it names a probable area, not an exact pipe.", "gpp_maybe"],
-    ["WHAT COMES NEXT", "Where to add the next sensor, a Bedrock explainer, larger networks, then real telemetry.", "arrow_circle_right"],
+    ["WHAT WE DON'T CLAIM", "This is not a real city. With five sensors it catches 4 in 5 bursts but misses about half of large leaks, most medium ones and nearly all small ones, and it names a probable area, not an exact pipe.", "gpp_maybe"],
+    ["WHAT COMES NEXT", "Where to add the next sensor, larger networks, then real telemetry.", "arrow_circle_right"],
   ];
   return (
     <section id="limits" className="py-16 sm:py-24 border-t border-white/30">

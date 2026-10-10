@@ -36,6 +36,18 @@ def _hash(cfg: dict, weights: bytes) -> str:
     return "sha256:" + h.hexdigest()
 
 
+def _git_sha() -> str:
+    """Short commit of the code; ``AQUA_GIT_SHA`` in containers without git (SageMaker)."""
+    import os
+
+    try:
+        return subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
+        ).stdout.strip() or os.environ.get("AQUA_GIT_SHA", "unknown")
+    except FileNotFoundError:
+        return os.environ.get("AQUA_GIT_SHA", "unknown")
+
+
 def _read(uri: str, name: str) -> bytes:
     if uri.startswith("s3://"):
         import boto3
@@ -181,18 +193,19 @@ def freeze(args) -> int:
     res_tr = np.load(feat / "residuals" / f"{args.predictor}_train.npy").astype(np.float64)
     sig = res_tr[tr["train_ok"]].std(0)
     scalers = json.loads((feat / "scalers.json").read_text())
-    tv = thresholds_version("ds1")
+    cand = json.loads((sel / "candidate.json").read_text()) if (sel / "candidate.json").exists() else {}
+    tv = thresholds_version(args.dataset_version)
     cfg = {
         "schema_version": "1.0",
         "thresholds_version": tv,
         "detector": "sensorset_tcn_v1",
         "created_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "predictor_model_version": args.predictor,
-        "dataset_version": "ds1",
+        "dataset_version": args.dataset_version,
         "sigmas": {s: float(v) for s, v in zip(SENSORS, sig, strict=True)},
         "sigma_source": "std of LOO residuals, train-split normal rows",
-        "history": 24,
-        "hidden": 32,
+        "history": int(cand.get("history", 24)),
+        "hidden": int(cand.get("hidden", 32)),
         "step_s": STEP_S,
         "params": {"tau": float(row["tau"]), "T": int(row["T"])},
         "alarm_rule": "P(anomaly) > tau for T consecutive steps → ANOMALY (latched until reset)",
@@ -200,9 +213,7 @@ def freeze(args) -> int:
         "trained_on": "train split (labels: LEAK/BURST active fault_start ≤ t < fault_end); tau/T chosen on val",
         "selection": str(sel / "selection_val.csv"),
         "val_metrics": {k: (None if pd.isna(v) else v) for k, v in row.to_dict().items()},
-        "code_git_sha": subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
-        ).stdout.strip(),
+        "code_git_sha": _git_sha(),
     }
     weights = (sel / "sensorset_candidate.pt").read_bytes()
     cfg["content_sha256"] = _hash(cfg, weights)
@@ -283,8 +294,10 @@ def main(argv=None) -> int:
     p.add_argument("--split", default="test")
     p.add_argument("--out-root", default="data/models/anomaly")
     p.add_argument("--experiments-root", default="data/experiments")
+    p.add_argument("--dataset-version", default="ds1")
+    p.add_argument("--threads", type=int, default=10)
     args = p.parse_args(argv)
-    torch.set_num_threads(10)
+    torch.set_num_threads(args.threads)
     return freeze(args) if args.cmd == "freeze" else evaluate(args)
 
 

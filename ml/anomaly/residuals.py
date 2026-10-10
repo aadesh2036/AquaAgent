@@ -27,19 +27,23 @@ SENSORS: tuple[str, ...] = (*PRESSURE_SENSORS, *FLOW_SENSORS)  # S1, S2, S3, F1,
 
 @torch.no_grad()
 def loo_residuals(
-    arrays: dict[str, np.ndarray], artifact, rows: np.ndarray | None = None, bs: int = 16384
+    arrays: dict[str, np.ndarray], artifact, rows: np.ndarray | None = None, bs: int = 16384, device="cpu"
 ) -> np.ndarray:
-    """[R, 5] residuals (S1, S2, S3, F1, F2) for the given rows of a features split."""
-    gs, model = artifact.gs, artifact.model
+    """[R, 5] residuals (S1, S2, S3, F1, F2) for the given rows of a features split.
+
+    ``device`` = "cuda" for offline caching on a GPU instance; the maths is identical to the CPU path.
+    """
+    gs_cpu = artifact.gs
+    gs, model = gs_cpu.to(device), artifact.model.to(device)
     rows = np.arange(len(arrays["sim_code"])) if rows is None else rows
     out = np.empty((len(rows), len(SENSORS)), np.float64)
     keys = ("p_obs", "p_obs_lag1", "p_obs_lag3", "q_obs", "ctx")
     for i in range(0, len(rows), bs):
         sl = rows[i : i + bs]
-        b = {k: torch.from_numpy(np.ascontiguousarray(arrays[k][sl])) for k in keys}
+        b = {k: torch.from_numpy(np.ascontiguousarray(arrays[k][sl])).to(device) for k in keys}
         for c, sid in enumerate(SENSORS):
-            pm, qm = default_masks(len(sl), gs, drop=sid)
-            x, e = tensorize(b, pm, qm, gs)
+            pm, qm = default_masks(len(sl), gs_cpu, drop=sid)
+            x, e = tensorize(b, pm.to(device), qm.to(device), gs)
             head_z, flow_z = model(x, e, gs)
             if sid.startswith("S"):
                 j = gs.default_sensor_idx[int(sid[1:]) - 1]
@@ -50,7 +54,9 @@ def loo_residuals(
                 pred = gs.z_to_flow(flow_z)[:, f]
                 obs = b["q_obs"][:, f]
             # same rounding as PredictorResponse (4 dp) so offline == online exactly
-            out[i : i + len(sl), c] = np.round(obs.double().numpy(), 4) - np.round(pred.double().numpy(), 4)
+            out[i : i + len(sl), c] = np.round(obs.double().cpu().numpy(), 4) - np.round(
+                pred.double().cpu().numpy(), 4
+            )
     return out
 
 

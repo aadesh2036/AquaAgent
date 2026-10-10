@@ -121,6 +121,7 @@ def type_matrix():
 @torch.no_grad()
 def predict_set(model, zz, ctx, valid, h, bs=8192, sensor_drop: list[int] | None = None) -> np.ndarray:
     model.eval()
+    device = next(model.parameters()).device
     zp, cp = pad(zz, ctx, h)
     typ = type_matrix()
     e_idx, t_idx = np.nonzero(valid)
@@ -129,35 +130,39 @@ def predict_set(model, zz, ctx, valid, h, bs=8192, sensor_drop: list[int] | None
     for i in range(0, len(e_idx), bs):
         x = gather(zp, cp, typ, e_idx[i : i + bs], t_idx[i : i + bs], h)[:, keep]
         m = torch.ones(x.shape[0], x.shape[1], dtype=torch.bool)
-        logit, _ = model(x, m)
-        p[e_idx[i : i + bs], t_idx[i : i + bs]] = torch.sigmoid(logit).numpy()
+        logit, _ = model(x.to(device), m.to(device))
+        p[e_idx[i : i + bs], t_idx[i : i + bs]] = torch.sigmoid(logit).cpu().numpy()
     return p
 
 
-def train_set(zz, ctx, valid, y, h, epochs, seed, log) -> SensorSetNet:
+def train_set(
+    zz, ctx, valid, y, h, epochs, seed, log, hidden=32, n_per=60000, batch=512, device="cpu"
+) -> SensorSetNet:
+    """Balanced (n_per positives + n_per negatives per epoch) BCE training; returns the model on ``device``."""
     torch.manual_seed(seed)
     rng = np.random.Generator(np.random.PCG64(seed))
-    model = SensorSetNet(hidden=32, history=h, n_signal=zz.shape[-1])
+    model = SensorSetNet(hidden=hidden, history=h, n_signal=zz.shape[-1]).to(device)
     opt = torch.optim.AdamW(model.parameters(), 2e-3, weight_decay=1e-4)
     zp, cp = pad(zz, ctx, h)
     typ = type_matrix()
     e_idx, t_idx = np.nonzero(valid)
     lab = y[e_idx, t_idx]
     pos, neg = np.flatnonzero(lab == 1), np.flatnonzero(lab == 0)
-    n_per = 60000
     for ep_ in range(epochs):
         model.train()
         sel = np.concatenate([rng.choice(pos, n_per), rng.choice(neg, n_per)])
         rng.shuffle(sel)
         tot = 0.0
-        for i in range(0, len(sel), 512):
-            s = sel[i : i + 512]
+        for i in range(0, len(sel), batch):
+            s = sel[i : i + batch]
             x = gather(zp, cp, typ, e_idx[s], t_idx[s], h)
             # sensor dropout: random subsets so the set model never relies on a fixed layout
             m = torch.from_numpy(rng.random((len(s), len(SENSORS))) > 0.2)
             m[~m.any(1), 4] = True
-            logit, _ = model(x, m)
-            loss = torch.nn.functional.binary_cross_entropy_with_logits(logit, torch.from_numpy(lab[s]))
+            logit, _ = model(x.to(device), m.to(device))
+            loss = torch.nn.functional.binary_cross_entropy_with_logits(
+                logit, torch.from_numpy(lab[s]).to(device)
+            )
             opt.zero_grad()
             loss.backward()
             opt.step()
@@ -191,8 +196,20 @@ def main(argv=None) -> int:
         "--raw-channel", action="store_true", help="R3 also sees each sensor's type-normalised raw reading"
     )
     p.add_argument("--only-r3", action="store_true")
+    p.add_argument("--hidden", type=int, default=32, help="SensorSetNet width")
+    p.add_argument(
+        "--samples-per-class", type=int, default=60000, help="R3 positives (= negatives) per epoch"
+    )
+    p.add_argument("--batch-size", type=int, default=512)
+    p.add_argument("--device", default="cpu", help="cpu | cuda | auto")
+    p.add_argument("--threads", type=int, default=10)
     args = p.parse_args(argv)
-    torch.set_num_threads(10)
+    torch.set_num_threads(args.threads)
+    device = (
+        "cuda"
+        if args.device == "auto" and torch.cuda.is_available()
+        else ("cpu" if args.device == "auto" else args.device)
+    )
     out = Path(args.out or f"data/experiments/detsel_{datetime.now(UTC):%Y%m%d%H%M}")
     out.mkdir(parents=True, exist_ok=True)
     logf = open(out / "log.txt", "w")
@@ -251,8 +268,6 @@ def main(argv=None) -> int:
         ep_data[s] = (zz, cx, valid, lab, y)
 
     # ---- R2: HistGradientBoosting on window features (fixed layout reference)
-    from sklearn.ensemble import HistGradientBoostingClassifier
-
     t0 = time.time()
     zz, cx, valid, lab, y = ep_data["train"]
     if args.only_r3:
@@ -260,6 +275,8 @@ def main(argv=None) -> int:
     else:
         f_tr = window_feats(zz[..., 0], cx)[valid]
     if f_tr is not None:
+        from sklearn.ensemble import HistGradientBoostingClassifier
+
         y_tr = y[valid]
         rng = np.random.Generator(np.random.PCG64(args.seed))
         sub = rng.choice(len(y_tr), min(200000, len(y_tr)), replace=False)
@@ -277,7 +294,20 @@ def main(argv=None) -> int:
     # ---- R3: SensorSetNet (generalised)
     t0 = time.time()
     zz, cx, valid, lab, y = ep_data["train"]
-    model = train_set(zz, cx, valid, y, args.history, args.epochs, args.seed, log)
+    model = train_set(
+        zz,
+        cx,
+        valid,
+        y,
+        args.history,
+        args.epochs,
+        args.seed,
+        log,
+        hidden=args.hidden,
+        n_per=args.samples_per_class,
+        batch=args.batch_size,
+        device=device,
+    )
     zz, cx, valid, lab, y = ep_data["val"]
     pv = predict_set(model, zz, cx, valid, args.history)
     params, m = tune_prob(pv, valid, lab)
@@ -290,7 +320,10 @@ def main(argv=None) -> int:
         prm, mm = tune_prob(pd_, valid, lab)
         rows.append(summarise(f"{r3name}_drop_{'+'.join(SENSORS[i] for i in drop)}", prm, mm))
         log(f"[R3-drop] {rows[-1]}")
-    torch.save(model.state_dict(), out / "sensorset_candidate.pt")
+    torch.save({k: v.cpu() for k, v in model.state_dict().items()}, out / "sensorset_candidate.pt")
+    (out / "candidate.json").write_text(
+        json.dumps({"hidden": args.hidden, "history": args.history, "predictor": args.predictor}, indent=1)
+    )
 
     df = pd.DataFrame(rows)
     df.to_csv(out / "selection_val.csv", index=False)

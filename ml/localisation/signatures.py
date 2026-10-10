@@ -27,7 +27,14 @@ START_H = (3, 9, 15, 21)
 HORIZON_STEPS = 12  # first hour after onset (300-s steps)
 
 
-def generate(predictor: str, detector_dir: str, out_root: str) -> Path:
+def generate(
+    predictor: str,
+    detector_dir: str,
+    out_root: str,
+    config: str = "config/generation/ds1.yaml",
+    dataset_version: str = "ds1",
+    start_hours: tuple[int, ...] = START_H,
+) -> Path:
     from ml.anomaly.residuals import residual_frame
     from ml.anomaly.sensorset import SensorSetDetector
     from ml.features.online import snapshot_to_step
@@ -47,7 +54,7 @@ def generate(predictor: str, detector_dir: str, out_root: str) -> Path:
     art = load_artifact(predictor)
     det = SensorSetDetector.load(detector_dir)
     sig = det.cfg["sigmas"]
-    gen = load_config("config/generation/ds1.yaml")
+    gen = load_config(config)
     layout = load_sensor_layout(gen["sensor_layout_id"])
     net = NetworkConfig.model_validate(
         json.loads(Path(f"config/networks/{gen['network_id']}.json").read_text())
@@ -60,7 +67,7 @@ def generate(predictor: str, detector_dir: str, out_root: str) -> Path:
     ]
 
     rows = []
-    for k, start_h in enumerate(START_H):
+    for k, start_h in enumerate(start_hours):
         base = sample_scenario(ScenarioType.NORMAL, 900000 + k, "sig", make_rng(20261009 + k), gen)
         for kind, loc in locs:
             for size, area in AREAS_M2.items():
@@ -103,7 +110,7 @@ def generate(predictor: str, detector_dir: str, out_root: str) -> Path:
                 )
         print(f"[signatures] start {start_h:02d}:00 done ({len(rows)} signatures)", flush=True)
 
-    sv = signatures_version("ds1")
+    sv = signatures_version(dataset_version)
     out = Path(out_root) / sv
     out.mkdir(parents=True, exist_ok=True)
     doc = {
@@ -118,7 +125,7 @@ def generate(predictor: str, detector_dir: str, out_root: str) -> Path:
         "sigmas": sig,
         "horizon_steps": HORIZON_STEPS,
         "areas_m2": AREAS_M2,
-        "start_h": list(START_H),
+        "start_h": list(start_hours),
         "signatures": rows,
     }
     (out / "signatures.json").write_text(json.dumps(doc, indent=1))
@@ -133,8 +140,18 @@ def main(argv=None) -> int:
     p.add_argument("--out-root", default="data/models/localisation")
     p.add_argument("--upload", action="store_true")
     p.add_argument("--bucket", default=os.environ.get("AQUA_BUCKET"))
+    p.add_argument("--config", default="config/generation/ds1.yaml", help="network + fault locations")
+    p.add_argument("--dataset-version", default="ds1")
+    p.add_argument("--start-hours", default=",".join(map(str, START_H)), help="onset hours, e.g. 0,3,6,…,21")
     args = p.parse_args(argv)
-    out = generate(args.predictor, args.detector, args.out_root)
+    out = generate(
+        args.predictor,
+        args.detector,
+        args.out_root,
+        args.config,
+        args.dataset_version,
+        tuple(int(h) for h in args.start_hours.split(",")),
+    )
     if args.upload:
         subprocess.run(
             [
