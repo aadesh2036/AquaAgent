@@ -14,6 +14,8 @@
 | You are… | Read |
 |---|---|
 | Any coding agent / contributor | [INSTRUCTIONS.md](INSTRUCTIONS.md) → [BACKBONE.md](BACKBONE.md) → your `docs/modules/NN_*.md` → [TILL_NOW.md](TILL_NOW.md) |
+| AI / ML: data, models, training, results | [docs/AI_ML.md](docs/AI_ML.md) |
+| System + AWS architecture, security, cost, operations | [docs/AWS_ARCHITECTURE.md](docs/AWS_ARCHITECTURE.md) |
 | Running things | [docs/RUNBOOK.md](docs/RUNBOOK.md), the linear terminal walkthrough (`make help` lists targets) |
 | New to AWS / SageMaker / Bedrock | [docs/aws/](docs/aws/): 00 AWS · 01 SageMaker · 02 Bedrock · 03 CLI cheat-sheet · 04 teardown & cost |
 | Reviewing the contract | [BACKBONE.md](BACKBONE.md) (frozen `backbone/1.1.0`) + [docs/BACKBONE_ISSUES.md](docs/BACKBONE_ISSUES.md) |

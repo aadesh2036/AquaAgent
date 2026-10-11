@@ -14,12 +14,13 @@ import { fmtLps, fmtM, fmtPct, layoutOf } from "../lib/display";
 import { CityLink } from "../components/CityLink";
 import { AiMonitor } from "../components/AiMonitor";
 import { AiToast } from "../components/AiToast";
+import { Tour, tourSeen } from "../components/Tour";
 
 const MODES: [SimMode, string][] = [["explore", "EXPLORE"], ["break", "BREAK IT"], ["challenge", "TEST THE AI"]];
 
 function ModeTabs({ mode, onMode }: { mode: SimMode; onMode: (m: SimMode) => void }): JSX.Element {
   return (
-    <div className="flex gap-1" role="tablist" aria-label="Mode">
+    <div className="flex gap-1" role="tablist" aria-label="Mode" data-tour="modes">
       {MODES.map(([m, label]) => (
         <button key={m} role="tab" aria-selected={mode === m} onClick={() => onMode(m)}
           className={`px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap ${mode === m ? "cad-btn-active" : "cad-btn-secondary"}`}>{label}</button>
@@ -48,7 +49,7 @@ function StatusBar(): JSX.Element {
   parts.push(`TANK ${fmtPct(view?.tank.level_pct)}`);
   const status = view?.network_status ?? "—";
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 bg-panel border-t border-white/40" role="status">
+    <div className="fixed bottom-0 inset-x-0 z-40 bg-panel border-t border-white/40" role="status" data-tour="status">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-9 flex items-center gap-3 overflow-x-auto whitespace-nowrap font-mono-cad text-[11px]">
         {parts.map((p) => <span key={p}>{p}<span className="text-white/40 ml-3">|</span></span>)}
         <span className={status === "NORMAL" ? "font-bold" : status === "—" ? "" : "font-bold text-alarm"}>NETWORK {status}</span>
@@ -77,6 +78,7 @@ function Events(): JSX.Element {
 export function Simulate(): JSX.Element {
   const { topology, view, running, selection, connection, error, contractMismatch, report, loadTopology, select, useMockData, ai, showAiArea } = useSimStore();
   const [mode, setMode] = useState<SimMode>("explore");
+  const [tourOpen, setTourOpen] = useState(false);
 
   useEffect(() => { void loadTopology(); }, [loadTopology]);
 
@@ -90,11 +92,13 @@ export function Simulate(): JSX.Element {
   }, [running]);
 
   const offline = connection === "offline" && !topology;
+  // first visit: open the guide once the drawing is on screen (so the steps have something to point at)
+  useEffect(() => { if (topology && view && !tourSeen()) setTourOpen(true); }, [topology, view]);
 
   return (
     <div className="min-h-screen pb-12 lg:pb-0 lg:h-screen lg:overflow-hidden flex flex-col">
       <Header tag="SIM://WNTR-1.5" center={<ModeTabs mode={mode} onMode={setMode} />}
-        right={<><ConnBadge c={connection} /><CityLink className="font-mono-cad text-[10px] text-pale underline whitespace-nowrap max-sm:hidden">City view (demo)</CityLink><Link to="/" className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap">← OVERVIEW</Link></>} />
+        right={<><button onClick={() => { useSimStore.getState().setRunning(false); setTourOpen(true); }} className="cad-btn-secondary px-2 sm:px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap flex items-center" aria-label="Open the simulator guide"><span aria-hidden="true" className="material-symbols-outlined sm:hidden" style={{ fontSize: 16 }}>help</span><span className="max-sm:hidden">GUIDE</span></button><ConnBadge c={connection} /><CityLink className="font-mono-cad text-[10px] text-pale underline whitespace-nowrap max-sm:hidden">City view (demo)</CityLink><Link to="/" className="cad-btn-secondary px-3 py-1.5 font-mono-cad text-[11px] whitespace-nowrap">← OVERVIEW</Link></>} />
 
       {/* lg+: one screen — header 56px + status bar 36px fixed; columns scroll internally */}
       <main className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 pt-[68px] lg:pb-12 flex-1 min-h-0 flex flex-col">
@@ -121,7 +125,7 @@ export function Simulate(): JSX.Element {
         <AiToast />
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_340px] gap-4 flex-1 min-h-0">
           <div className="flex flex-col gap-4 min-h-0">
-          <div className="cad-panel-dark blueprint-grid-subtle crosshair-corner relative p-3 sm:p-4 flex flex-col lg:flex-1 lg:min-h-[260px]">
+          <div data-tour="plan" className="cad-panel-dark blueprint-grid-subtle crosshair-corner relative p-3 sm:p-4 flex flex-col lg:flex-1 lg:min-h-[260px]">
             <div className="mono-label text-paler mb-2">PLAN VIEW // net_epa_tutorial_v1 // SCALE N.T.S.</div>
             {offline ? (
               <div className="py-16 px-4 text-center flex flex-col items-center gap-4 max-w-xl mx-auto">
@@ -138,18 +142,19 @@ export function Simulate(): JSX.Element {
               <div className="py-24 text-center font-mono-cad text-xs text-paler aq-pulse">LOADING NETWORK…</div>
             )}
           </div>
-          <AiMonitor />
+          <div data-tour="ai" className="lg:shrink-0"><AiMonitor /></div>
           </div>
 
           <aside className="flex flex-col gap-3 min-h-0 lg:overflow-y-auto lg:pr-1">
-            <Controls />
-            {mode === "challenge" ? <ChallengePanel onBreak={() => setMode("break")} /> : <Inspector mode={mode} onMode={setMode} />}
+            <div data-tour="controls"><Controls /></div>
+            <div data-tour="inspector">{mode === "challenge" ? <ChallengePanel onBreak={() => setMode("break")} /> : <Inspector mode={mode} onMode={setMode} />}</div>
             <AgentReport report={report} />
             <Events />
           </aside>
         </div>
       </main>
       <StatusBar />
+      <Tour open={tourOpen} onClose={() => setTourOpen(false)} />
     </div>
   );
 }
